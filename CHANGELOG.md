@@ -18,6 +18,7 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - Workspace do pub do Studio em `studio/`: `pubspec.yaml` com os pacotes herdados por caminho em `dependency_overrides`, `pubspec.lock` próprio, `analysis_options.yaml` comum (inclui o do upstream, liga os três modos estritos e as regras de analisador da seção 4.2 do padrão de código) e `flutter-version.txt` com `3.47.9`.
 - Pacote `studio/packages/studio_shell` 0.1.0: runner de Linux, `StudioWidgetsBinding`, `InheritedAssetMessenger`, `MessageChannelAssetBundle`, `InheritedFontRegistry` e oito testes de unidade em `test/inherited_assets/`.
 - `STUDIO-PATCH(2)` em `packages/devtools_app/lib/initialization.dart` e `packages/devtools_app/lib/src/shared/framework/app_error_handling.dart`: parâmetro opcional `ensureBindingInitialized`. Registrado em `PATCHES.md`.
+- Pacote `studio/packages/studio_tool` 0.1.0, com o executável `st` e o comando `st verify` (NFR-MNT-005): `QualityGate`, `GateStep`, `ProcessStep`, `GateStepCatalog`, `ProcessRunner` e 16 testes. Passos construídos: QG-01, QG-02, QG-04 e QG-05. Passo exigido sem implementação, ou com ferramenta ausente, sai como `notRun` e reprova o portão. Uso: `dart run studio_tool:st verify`, a partir de `studio/`.
 
 ### Alterado
 

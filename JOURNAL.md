@@ -4,6 +4,10 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**O portão de qualidade começou a existir.** O comando `st verify` roda e já confere formato e análise do código Dart do Studio; os dois passos de Rust saem como "não se aplica", porque ainda não há código Rust. Os outros nove passos aparecem como "não executado" e reprovam o portão, de propósito: o portão só aprova quando os treze passos rodarem, então hoje ele reprova toda mudança. Isso é o estado real, não um defeito.
+
+Falta para o portão aprovar: instalar e fixar as versões do cspell e do PMD; decidir a licença do DCM, que segue pendente e trava os passos QG-03 e parte do QG-06; e escrever os passos próprios (estrutura, geração, marcadores, documentação, rastreabilidade e dispensas).
+
 **ADR-0015 aceita.** O dono do produto aprovou o mecanismo de assets do shell. Não há mais decisão em estado de proposta.
 
 **ADR-0003 a ADR-0013 estão aceitas.** O dono do produto informou que aprovou todas ao publicar a baseline em `docs/`, e que só faltou trocar o estado. Trocado. A ADR-0015, escrita depois, continua como proposta.
