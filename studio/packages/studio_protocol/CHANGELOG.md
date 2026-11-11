@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+- Contract 0.4.0: the extensions of the design agent, `hello` and `scene`,
+  and the types `AgentInfo`, `Scene` and `SceneElement`.
+- The package accepts Dart 3.10, the SDK of the oldest supported Flutter.
+
 ## 0.3.0
 
 - Contract 0.3.0: `getSourceTree` and the type `SourceNode`.

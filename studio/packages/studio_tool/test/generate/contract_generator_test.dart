@@ -18,6 +18,7 @@ void main() {
       'src/generated/sample_method.dart',
       'src/generated/sample_event.dart',
       'src/generated/sample_error_code.dart',
+      'src/generated/sample_agent_extension.dart',
       'src/generated/sample_api.dart',
       'src/generated/sample_client.dart',
       'src/generated/sample_dispatcher.dart',

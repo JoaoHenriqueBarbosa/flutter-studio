@@ -49,6 +49,9 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `studio_shell`: `CanvasPane`, a aba Canvas com o último quadro do app, esmaecido e com aviso quando o app termina (FR-CNV-001, FR-CNV-008); a coluna central passa a ter as abas Canvas e Inspetor. O botão Run executa no host de design (`RunTarget.designHost`), sem janela nem compilação nativa, e um segundo botão executa em janela do desktop. Cinco textos novos nos dois ARB. 37 testes no pacote.
 - `studio_core`: `CanvasController.pauseWhile` e `ProjectSession.restartApp`; a captura fica suspensa durante hot reload e hot restart. 143 testes; o de sistema novo faz oito edições seguidas com captura a cada 5 ms.
 - `docs/architecture/arc42.md` 0.10, conforme a linha 0.18 da tabela do guia.
+- Contrato 0.4.0 em `studio_protocol`: chave `x-agent` com as extensões `hello` e `scene` do agente de design, e os tipos `AgentInfo`, `Scene` e `SceneElement`; o gerador emite o enum `StudioAgentExtension`. O pacote passa a aceitar Dart 3.10, o do Flutter mais antigo da janela (NFR-FLEX-001).
+- Pacote `studio/packages/studio_design_agent` 0.1.0 (IF-06): `DesignAgent` registra as extensões de serviço dentro do app; `SceneCollector` percorre a árvore de elementos e devolve, de cada widget criado sob as raízes do projeto, o local de criação e o retângulo na superfície. Depende só do Flutter e do `studio_protocol`. 5 testes de widget.
+- `docs/interfaces/icd.md` 0.6, conforme a linha 0.19 da tabela do guia.
 
 ### Corrigido
 

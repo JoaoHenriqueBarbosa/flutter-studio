@@ -2,7 +2,7 @@
   "openrpc": "1.4.0",
   "info": {
     "title": "Studio",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "Operations of Studio: reading, selecting and editing the widgets of the open project."
   },
   "x-binding": {
@@ -30,7 +30,7 @@
           "result": {
             "name": "versionInfo",
             "value": {
-              "version": "0.3.0"
+              "version": "0.4.0"
             }
           }
         }
@@ -917,6 +917,25 @@
       }
     }
   ],
+  "x-agent": {
+    "extensionPrefix": "ext.studio.agent",
+    "extensions": [
+      {
+        "name": "hello",
+        "description": "Returns the version of the protocol of the design agent.",
+        "schema": {
+          "$ref": "#/components/schemas/AgentInfo"
+        }
+      },
+      {
+        "name": "scene",
+        "description": "Returns the scene mirror of the frame on screen: the geometry and the creation location of each element created in the project.",
+        "schema": {
+          "$ref": "#/components/schemas/Scene"
+        }
+      }
+    ]
+  },
   "components": {
     "schemas": {
       "VersionInfo": {
@@ -1276,6 +1295,93 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SourceNode"
+            }
+          }
+        }
+      },
+      "AgentInfo": {
+        "description": "What the design agent tells about itself.",
+        "type": "object",
+        "required": [
+          "protocolVersion"
+        ],
+        "properties": {
+          "protocolVersion": {
+            "description": "Version of the protocol between the shell and the agent.",
+            "type": "integer"
+          }
+        }
+      },
+      "SceneElement": {
+        "description": "One element created in the project, in the frame on screen.",
+        "type": "object",
+        "required": [
+          "uri",
+          "position",
+          "parentIndex",
+          "left",
+          "top",
+          "width",
+          "height"
+        ],
+        "properties": {
+          "uri": {
+            "description": "The file URI of the document that creates the widget of the element.",
+            "type": "string"
+          },
+          "position": {
+            "description": "Position of the constructor call that creates the widget.",
+            "$ref": "#/components/schemas/Position"
+          },
+          "parentIndex": {
+            "description": "Index, in the list of the scene, of the nearest ancestor created in the project, or -1.",
+            "type": "integer"
+          },
+          "left": {
+            "description": "Left edge of the bounds of the element on the surface, in logical pixels.",
+            "type": "number"
+          },
+          "top": {
+            "description": "Top edge of the bounds of the element on the surface, in logical pixels.",
+            "type": "number"
+          },
+          "width": {
+            "description": "Width of the bounds, in logical pixels.",
+            "type": "number"
+          },
+          "height": {
+            "description": "Height of the bounds, in logical pixels.",
+            "type": "number"
+          }
+        }
+      },
+      "Scene": {
+        "description": "The scene mirror of one frame, in the JSON form of the first version of the agent.",
+        "type": "object",
+        "required": [
+          "width",
+          "height",
+          "devicePixelRatio",
+          "elements"
+        ],
+        "properties": {
+          "width": {
+            "description": "Width of the surface, in logical pixels.",
+            "type": "number"
+          },
+          "height": {
+            "description": "Height of the surface, in logical pixels.",
+            "type": "number"
+          },
+          "devicePixelRatio": {
+            "description": "Physical pixels of a frame for each logical pixel.",
+            "type": "number"
+          },
+          "elements": {
+            "description": "The elements created in the project, in the pre-order of the tree.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SceneElement"
             }
           }
         }

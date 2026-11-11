@@ -13,7 +13,12 @@ void main() {
       'sample_method.dart',
       'sample_event.dart',
       'sample_error_code.dart',
+      'sample_agent_extension.dart',
     ]);
+    expect(
+      files['sample_agent_extension.dart'],
+      contains("  /// Answers a thing.\n  ping('ext.sample.agent.ping');"),
+    );
     expect(
       files['sample_contract.dart'],
       allOf(

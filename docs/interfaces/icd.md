@@ -1,6 +1,6 @@
 # Especificação de interfaces
 
-Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.5, rascunho para revisão.
+Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.6, rascunho para revisão.
 
 ## 1. Inventário de interfaces
 
@@ -30,7 +30,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 
 ### 2.1 Regras
 
-- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.3.0.
+- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.4.0.
 - Todo `WidgetRef` enviado a um método de edição DEVE trazer `documentVersion`. Se não for a versão atual do documento, o serviço DEVE responder `StaleDocument` sem alterar nada.
 - Um método de edição DEVE ser atômico: ou todos os arquivos da edição são gravados, ou nenhum.
 - O serviço NÃO DEVE aceitar URI fora das raízes do projeto.
@@ -120,6 +120,10 @@ Os códigos ficam na faixa que o JSON-RPC 2.0 reserva a erros definidos pela imp
 ## 3. Agente de design
 
 O agente roda dentro do app alvo. O canal de controle usa extensões de serviço do VM Service. O canal de quadros usa memória compartilhada, porque o volume não cabe em JSON. Esta é a versão 1 do protocolo, a confirmar no incremento F2.
+
+Os nomes das extensões e os tipos dos resultados ficam no documento OpenRPC do `studio_protocol`, na chave `x-agent`, de onde saem as constantes e os tipos usados pelo shell e pelo agente (ADR-0013).
+
+Construído até aqui: `ext.studio.agent.hello` e `ext.studio.agent.scene`. A segunda não está na tabela de controle abaixo: ela devolve o espelho de cena da seção 3.3 em JSON, enquanto o segmento de memória compartilhada não existe. Cada elemento traz `uri` e `position` do local de criação, `parentIndex` e o retângulo `left`, `top`, `width` e `height` na superfície, em pixels lógicos, no lugar da matriz de transformação; a cena traz ainda `width`, `height` e `devicePixelRatio` da superfície.
 
 ### 3.1 Controle
 

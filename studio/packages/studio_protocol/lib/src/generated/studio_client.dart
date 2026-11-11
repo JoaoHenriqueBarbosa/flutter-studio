@@ -17,10 +17,8 @@ import 'widget_spec.dart';
 
 /// Sends one call of the `Studio` service and completes with its result,
 /// both in JSON form.
-typedef StudioCall = Future<Object?> Function(
-  StudioMethod method,
-  Map<String, Object?> params,
-);
+typedef StudioCall =
+    Future<Object?> Function(StudioMethod method, Map<String, Object?> params);
 
 /// Client of the `Studio` service over any transport.
 final class StudioClient implements StudioApi {

@@ -30,6 +30,7 @@ final class ConstantsEmitter {
       },
     ),
     '${snakeCase(_title)}_error_code.dart': _emitErrors(),
+    '${snakeCase(_title)}_agent_extension.dart': _emitAgentExtensions(),
   };
 
   String _emitContract() {
@@ -81,6 +82,30 @@ $declarations,
 }
 ''';
   }
+
+  String _emitAgentExtensions() {
+    final name = '${_title}AgentExtension';
+    final prefix = _document.agentExtensionPrefix;
+    final declarations = [
+      for (final extension in _document.agentExtensions)
+        _agentExtensionValue(extension.name, extension.description, prefix),
+    ].join(',\n\n');
+    return '''
+$generatedHeader
+/// The service extensions that the design agent registers in the app.
+enum $name {
+$declarations;
+
+  const $name(this.method);
+
+  /// Full name of the extension in the VM Service.
+  final String method;
+}
+''';
+  }
+
+  String _agentExtensionValue(String name, String description, String prefix) =>
+      "${docComment(description, indent: '  ')}\n  $name('$prefix.$name')";
 
   String _errorValue(ContractError error) {
     final documentation = docComment(

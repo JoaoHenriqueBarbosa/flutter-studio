@@ -37,6 +37,16 @@ const sampleContractSource = '''
       "schema": {"\$ref": "#/components/schemas/Thing"}
     }
   ],
+  "x-agent": {
+    "extensionPrefix": "ext.sample.agent",
+    "extensions": [
+      {
+        "name": "ping",
+        "description": "Answers a thing.",
+        "schema": {"\$ref": "#/components/schemas/Thing"}
+      }
+    ]
+  },
   "components": {
     "schemas": {
       "Thing": {

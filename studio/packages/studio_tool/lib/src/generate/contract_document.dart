@@ -21,6 +21,8 @@ final class ContractDocument {
     required this.binding,
     required this.methods,
     required this.events,
+    required this.agentExtensionPrefix,
+    required this.agentExtensions,
     required this.schemas,
     required this.errors,
   });
@@ -41,6 +43,10 @@ final class ContractDocument {
       'x-binding': final Map<String, Object?> binding,
       'methods': final List<Object?> methods,
       'x-events': final List<Object?> events,
+      'x-agent': {
+        'extensionPrefix': final String agentExtensionPrefix,
+        'extensions': final List<Object?> agentExtensions,
+      },
       'components': {
         'schemas': final Map<String, Object?> schemas,
         'errors': final Map<String, Object?> errors,
@@ -55,6 +61,8 @@ final class ContractDocument {
         },
         methods: methods.map(_methodFrom).toList(),
         events: events.map(_eventFrom).toList(),
+        agentExtensionPrefix: agentExtensionPrefix,
+        agentExtensions: agentExtensions.map(_eventFrom).toList(),
         schemas: schemas.entries.map(_schemaFrom).toList(),
         errors: errors.entries.map(_errorFrom).toList(),
       );
@@ -84,6 +92,14 @@ final class ContractDocument {
 
   /// The events, in document order.
   final List<ContractEvent> events;
+
+  /// Prefix of the service extensions of the design agent, such as
+  /// `ext.studio.agent`.
+  final String agentExtensionPrefix;
+
+  /// The service extensions of the design agent, each with the type of its
+  /// result, in document order.
+  final List<ContractEvent> agentExtensions;
 
   /// The named schemas, in document order.
   final List<ContractSchema> schemas;
@@ -152,7 +168,7 @@ final class ContractDocument {
       );
     }
     throw FormatException(
-      'An event needs name, description and schema.',
+      'An event or extension needs name, description and schema.',
       event,
     );
   }

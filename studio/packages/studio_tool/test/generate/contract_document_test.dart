@@ -19,6 +19,8 @@ void main() {
         false,
       ]);
       expect(document.events.single.name, 'renamed');
+      expect(document.agentExtensionPrefix, 'ext.sample.agent');
+      expect(document.agentExtensions.single.name, 'ping');
       expect(document.schemas.map((schema) => schema.name), ['Thing', 'Kind']);
       expect(document.schemas.last.enumValues, ['small', 'large']);
       expect(document.errors.single, (

@@ -109,5 +109,6 @@ Fontes técnicas verificadas para esta baseline:
 | 0.16 | 11/11/2026 | Passo QG-12 do portão e comando `st trace`. Padrão de código 0.5: a seção 5.2 ganha a fonte única do incremento em construção, `studio/current-increment.txt`. |
 | 0.17 | 11/11/2026 | SRS 0.5: ASM-02 respondida, verdadeira; ASM-01 parcialmente confirmada em Linux, com o `flutter_tester` iniciando, renderizando e entregando quadro. |
 | 0.18 | 11/11/2026 | Primeiro canvas: o app roda no host de design e o quadro aparece no shell (FR-CNV-001, FR-HST-002). Arquitetura 0.10: limites desse degrau e a suspensão da captura durante o reload entram na dívida técnica. |
+| 0.19 | 11/11/2026 | Pacote `studio_design_agent`, com as extensões `hello` e `scene`. Interfaces 0.6: contrato 0.4.0, chave `x-agent` e forma JSON provisória do espelho de cena (IF-06). |
 
 Esta tabela registra as mudanças de conteúdo da baseline. O detalhe técnico de cada mudança fica em `CHANGELOG.md`, e o relato para quem aprova, em `JOURNAL.md`, os dois na raiz do repositório.

@@ -4,6 +4,7 @@
 /// Contract of the `Studio` service: types, names and stubs.
 library;
 
+export 'src/generated/agent_info.dart';
 export 'src/generated/change_origin.dart';
 export 'src/generated/document_changed.dart';
 export 'src/generated/edit_result.dart';
@@ -13,9 +14,12 @@ export 'src/generated/position.dart';
 export 'src/generated/property.dart';
 export 'src/generated/range.dart';
 export 'src/generated/reload_kind.dart';
+export 'src/generated/scene.dart';
+export 'src/generated/scene_element.dart';
 export 'src/generated/selection_changed.dart';
 export 'src/generated/source_node.dart';
 export 'src/generated/structure_options.dart';
+export 'src/generated/studio_agent_extension.dart';
 export 'src/generated/studio_api.dart';
 export 'src/generated/studio_client.dart';
 export 'src/generated/studio_contract.dart';

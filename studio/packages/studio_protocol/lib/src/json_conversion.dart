@@ -11,8 +11,9 @@ T asJson<T extends Object>(Object? value) {
 bool jsonEquals(Object? left, Object? right) => switch ((left, right)) {
   (final List<Object?> left, final List<Object?> right) =>
     left.length == right.length &&
-        Iterable<int>.generate(left.length)
-            .every((index) => jsonEquals(left[index], right[index])),
+        Iterable<int>.generate(
+          left.length,
+        ).every((index) => jsonEquals(left[index], right[index])),
   (final Map<String, Object?> left, final Map<String, Object?> right) =>
     left.length == right.length &&
         left.keys.every(
