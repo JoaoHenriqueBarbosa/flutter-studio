@@ -239,7 +239,7 @@ As regras de escrita, nomes, comentários e documentação gerada estão em Padr
 
 ## 9. Decisões de arquitetura
 
-As decisões estão registradas uma a uma em Decisões (ADR). Treze formam esta baseline. ADR-0001 e ADR-0002 estão aceitas; as demais estão propostas e aguardam o dono do produto.
+As decisões estão registradas uma a uma em Decisões (ADR). O estado de cada uma está no índice, em `docs/decisions/README.md`.
 
 ## 10. Requisitos de qualidade
 

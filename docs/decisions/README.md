@@ -1,6 +1,6 @@
 # Registro de decisões de arquitetura
 
-Decisões do Studio no formato MADR 4.0. Cada decisão é um arquivo nesta pasta. Versão 0.2, rascunho para revisão.
+Decisões do Studio no formato MADR 4.0. Cada decisão é um arquivo nesta pasta. Versão 0.3, rascunho para revisão.
 
 ## Índice
 

@@ -27,6 +27,6 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `docs/engineering/coding-standard.md` 0.2: célula do `analysis_options.yaml` na seção 2.2, linha de versões de toolchain na seção 5.2 e padrão Decorator no catálogo da seção 6.3.
 - `docs/architecture/arc42.md` 0.4: resposta do RSK-11 e local dos pacotes `studio_*` na seção 8.
 - `CLAUDE.md`: os dois workspaces e o SDK de cada um.
-- ADR-0003 a ADR-0013: estado de "proposta" para "aceita", nos arquivos e no índice.
+- ADR-0003 a ADR-0013: estado de "proposta" para "aceita", nos arquivos e no índice (registro de decisões 0.3). A seção 9 de `docs/architecture/arc42.md` deixa de repetir os estados e remete ao índice.
 - Histórico do `main` reescrito pelo rebase: os quatro commits anteriores ganharam hashes novos, sem mudança de conteúdo.
 - `docs/guide.md`: linha 0.3 na tabela de mudanças e os dois registros citados na seção de controle de mudanças.
