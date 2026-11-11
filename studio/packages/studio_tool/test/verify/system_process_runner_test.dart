@@ -26,5 +26,19 @@ void main() {
 
       expect(run, isNull);
     });
+
+    // Verifies: NFR-MNT-004
+    test('gives the tool the variables that the invocation sets', () async {
+      final run = await const SystemProcessRunner().run(
+        const ToolInvocation(
+          'sh',
+          ['-c', r'echo $FLUTTER_ROOT'],
+          environment: {'FLUTTER_ROOT': '/candidate'},
+        ),
+        workingDirectory: Directory.current,
+      );
+
+      expect(run?.output.trim(), '/candidate');
+    });
   });
 }

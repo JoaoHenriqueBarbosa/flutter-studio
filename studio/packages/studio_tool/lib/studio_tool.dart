@@ -20,6 +20,7 @@ export 'src/generate/protocol_package.dart';
 export 'src/generate/schema_emitter.dart';
 export 'src/generate/schema_type.dart';
 export 'src/generate/service_emitter.dart';
+export 'src/inherited/inherited_suite.dart';
 export 'src/markers/marker_step.dart';
 export 'src/source/own_sources.dart';
 export 'src/structure/dependency_graph_check.dart';

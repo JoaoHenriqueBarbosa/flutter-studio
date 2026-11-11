@@ -29,3 +29,8 @@ identifier that no document defines, or when a requirement of the increment in
 `st docs` generates the API reference of every package with `dart doc`, and the
 reference of the `Studio` service from its contract, into `doc/api/`. A warning
 of a generator fails the command, which is step QG-11 of the gate.
+
+The tests of the package take a few seconds with `dart test --exclude-tags
+inherited`. The tag `inherited` marks the test that runs the whole suite
+inherited from DevTools with the candidate SDK of `tool/flutter-sdk`, which
+takes several minutes.

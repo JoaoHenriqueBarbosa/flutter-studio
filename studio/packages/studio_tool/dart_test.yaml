@@ -1,0 +1,6 @@
+tags:
+  # The suite inherited from DevTools, which takes several minutes and needs
+  # the candidate SDK in tool/flutter-sdk. Leave it out of a quick run with
+  # --exclude-tags inherited.
+  inherited:
+    timeout: 45m

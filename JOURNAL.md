@@ -4,6 +4,12 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**Os testes herdados entraram no que o portão enxerga. Fim do dia.** Um teste do `studio_tool` roda a suíte herdada inteira dos quatro pacotes do DevTools com o SDK candidato e confere que passa com os patches do Studio. Com ele, o passo de rastreabilidade (QG-12) deixa de apontar requisito sem teste até o F1. O teste leva uns sete minutos e fica fora da rodada rápida.
+
+Onde o portão para hoje: dez dos treze passos existem e sete deles aprovam ou não se aplicam. O QG-10 espera o texto do cabeçalho de licença, e QG-03, QG-06 e QG-07 esperam DCM, PMD e cspell. As quatro pendências são decisões suas.
+
+Para retomar: a ADR-0016 está como proposta; o painel de propriedades próprio do Studio é o que falta para expor na interface a remoção de argumento e a expressão não literal; e o canvas ainda não entrega mouse e teclado ao app.
+
 **Tamanho e restrições do widget selecionado, e um defeito que eu tinha deixado passar.** Acima das propriedades aparece agora o tamanho do widget selecionado no app em execução, as restrições que o pai impõe e, dentro de linha ou coluna, o fator e o ajuste de flex. Alterar alinhamento e flex já era possível pelas propriedades e por "Envolver com Expanded ou Flexible".
 
 O defeito: o aviso de "app sem rastreamento", que entrou algumas entradas abaixo, aparecia sempre e desligava a seleção por clique no canvas. Os testes passavam; a interface eu não tinha reaberto depois daquela mudança. Achei ao conferir o painel novo, corrigi e pus no teste de sistema a conferência de que o canvas fica selecionável. Daqui em diante reabro a interface depois de toda mudança que toca o canvas.

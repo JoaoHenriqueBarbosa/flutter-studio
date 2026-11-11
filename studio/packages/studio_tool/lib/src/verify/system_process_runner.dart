@@ -19,6 +19,7 @@ final class SystemProcessRunner implements ProcessRunner {
         invocation.executable,
         invocation.arguments,
         workingDirectory: workingDirectory.path,
+        environment: invocation.environment,
       );
       return ToolRun(
         exitCode: result.exitCode,
