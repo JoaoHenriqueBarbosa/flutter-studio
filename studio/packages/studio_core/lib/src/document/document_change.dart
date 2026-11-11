@@ -1,4 +1,5 @@
-import 'change_origin.dart';
+import 'package:studio_protocol/studio_protocol.dart' show ChangeOrigin;
+
 import 'text_document.dart';
 
 /// A document of the project after a change that is already on disk.

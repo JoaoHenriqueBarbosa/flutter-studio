@@ -1,24 +1,26 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:studio_protocol/studio_protocol.dart';
 
 import '../dap/dap_request_failed.dart';
 import '../document/document_change.dart';
 import '../document/document_store.dart';
-import '../document/edit_failure.dart';
-import '../document/text_edit.dart';
-import '../document/workspace_edit.dart';
 import '../dtd/dtd_connection.dart';
+import '../edit/argument_reader.dart';
+import '../edit/edit_pipeline.dart';
+import '../lsp/document_sync.dart';
 import '../lsp/lsp_client.dart';
 import '../project/flutter_project.dart';
+import '../selection/selection_controller.dart';
+import '../service/studio_service.dart';
 import '../toolchain/toolchain_supervisor.dart';
 import 'analysis_server_child.dart';
 import 'app_run.dart';
 import 'tooling_daemon_child.dart';
 
-/// An open project with its tools: daemon, analysis server, documents and
-/// the run of the app (FR-PRJ-004).
+/// An open project with its tools: daemon, analysis server, documents, the
+/// `Studio` service and the run of the app (FR-PRJ-004).
 final class ProjectSession {
   /// Creates the session of [project]. Nothing is started until [start].
   ProjectSession(this.project) : documents = DocumentStore(project.rootPath);
@@ -28,6 +30,29 @@ final class ProjectSession {
 
   /// The documents of the project. Every edit goes through this store.
   final DocumentStore documents;
+
+  /// The selection shared by the views and by the clients of the service.
+  late final selection = SelectionController(documents);
+
+  /// The `Studio` service of the project, which the session registers in
+  /// the daemon. Every operation enters through it (ADR-0012).
+  late final StudioApi service = StudioService(
+    documents,
+    selection,
+    _pipeline,
+    _reader,
+  );
+
+  late final _sync = DocumentSync(documents);
+
+  late final _reader = ArgumentReader(_sync, () => _server);
+
+  late final _pipeline = EditPipeline(
+    documents,
+    _reader,
+    server: () => _server,
+    requestReload: _requestReload,
+  );
 
   final _supervisor = ToolchainSupervisor();
 
@@ -40,8 +65,6 @@ final class ProjectSession {
   DtdConnection? _daemon;
 
   LspClient? _server;
-
-  ({String filePath, DocumentPosition position})? _activeLocation;
 
   StreamSubscription<DocumentChange>? _changes;
 
@@ -59,9 +82,10 @@ final class ProjectSession {
 
   /// Starts the daemon, then the analysis server, and pairs the two.
   ///
-  /// Completes when the server has registered its service in the daemon.
-  /// No code of the project runs.
+  /// Completes when the `Studio` service is registered in the daemon and
+  /// the server has registered its own. No code of the project runs.
   Future<void> start() async {
+    selection.selection.addListener(_handleSelection);
     _changes = documents.changes.listen(_handleChange);
     await _supervisor.start(
       ToolingDaemonChild(project.sdk, _handleDaemonConnected),
@@ -69,20 +93,10 @@ final class ProjectSession {
     await _supervisor.start(
       AnalysisServerChild(
         project,
-        applyEdit: _applyEdit,
+        applyEdit: _pipeline.applyServerEdit,
         onConnected: _handleServerConnected,
       ),
     );
-  }
-
-  /// Announces to the tools that the active location is [position] in the
-  /// file at [filePath]. The location is announced again after each edit.
-  Future<void> selectLocation({
-    required String filePath,
-    required DocumentPosition position,
-  }) async {
-    _activeLocation = (filePath: filePath, position: position);
-    await _daemon?.postActiveLocation(filePath: filePath, position: position);
   }
 
   /// Builds and starts the app on the device [deviceId].
@@ -111,10 +125,13 @@ final class ProjectSession {
   /// Ends the app and the tools and releases the resources of the session.
   Future<void> close() async {
     await stopApp();
+    selection.selection.removeListener(_handleSelection);
     await _changes?.cancel();
+    await _sync.dispose();
     await _server?.close();
     await _daemon?.close();
     await _supervisor.stop();
+    await selection.dispose();
     await documents.dispose();
     await _diagnostics.close();
     _daemonUri.dispose();
@@ -123,44 +140,69 @@ final class ProjectSession {
 
   Future<void> _handleDaemonConnected(DtdConnection connection) async {
     _daemon = connection;
+    await connection.serveStudio(service);
     _daemonUri.value = connection.uri;
     await _server?.connectToDtd(connection.uri);
   }
 
   Future<void> _handleServerConnected(LspClient client) async {
     _server = client;
+    _sync.attach(client);
     // The subscription ends with the client, which closes its stream.
     unawaited(client.diagnostics.forEach(_diagnostics.add));
     final daemon = _daemon;
     if (daemon != null) await client.connectToDtd(daemon.uri);
   }
 
-  Future<bool> _applyEdit(WorkspaceEdit edit) async {
-    try {
-      await documents.apply(edit);
-      return true;
-    } on EditFailure {
-      return false;
-    } on FileSystemException {
-      return false;
-    }
+  /// Asks the running app to reload the code on disk (FR-DOC-002) and
+  /// returns whether there was an app to ask.
+  bool _requestReload() {
+    final run = _appRun.value;
+    if (run == null) return false;
+    unawaited(_reload(run));
+    return true;
   }
 
-  /// Reloads the app after the file is on disk (FR-DOC-002) and announces
-  /// the active location again, so that the tools read the new text.
-  Future<void> _handleChange(DocumentChange change) async {
+  Future<void> _reload(AppRun run) async {
     try {
-      await _appRun.value?.hotReload();
+      await run.hotReload();
     } on DapRequestFailed {
       // The run ended between the edit and the reload. The edit is on disk,
       // and the next run starts from it.
     }
-    final location = _activeLocation;
-    if (location != null) {
-      await _daemon?.postActiveLocation(
-        filePath: location.filePath,
-        position: location.position,
+  }
+
+  /// Announces the selection to the inherited panels, as the active
+  /// location of an editor, and to the clients of the service.
+  ///
+  /// The document is opened in the analysis server first, because the
+  /// panels ask the server about the version that is announced.
+  Future<void> _handleSelection() async {
+    final selected = selection.selection.value;
+    final daemon = _daemon;
+    if (daemon == null) return;
+    if (selected != null) {
+      _sync.ensureOpen(selected.filePath);
+      await daemon.postActiveLocation(
+        filePath: selected.filePath,
+        position: selected.position,
+        documentVersion: selected.documentVersion,
       );
     }
+    await daemon.postStudioEvent(
+      StudioEvent.selectionChanged,
+      SelectionChanged(selection: await service.getSelection()).toJson(),
+    );
+  }
+
+  Future<void> _handleChange(DocumentChange change) async {
+    await _daemon?.postStudioEvent(
+      StudioEvent.documentChanged,
+      DocumentChanged(
+        uri: '${Uri.file(change.filePath)}',
+        documentVersion: change.document.version,
+        origin: change.origin,
+      ).toJson(),
+    );
   }
 }

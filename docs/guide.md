@@ -100,5 +100,6 @@ Fontes técnicas verificadas para esta baseline:
 | 0.7 | 11/11/2026 | ADR-0015 aceita; o padrão Decorator fica no catálogo do padrão de código (0.3) sem ressalva. |
 | 0.8 | 11/11/2026 | Primeiro entregável. Arquitetura 0.5: três itens de dívida técnica (desvio de FR-API-002, documentos não abertos no analysis server, daemon órfão). Padrão de código 0.4: a exclusão de diretórios no `analysis_options.yaml` vale para todo pacote Flutter. |
 | 0.9 | 11/11/2026 | Interfaces 0.2: local do documento OpenRPC, envelope do resultado no daemon, campo `options` em `Property`, tipo `TextDocumentEdit`, forma do evento `selectionChanged` e alcance do contrato 0.1.0 (IF-04, ADR-0013). |
+| 0.10 | 11/11/2026 | Serviço `Studio` registrado no daemon. Interfaces 0.3: alcance de `setProperty` no contrato 0.1.0. Arquitetura 0.6: sai da dívida técnica o item dos documentos não abertos no analysis server. |
 
 Esta tabela registra as mudanças de conteúdo da baseline. O detalhe técnico de cada mudança fica em `CHANGELOG.md`, e o relato para quem aprova, em `JOURNAL.md`, os dois na raiz do repositório.

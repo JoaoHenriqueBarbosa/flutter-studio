@@ -6,10 +6,10 @@ import '../document/document_store.dart';
 import '../document/edit_failure.dart';
 import '../document/source_location.dart';
 import '../document/workspace_edit.dart';
-import '../lsp/document_sync.dart';
 import '../lsp/lsp_client.dart';
 import '../lsp/lsp_request_failed.dart';
 import 'argument_literal.dart';
+import 'argument_reader.dart';
 import 'edit_outcome.dart';
 
 /// The transaction of every edit: check the target, produce the edit,
@@ -19,14 +19,15 @@ import 'edit_outcome.dart';
 /// a time, in arrival order. This version has the first level of ADR-0006,
 /// in which the analysis server produces the edit.
 final class EditPipeline {
-  /// Creates the pipeline over [_documents] and [_sync].
+  /// Creates the pipeline over [_documents], which reads the arguments of
+  /// a target through [_reader].
   ///
   /// [_server] returns the current client of the analysis server, or `null`
   /// while the server is not running. [_requestReload] asks the running app
   /// to reload and tells whether there was an app to ask.
   EditPipeline(
     this._documents,
-    this._sync, {
+    this._reader, {
     required this._server,
     required this._requestReload,
   });
@@ -35,7 +36,7 @@ final class EditPipeline {
 
   final DocumentStore _documents;
 
-  final DocumentSync _sync;
+  final ArgumentReader _reader;
 
   final LspClient? Function() _server;
 
@@ -63,15 +64,14 @@ final class EditPipeline {
     required String name,
     required String? source,
   }) => _enqueue(() async {
-    _checkTarget(target.filePath, documentVersion);
+    _documents.documentAt(target.filePath, version: documentVersion);
     if (source == null) {
       throw const UnsupportedEdit('Removing an argument is not built yet.');
     }
     final server = _server();
     if (server == null) throw const ToolUnavailable(_serverName);
-    _sync.ensureOpen(target.filePath);
+    final newValue = await _valueFor(target, name, source);
     try {
-      final newValue = await _valueFor(server, target, name, source);
       await server.editArgument(
         target,
         documentVersion: documentVersion,
@@ -130,30 +130,14 @@ final class EditPipeline {
     return result;
   }
 
-  void _checkTarget(String filePath, int documentVersion) {
-    if (!_documents.contains(filePath)) throw EditOutsideProject(filePath);
-    try {
-      final currentVersion = _documents.document(filePath).version;
-      if (currentVersion != documentVersion) {
-        throw StaleDocument(currentVersion);
-      }
-    } on FileSystemException catch (exception) {
-      throw UnsupportedEdit(exception.message);
-    }
-  }
-
   /// Completes with the value that the server takes for [source] as the
   /// argument [name] of the constructor at [target].
   Future<Object?> _valueFor(
-    LspClient server,
     SourceLocation target,
     String name,
     String source,
   ) async {
-    final arguments = await server.editableArguments(target);
-    if (arguments == null) {
-      throw const UnsupportedEdit('No widget is created at the position.');
-    }
+    final arguments = await _reader.read(target);
     final argument = arguments.where((each) => each.name == name).firstOrNull;
     if (argument == null || !argument.isEditable) {
       throw UnsupportedEdit('The argument $name is not editable.');

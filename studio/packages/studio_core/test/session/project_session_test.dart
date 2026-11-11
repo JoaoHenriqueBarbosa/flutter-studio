@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:dtd/dtd.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:json_rpc_2/json_rpc_2.dart';
 import 'package:path/path.dart' as path;
 import 'package:studio_core/studio_core.dart';
+import 'package:studio_protocol/studio_protocol.dart';
 
 import '../support/sample_app.dart';
 
@@ -72,6 +74,80 @@ void main() {
             'MainAxisAlignment.end',
           ),
         );
+      },
+      timeout: const Timeout(Duration(minutes: 2)),
+    );
+
+    // Verifies: FR-API-001, FR-PRP-001, FR-PRP-003, FR-DOC-005, FR-DOC-006,
+    // NFR-REL-004, NFR-SEC-002, IR-003
+    test(
+      'a client of the daemon reads, edits and undoes through Studio',
+      () async {
+        await session.start();
+        final daemonUri = session.daemonUri.value;
+        if (daemonUri == null) fail('The daemon did not start.');
+        final tool = await DartToolingDaemon.connect(daemonUri);
+        addTearDown(tool.close);
+        await tool.streamListen(StudioContract.streamName);
+        final events = <String>[];
+        final subscription = tool
+            .onEvent(StudioContract.streamName)
+            .listen((event) => events.add(event.kind));
+        addTearDown(subscription.cancel);
+        final studio = StudioClient((method, params) async {
+          final response = await tool.call(
+            StudioContract.serviceName,
+            method.name,
+            params: params,
+          );
+          return response.result[StudioContract.resultKey];
+        });
+        final column = WidgetRef(
+          uri: '${Uri.file(mainPath)}',
+          position: const Position(line: 11, character: 14),
+          documentVersion: 1,
+        );
+
+        expect((await studio.getVersion()).version, StudioContract.version);
+        expect(await studio.select(target: column), column);
+        final properties = await studio.getProperties(target: column);
+        final alignment = properties.firstWhere(
+          (property) => property.name == 'mainAxisAlignment',
+        );
+        expect(alignment.type, 'enum');
+        expect(alignment.expression?.source, 'MainAxisAlignment.center');
+        expect(alignment.options, contains('MainAxisAlignment.end'));
+
+        final result = await studio.setProperty(
+          target: column,
+          name: 'mainAxisAlignment',
+          value: const Expression(source: 'MainAxisAlignment.end'),
+        );
+
+        expect(result.applied, isTrue);
+        expect(result.documentVersions, {column.uri: 2});
+        expect(result.reload, ReloadKind.none);
+        expect(
+          File(mainPath).readAsStringSync(),
+          sampleAppSource.replaceFirst(
+            'MainAxisAlignment.center',
+            'MainAxisAlignment.end',
+          ),
+        );
+        expect((await studio.getSelection())?.documentVersion, 2);
+        await expectLater(
+          studio.getProperties(target: column),
+          throwsA(
+            isA<RpcException>()
+                .having((exception) => exception.code, 'code', -32001)
+                .having((exception) => exception.data, 'data', 2),
+          ),
+        );
+
+        expect((await studio.undo()).applied, isTrue);
+
+        expect(File(mainPath).readAsStringSync(), sampleAppSource);
+        expect(events, containsAll(['selectionChanged', 'documentChanged']));
       },
       timeout: const Timeout(Duration(minutes: 2)),
     );

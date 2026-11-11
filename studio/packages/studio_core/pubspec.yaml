@@ -16,6 +16,7 @@ dependencies:
   json_rpc_2: ^3.0.2
   path: ^1.9.0
   stream_channel: ^2.1.0
+  studio_protocol:
   yaml: ^3.1.2
 
 dev_dependencies:

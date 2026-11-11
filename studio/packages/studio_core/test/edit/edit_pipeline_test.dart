@@ -33,10 +33,11 @@ void main() {
         applyEdit: (edit) => pipeline.applyServerEdit(edit),
       );
       sync.attach(server.client);
+      LspClient? currentServer() => isServerRunning ? server.client : null;
       pipeline = EditPipeline(
         store,
-        sync,
-        server: () => isServerRunning ? server.client : null,
+        ArgumentReader(sync, currentServer),
+        server: currentServer,
         requestReload: () {
           if (isAppRunning) reloadCount++;
           return isAppRunning;

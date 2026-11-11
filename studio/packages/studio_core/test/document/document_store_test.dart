@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 import 'package:studio_core/studio_core.dart';
+import 'package:studio_protocol/studio_protocol.dart' show ChangeOrigin;
 
 void main() {
   group('DocumentStore', () {
@@ -183,6 +184,23 @@ void main() {
         expect(File(filePath).readAsStringSync(), 'alignment: .center,\n');
       },
     );
+
+    // Verifies: FR-API-001, NFR-SEC-003
+    test('checks the project and the version of a document', () {
+      expect(store.documentAt(filePath, version: 1).version, 1);
+      expect(
+        () => store.documentAt(filePath, version: 2),
+        throwsA(isA<StaleDocument>()),
+      );
+      expect(
+        () => store.documentAt('/etc/hosts', version: 1),
+        throwsA(isA<EditOutsideProject>()),
+      );
+      expect(
+        () => store.documentAt('${project.path}/missing.dart', version: 1),
+        throwsA(isA<UnsupportedEdit>()),
+      );
+    });
 
     // Verifies: IR-005
     test('refuses to edit a file outside the project', () async {

@@ -145,11 +145,6 @@ final class WorkbenchController extends DisposableController
     final location = _devTools.selectedLocation.value;
     if (session == null || location == null) return;
     if (!path.isWithin(session.project.rootPath, location.filePath)) return;
-    unawaited(
-      session.selectLocation(
-        filePath: location.filePath,
-        position: location.position,
-      ),
-    );
+    session.selection.select(location);
   }
 }

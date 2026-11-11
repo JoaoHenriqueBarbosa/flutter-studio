@@ -1,6 +1,6 @@
 # Especificação de interfaces
 
-Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.2, rascunho para revisão.
+Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.3, rascunho para revisão.
 
 ## 1. Inventário de interfaces
 
@@ -84,7 +84,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `createEventHandler` | `target`, `event: string` | `EditResult` e a localização do método criado | F3 |
 | `listPalette` | `query?: string` | `WidgetSpec[]`, com documentação | F3 |
 
-O contrato 0.1.0 traz `getVersion`, `getSelection`, `select`, `getProperties`, `setProperty`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem.
+O contrato 0.1.0 traz `getVersion`, `getSelection`, `select`, `getProperties`, `setProperty`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem. Nessa versão `setProperty` cobre o primeiro nível da ADR-0006: aceita como `value` um literal do gênero do parâmetro (ou `null` escrito como expressão) e responde `UnsupportedTarget` para outra expressão e para `value` nulo, que pede a remoção do argumento (FR-PRP-007, FR-PRP-008).
 
 ### 2.4 Eventos
 

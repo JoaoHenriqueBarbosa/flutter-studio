@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
+import 'package:studio_protocol/studio_protocol.dart' show ChangeOrigin;
 
 import 'applied_edit.dart';
-import 'change_origin.dart';
 import 'document_change.dart';
 import 'edit_failure.dart';
 import 'text_document.dart';
@@ -67,6 +67,22 @@ final class DocumentStore {
       version: TextDocument.initialVersion,
     ),
   );
+
+  /// Returns the document of the file at [filePath], after checking that
+  /// the file is in the project and that [version] is its current version.
+  ///
+  /// Throws [EditOutsideProject] or [StaleDocument] when a check fails, and
+  /// [UnsupportedEdit] when the file cannot be read.
+  TextDocument documentAt(String filePath, {required int version}) {
+    if (!contains(filePath)) throw EditOutsideProject(filePath);
+    try {
+      final current = document(filePath);
+      if (current.version != version) throw StaleDocument(current.version);
+      return current;
+    } on FileSystemException catch (exception) {
+      throw UnsupportedEdit(exception.message);
+    }
+  }
 
   /// Applies [edit], writes every changed file to disk and makes the edit
   /// the next one to undo.
