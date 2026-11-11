@@ -4,8 +4,12 @@ import 'dart:io';
 import 'package:json_rpc_2/json_rpc_2.dart';
 import 'package:stream_channel/stream_channel.dart';
 
+import '../document/source_location.dart';
+import '../document/text_document.dart';
 import '../document/text_edit.dart';
 import '../document/workspace_edit.dart';
+import 'editable_argument.dart';
+import 'lsp_request_failed.dart';
 
 /// The diagnostics that the analysis server reports for one file. Each
 /// report replaces the previous one for the same file.
@@ -74,10 +78,124 @@ final class LspClient {
   Future<void> connectToDtd(Uri daemonUri) =>
       _peer.sendRequest('dart/connectToDtd', {'uri': '$daemonUri'});
 
+  /// Opens in the server the file at [filePath] with the content of
+  /// [document]. From then on the server analyzes that content and not the
+  /// file on disk, until the next [changeDocument].
+  void openDocument(String filePath, TextDocument document) =>
+      _peer.sendNotification('textDocument/didOpen', {
+        'textDocument': {
+          'uri': '${Uri.file(filePath)}',
+          'languageId': 'dart',
+          'version': document.version,
+          'text': document.text,
+        },
+      });
+
+  /// Replaces the content that the server has for the open file at
+  /// [filePath] with the one of [document].
+  void changeDocument(String filePath, TextDocument document) =>
+      _peer.sendNotification('textDocument/didChange', {
+        'textDocument': {
+          'uri': '${Uri.file(filePath)}',
+          'version': document.version,
+        },
+        'contentChanges': [
+          {'text': document.text},
+        ],
+      });
+
+  /// Completes with the parameters of the constructor called at [location],
+  /// or with `null` when no widget is created there.
+  ///
+  /// Throws [LspRequestFailed] when the server refuses the request.
+  Future<List<EditableArgument>?> editableArguments(
+    SourceLocation location,
+  ) async {
+    final result = await _request(
+      'dart/textDocument/editableArguments',
+      _positionParameters(location),
+    );
+    if (result case {'arguments': final List<Object?> arguments}) {
+      return [for (final argument in arguments) ?_argumentFrom(argument)];
+    }
+    return null;
+  }
+
+  /// Asks the server to give the value [newValue] to the argument [name] of
+  /// the constructor called at [location], in the document at
+  /// [documentVersion].
+  ///
+  /// [newValue] is a `bool`, a `num`, a `String` or `null`. The server
+  /// answers with a `workspace/applyEdit` before this call completes.
+  /// Throws [LspRequestFailed] when the server refuses the edit.
+  Future<void> editArgument(
+    SourceLocation location, {
+    required int documentVersion,
+    required String name,
+    required Object? newValue,
+  }) => _request('dart/textDocument/editArgument', {
+    ..._positionParameters(location, documentVersion: documentVersion),
+    'edit': {'name': name, 'newValue': newValue},
+  });
+
   /// Ends the session and closes the channel.
   Future<void> close() async {
     await _diagnostics.close();
     await _peer.close();
+  }
+
+  Future<Object?> _request(
+    String method,
+    Map<String, Object?> parameters,
+  ) async {
+    try {
+      final Object? result = await _peer.sendRequest(method, parameters);
+      return result;
+    } on RpcException catch (exception) {
+      throw LspRequestFailed(method, exception.message);
+    } on StateError catch (error) {
+      throw LspRequestFailed(method, error.message);
+    }
+  }
+
+  Map<String, Object?> _positionParameters(
+    SourceLocation location, {
+    int? documentVersion,
+  }) => {
+    'textDocument': {
+      'uri': '${Uri.file(location.filePath)}',
+      'version': ?documentVersion,
+    },
+    'position': {
+      'line': location.position.line,
+      'character': location.position.character,
+    },
+  };
+
+  EditableArgument? _argumentFrom(Object? argument) {
+    if (argument case {'name': final String name, 'type': final String kind}) {
+      return EditableArgument(
+        name: name,
+        kind: kind,
+        hasArgument: argument['hasArgument'] == true,
+        isEditable: argument['isEditable'] != false,
+        value: argument['value'],
+        displayValue: switch (argument['displayValue']) {
+          final String displayValue => displayValue,
+          _ => null,
+        },
+        defaultValue: argument['defaultValue'],
+        options: switch (argument['options']) {
+          final List<Object?> options => options.whereType<String>().toList(),
+          _ => null,
+        },
+        documentation: switch (argument['documentation']) {
+          final String documentation => documentation,
+          _ => null,
+        },
+      );
+    }
+    return null;
   }
 
   Future<Map<String, Object?>> _handleApplyEdit(Parameters parameters) async {

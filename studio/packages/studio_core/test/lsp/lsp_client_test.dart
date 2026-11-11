@@ -163,5 +163,81 @@ void main() {
 
       expect(reply, isNull);
     });
+
+    // Verifies: FR-PRP-001
+    test('reads the editable arguments at a location', () async {
+      server.registerMethod('dart/textDocument/editableArguments', (
+        Parameters parameters,
+      ) {
+        expect(parameters['position']['line'].asInt, 11);
+        return {
+          'arguments': [
+            {
+              'name': 'mainAxisAlignment',
+              'type': 'enum',
+              'value': 'MainAxisAlignment.center',
+              'hasArgument': true,
+              'options': ['MainAxisAlignment.start'],
+              'documentation': 'How to align.',
+            },
+            {'name': 'spacing', 'type': 'double', 'isEditable': false},
+            'not an argument',
+          ],
+        };
+      });
+      unawaited(server.listen());
+
+      final arguments = await client.editableArguments((
+        filePath: '/work/main.dart',
+        position: (line: 11, character: 14),
+      ));
+
+      expect(arguments, hasLength(2));
+      expect(arguments?.first.kind, EditableArgument.enumKind);
+      expect(arguments?.first.value, 'MainAxisAlignment.center');
+      expect(arguments?.first.hasArgument, isTrue);
+      expect(arguments?.first.isEditable, isTrue);
+      expect(arguments?.first.options, ['MainAxisAlignment.start']);
+      expect(arguments?.first.documentation, 'How to align.');
+      expect(arguments?.last.isEditable, isFalse);
+      expect(arguments?.last.hasArgument, isFalse);
+    });
+
+    // Verifies: FR-PRP-001
+    test('reads no arguments where no widget is created', () async {
+      server.registerMethod(
+        'dart/textDocument/editableArguments',
+        (Parameters _) => null,
+      );
+      unawaited(server.listen());
+
+      final arguments = await client.editableArguments((
+        filePath: '/work/main.dart',
+        position: (line: 0, character: 0),
+      ));
+
+      expect(arguments, isNull);
+    });
+
+    // Verifies: IR-001
+    test('reports a refused request as a failure of that method', () async {
+      unawaited(server.listen());
+
+      await expectLater(
+        client.editArgument(
+          (filePath: '/work/main.dart', position: (line: 0, character: 0)),
+          documentVersion: 1,
+          name: 'spacing',
+          newValue: 2,
+        ),
+        throwsA(
+          isA<LspRequestFailed>().having(
+            (failure) => failure.method,
+            'method',
+            'dart/textDocument/editArgument',
+          ),
+        ),
+      );
+    });
   });
 }
