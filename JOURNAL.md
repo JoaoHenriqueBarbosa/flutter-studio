@@ -8,7 +8,17 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 **GitHub Actions desligado no repositório.** O upstream traz workflows próprios, e quatro deles rodam por agenda, um sem checar em que repositório está. Para não gastarem minutos nem mexerem em issues, o Actions foi desligado nas configurações do repositório. Volta a ser ligado quando o Studio tiver o próprio CI chamando `st verify`.
 
-Pendente do F0, em ordem: compilar e rodar o `devtools_app` em desktop com os testes herdados passando; criar os pacotes `studio_*` e o `st verify`; shell com daemon, analysis server e adaptador de debug; `DocumentStore`; experimentos das premissas ASM-01 a ASM-08.
+**Testes herdados passam em Linux.** Com o SDK que o upstream fixa (Flutter 3.50.0-1.0.pre-437, baixado pelo `dt` em `tool/flutter-sdk/`, fora do Git), passaram todos os testes de VM: 1683 no `devtools_app` (8 pulados pelo próprio upstream), 122 no `devtools_app_shared`, 114 no `devtools_shared`, 16 no `devtools_extensions` e 35 na ferramenta `dt`. Não rodaram os testes de navegador nem os de integração.
+
+**O DevTools abre em Linux, mas não com o SDK do upstream nesta máquina.** O `devtools_app` compila e executa em Linux com um runner gerado, sem tocar em código herdado. Com o SDK candidato, porém, a janela sai deslocada: só um quarto do conteúdo aparece, e o resto fica preto. O mesmo acontece com um app Flutter em branco, então o defeito é do engine dessa pré-versão com o driver da NVIDIA (flutter/flutter#195885, aberto, sem contorno). Com o Flutter estável 3.47.9 o mesmo código compila e desenha certo. Ficou registrado como RSK-11.
+
+**Achado para o shell.** O `devtools_app` carrega imagens e fontes por caminhos que só valem quando ele é o app principal. Dentro do `studio_shell` ele compila, mas cai na partida ao procurar `assets/dart_syntax.json`. São 12 pontos de carga de imagem e três famílias de fonte. O plano é o shell redirecionar esses caminhos na partida, com no máximo um patch no código herdado.
+
+Depende do dono do produto:
+
+- Com que SDK o produto é construído. A ADR-0002 aceita que a versão do Studio fique atrelada à do DevTools, que usa uma pré-versão trocada quase toda semana. O achado acima mostra o custo. A alternativa é construir o shell com a versão estável e manter o candidato só para os testes herdados; isso pediria uma ADR nova. Por ora nada mudou: o candidato segue sendo a referência, e a conferência visual nesta máquina usa a estável.
+
+Pendente do F0, em ordem: criar os pacotes `studio_*` e o `st verify`; shell com daemon, analysis server e adaptador de debug; `DocumentStore`; experimentos das premissas ASM-01 a ASM-08.
 
 **Repositório criado e baseline publicada.** O repositório privado `flutter-studio` existe no GitHub e já tem a baseline de projeto: os seis documentos e o guia. Ainda não há código; tudo é especificação.
 

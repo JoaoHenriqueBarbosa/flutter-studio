@@ -12,6 +12,8 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `CHANGELOG.md` e `JOURNAL.md` na raiz.
 - Código herdado de `flutter/devtools`: o `main` foi rebaseado sobre o `master` do upstream no commit `9b8d6457` (DC-04, ADR-0002). Entram `packages/devtools_*`, `tool/` (comando `dt`), `third_party/`, `.github/` e os arquivos de raiz do upstream. Remoto `upstream` configurado para buscar só o `master`, sem tags.
 - `PATCHES.md` na raiz, com o commit base do fork, a fila de patches e a lista de testes herdados removidos (NFR-MNT-001, NFR-MNT-004). Patch 1: `CLAUDE.md`.
+- `docs/requirements/srs.md` 0.3: tabela de situação das premissas no apêndice A, com o resultado parcial de ASM-06 (Linux x64 confirmado, Windows por testar).
+- `docs/architecture/arc42.md` 0.3: RSK-11, regressão do engine no SDK candidato do upstream (flutter/flutter#195885).
 
 ### Alterado
 

@@ -1,6 +1,6 @@
 # Especificação de requisitos de software
 
-Requisitos do Studio na estrutura da ISO/IEC/IEEE 29148:2018. Versão 0.2, rascunho para revisão.
+Requisitos do Studio na estrutura da ISO/IEC/IEEE 29148:2018. Versão 0.3, rascunho para revisão.
 
 ## 1. Introdução
 
@@ -300,6 +300,19 @@ Cada premissa é confirmada por experimento no incremento F0 e tem consequência
 | ASM-06 | `devtools_app` compila e executa em Windows desktop com ajustes localizados. | Custo adicional em F0 para completar as implementações de desktop. |
 | ASM-07 | Existe pacote Flutter de editor de código adequado a FR-COD-001. | Motor de editor próprio em F4. |
 | ASM-08 | As metas da seção 3.2 são atingíveis com o hot reload padrão do SDK. | Pipeline de reload próprio, ou revisão das metas registrada em ADR. |
+
+Situação de cada premissa. Uma premissa só é dada por respondida quando o experimento cobre tudo o que o enunciado afirma.
+
+| ID | Situação | Evidência |
+| --- | --- | --- |
+| ASM-01 | Aberta | |
+| ASM-02 | Aberta | |
+| ASM-03 | Aberta | |
+| ASM-04 | Aberta | |
+| ASM-05 | Aberta | |
+| ASM-06 | Aberta; o caso análogo em Linux está confirmado | 11/11/2026, Linux x64: no commit `9b8d6457` do upstream, `devtools_app` compila e executa com um runner gerado por `flutter create --platforms=linux`, sem alterar arquivo herdado. Falta o experimento em Windows. |
+| ASM-07 | Aberta | |
+| ASM-08 | Aberta | |
 
 Dependências externas: SDK Flutter; métodos `editableArguments` e `editArgument` do analysis server; Dart Tooling Daemon; adaptador de debug; extensões de serviço do inspector; anotação `@Preview`.
 

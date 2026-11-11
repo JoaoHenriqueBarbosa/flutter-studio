@@ -1,6 +1,6 @@
 # Documentação de arquitetura
 
-Arquitetura do Studio no modelo arc42, com diagramas C4. Versão 0.2, rascunho para revisão.
+Arquitetura do Studio no modelo arc42, com diagramas C4. Versão 0.3, rascunho para revisão.
 
 ## 1. Introdução e objetivos
 
@@ -287,6 +287,7 @@ As decisões estão registradas uma a uma em Decisões (ADR). Treze formam esta 
 | RSK-08 | Telas que dependem de plugin nativo não renderizam no host | Alta | Médio | Resposta vazia com aviso; edição sobre dispositivo real (FR-HST-005) |
 | RSK-09 | Abrir um projeto malicioso executa código | Baixa | Alto | Confirmação de confiança (NFR-SEC-001) |
 | RSK-10 | O editor de código consome o esforço de F4 (ASM-07) | Média | Médio | Pacote existente atrás de interface própria; abrir no editor externo sempre disponível |
+| RSK-11 | O SDK que o upstream fixa em `flutter-candidate.txt` é uma pré-versão trocada com frequência, e uma regressão do engine nela atinge o shell em desktop. Ocorrência em 11/11/2026: no candidato `de37392d`, em Linux com driver proprietário da NVIDIA, a janela desenha o conteúdo deslocado em meia janela ([flutter/flutter#195885](https://github.com/flutter/flutter/issues/195885)) | Alta | Médio | Testes herdados e portão rodam com o candidato, que é o que o upstream valida; a cada rebase, conferir o shell em desktop nos três sistemas; enquanto houver regressão aberta, a conferência visual usa a versão estável mais recente que satisfaz as restrições do `pubspec.yaml` |
 
 Dívida técnica assumida nesta baseline:
 

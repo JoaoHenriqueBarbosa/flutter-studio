@@ -94,5 +94,6 @@ Fontes técnicas verificadas para esta baseline:
 | 0.1 | 11/11/2026 | Primeira baseline: SRS, arquitetura, ADR-0001 a ADR-0012, interfaces e plano de verificação. |
 | 0.2 | 11/11/2026 | Padrão de código, com as regras CS e o portão de qualidade; NFR-MNT-005 a 008; ADR-0013; ORC-11. |
 | 0.3 | 11/11/2026 | Documentos movidos para os caminhos do mapa; decisões divididas em um arquivo por ADR, com índice; `CHANGELOG.md` e `JOURNAL.md` na raiz. |
+| 0.4 | 11/11/2026 | Início do F0: situação das premissas no apêndice A do SRS, com o resultado parcial de ASM-06; RSK-11, sobre regressões no SDK candidato do upstream. |
 
 Esta tabela registra as mudanças de conteúdo da baseline. O detalhe técnico de cada mudança fica em `CHANGELOG.md`, e o relato para quem aprova, em `JOURNAL.md`, os dois na raiz do repositório.
