@@ -1,6 +1,6 @@
 # Especificação de interfaces
 
-Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.9, rascunho para revisão.
+Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.10, rascunho para revisão.
 
 ## 1. Inventário de interfaces
 
@@ -30,7 +30,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 
 ### 2.1 Regras
 
-- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.6.0.
+- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.7.0.
 - Todo `WidgetRef` enviado a um método de edição DEVE trazer `documentVersion`. Se não for a versão atual do documento, o serviço DEVE responder `StaleDocument` sem alterar nada.
 - Um método de edição DEVE ser atômico: ou todos os arquivos da edição são gravados, ou nenhum.
 - O serviço NÃO DEVE aceitar URI fora das raízes do projeto.
@@ -85,9 +85,9 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `createEventHandler` | `target`, `event: string` | `EditResult` e a localização do método criado | F3 |
 | `listPalette` | `query?: string` | `WidgetSpec[]`, com documentação | F3 |
 
-O contrato 0.6.0 traz `getVersion`, `getSourceTree`, `getRuntimeTree`, `getSelection`, `select`, `getProperties`, `setProperty`, `getStructureOptions`, `wrapWidget`, `removeWidget`, `reorderWidget`, `swapWidget`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem.
+O contrato 0.7.0 traz `getVersion`, `getSourceTree`, `getRuntimeTree`, `getSelection`, `select`, `getProperties`, `setProperty`, `getStructureOptions`, `wrapWidget`, `removeWidget`, `reorderWidget`, `swapWidget`, `extractWidget`, `convertToStatefulWidget`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem.
 
-Limites da versão 0.6.0, que realiza os dois primeiros níveis da ADR-0006:
+Limites da versão 0.7.0, que realiza os dois primeiros níveis da ADR-0006:
 
 - `setProperty` grava um literal do gênero do parâmetro pelo analysis server, esteja o argumento no código ou não. Outra expressão só substitui a de um argumento que já está no código, e `value` nulo remove do código um argumento nomeado; as duas são edições do texto do argumento, sem validação pelo analisador nesta versão (FR-PRP-007, FR-PRP-008). Expressão não literal para argumento ausente e remoção de argumento posicional respondem `UnsupportedTarget`.
 - `wrapWidget` aceita os widgets que `getStructureOptions` lista em `wrappers`, que são os que o analysis server sabe envolver. Outro widget responde `UnsupportedTarget` até o motor de edição existir.

@@ -155,6 +155,28 @@ final class StudioClient implements StudioApi {
   }
 
   @override
+  Future<EditResult> extractWidget({
+    required WidgetRef target,
+    required String name,
+  }) async {
+    final result = await _call(StudioMethod.extractWidget, {
+      'target': target.toJson(),
+      'name': name,
+    });
+    return EditResult.fromJson(result);
+  }
+
+  @override
+  Future<EditResult> convertToStatefulWidget({
+    required WidgetRef declaration,
+  }) async {
+    final result = await _call(StudioMethod.convertToStatefulWidget, {
+      'declaration': declaration.toJson(),
+    });
+    return EditResult.fromJson(result);
+  }
+
+  @override
   Future<EditResult> undo() async {
     final result = await _call(StudioMethod.undo, {});
     return EditResult.fromJson(result);

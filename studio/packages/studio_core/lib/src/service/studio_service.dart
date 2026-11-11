@@ -172,6 +172,25 @@ final class StudioService implements StudioApi {
   });
 
   @override
+  Future<EditResult> extractWidget({
+    required WidgetRef target,
+    required String name,
+  }) => _guarded(
+    () async => _resultOf(
+      await _pipeline.extractWidget(
+        _locationOf(target),
+        documentVersion: target.documentVersion,
+        name: name,
+      ),
+    ),
+  );
+
+  @override
+  Future<EditResult> convertToStatefulWidget({
+    required WidgetRef declaration,
+  }) => _assist(declaration, WidgetAssist.toStatefulWidget);
+
+  @override
   Future<EditResult> undo() =>
       _guarded(() async => _resultOf(await _pipeline.undo()));
 

@@ -82,6 +82,18 @@ class StudioLocalizationsPt extends StudioLocalizations {
   String get swapWithChildAction => 'Trocar com o filho';
 
   @override
+  String get extractWidgetAction => 'Extrair para um widget novo';
+
+  @override
+  String get extractWidgetNameLabel => 'Nome da classe do widget novo';
+
+  @override
+  String get extractAction => 'Extrair';
+
+  @override
+  String get cancelAction => 'Cancelar';
+
+  @override
   String get startingApp => 'Iniciando o app…';
 
   @override

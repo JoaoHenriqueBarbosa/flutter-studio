@@ -94,6 +94,17 @@ final class StudioDispatcher {
           partner: SwapPartner.fromJson(params['partner']),
         );
         return result.toJson();
+      case StudioMethod.extractWidget:
+        final result = await _api.extractWidget(
+          target: WidgetRef.fromJson(params['target']),
+          name: asJson<String>(params['name']),
+        );
+        return result.toJson();
+      case StudioMethod.convertToStatefulWidget:
+        final result = await _api.convertToStatefulWidget(
+          declaration: WidgetRef.fromJson(params['declaration']),
+        );
+        return result.toJson();
       case StudioMethod.undo:
         final result = await _api.undo();
         return result.toJson();

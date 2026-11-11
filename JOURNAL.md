@@ -4,6 +4,10 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**Extrair widget, converter para StatefulWidget e a árvore do app na API.** A barra de estrutura ganhou "Extrair para um widget novo": pede o nome da classe e move o widget selecionado, com tudo o que há dentro, para uma classe nova no mesmo arquivo; o que ele usava de fora vira parâmetro. Converter um `StatelessWidget` em `StatefulWidget` existe na API e ainda não tem botão, porque a interface ainda não tem onde selecionar uma classe. A API também passou a devolver a árvore do app em execução, com o local de criação de cada widget do projeto.
+
+Com isso, dos requisitos até o F1 que pedem teste, ficam sem teste só quatro: o painel de layout e flex (FR-PRP-011), os testes herdados (NFR-MNT-004, que passam mas rodam fora do portão), a referência de API gerada (NFR-MNT-007) e nada mais do lado funcional.
+
 **O canvas avisa quando não dá para ligar o que se vê ao código.** Se o app for compilado sem o rastreamento de criação de widgets, o agente informa, o canvas mostra um aviso e deixa de selecionar por clique nessa execução (FR-INS-007). Nas execuções normais em modo debug o rastreamento vem ligado, e nada muda.
 
 **Dois erros meus, achados e corrigidos.** O patch 4 no código herdado quebrava a compilação de dois testes do DevTools: eu tinha rodado só os 61 testes vizinhos da mudança, e não a suíte inteira. Corrigido, e a suíte herdada inteira passa de novo (1683 testes). E um commit levou junto cinco arquivos temporários que a suíte herdada cria enquanto roda; saíram no commit seguinte, mas continuam no histórico do commit `78522f971`. Passei a rodar a suíte herdada inteira depois de todo patch e a não commitar enquanto ela roda.

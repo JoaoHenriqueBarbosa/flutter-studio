@@ -76,6 +76,17 @@ final class _ExampleApi implements StudioApi {
   }) async => EditResult.fromJson(_result);
 
   @override
+  Future<EditResult> extractWidget({
+    required WidgetRef target,
+    required String name,
+  }) async => EditResult.fromJson(_result);
+
+  @override
+  Future<EditResult> convertToStatefulWidget({
+    required WidgetRef declaration,
+  }) async => EditResult.fromJson(_result);
+
+  @override
   Future<EditResult> undo() async => EditResult.fromJson(_result);
 
   @override

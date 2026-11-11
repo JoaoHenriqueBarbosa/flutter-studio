@@ -27,6 +27,9 @@ final class DocumentSync {
 
   final _openPaths = <String>{};
 
+  /// The notifications of change that wait for their turn.
+  final _pendingSends = <Timer>[];
+
   late final StreamSubscription<DocumentChange> _changes;
 
   LspClient? _server;
@@ -55,10 +58,29 @@ final class DocumentSync {
   }
 
   /// Stops following the store.
-  Future<void> dispose() => _changes.cancel();
+  Future<void> dispose() async {
+    for (final timer in _pendingSends) {
+      timer.cancel();
+    }
+    await _changes.cancel();
+  }
 
+  /// Sends the change to the server in a later turn of the event loop.
+  ///
+  /// A change often happens while the store applies an edit that the server
+  /// asked for, and the server gives up the operation that asked when it
+  /// hears of the change before it hears the answer. The answer leaves in
+  /// the turn of the edit, so the notification waits for the next one.
+  /// Whoever needs the server up to date sooner calls [ensureOpen].
   void _handleChange(DocumentChange change) {
-    if (_openPaths.contains(change.filePath)) _send(change.filePath);
+    if (!_openPaths.contains(change.filePath)) return;
+    _pendingSends
+      ..removeWhere((timer) => !timer.isActive)
+      ..add(
+        Timer(Duration.zero, () {
+          if (_openPaths.contains(change.filePath)) _send(change.filePath);
+        }),
+      );
   }
 
   /// Sends the current document at [filePath] to the server, unless the

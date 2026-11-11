@@ -36,6 +36,8 @@ final class EditPipeline {
     required this._requestReload,
   });
 
+  static final _className = RegExp(r'^[A-Z][A-Za-z0-9]*$');
+
   final DocumentStore _documents;
 
   final WidgetReader _reader;
@@ -116,6 +118,35 @@ final class EditPipeline {
     return _outcomeOf(await _documents.apply(match.edit));
   });
 
+  /// Extracts the widget created at [target], with its subtree, to a new
+  /// widget class called [name].
+  ///
+  /// [documentVersion] is the version of the document that the caller read.
+  /// Throws an [EditFailure] and changes nothing when [name] is not a class
+  /// name or the server refuses.
+  Future<EditOutcome> extractWidget(
+    SourceLocation target, {
+    required int documentVersion,
+    required String name,
+  }) => _enqueue(() {
+    final document = _documents.documentAt(
+      target.filePath,
+      version: documentVersion,
+    );
+    if (!_className.hasMatch(name)) {
+      throw UnsupportedEdit('$name is not a name for a class.');
+    }
+    _reader.openDocumentOf(target);
+    return _runOnServer(
+      (server) => server.extractWidget(
+        target.filePath,
+        offset: document.offsetAt(target.position),
+        documentVersion: documentVersion,
+        name: name,
+      ),
+    );
+  });
+
   /// Undoes the last edit. The outcome has no edit when there is none.
   Future<EditOutcome> undo() =>
       _enqueue(() async => _outcomeOf(await _documents.undo()));
@@ -169,16 +200,24 @@ final class EditPipeline {
     int documentVersion,
     String name,
     Object? newValue,
+  ) => _runOnServer(
+    (server) => server.editArgument(
+      target,
+      documentVersion: documentVersion,
+      name: name,
+      newValue: newValue,
+    ),
+  );
+
+  /// Sends [request] to the analysis server and completes with what the
+  /// server made the store apply while it answered.
+  Future<EditOutcome> _runOnServer(
+    Future<void> Function(LspClient server) request,
   ) async {
     final server = _server();
     if (server == null) throw const ToolUnavailable(WidgetReader.serverName);
     try {
-      await server.editArgument(
-        target,
-        documentVersion: documentVersion,
-        name: name,
-        newValue: newValue,
-      );
+      await request(server);
     } on LspRequestFailed catch (failure) {
       throw UnsupportedEdit(failure.message);
     }

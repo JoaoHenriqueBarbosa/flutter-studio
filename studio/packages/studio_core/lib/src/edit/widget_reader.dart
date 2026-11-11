@@ -59,6 +59,11 @@ final class WidgetReader {
   Future<List<ServerAssist>> assists(SourceLocation target) =>
       _ask(target, (server) => server.assists(target));
 
+  /// Makes sure that the server has the current version of the document
+  /// of [target], before a request about it that this class does not make.
+  void openDocumentOf(SourceLocation target) =>
+      _sync.ensureOpen(target.filePath);
+
   /// Completes with the widgets that the source of the file at [filePath]
   /// creates.
   ///

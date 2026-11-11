@@ -316,6 +316,38 @@ void main() {
       );
     });
 
+    // Verifies: FR-STR-007
+    test('asks the server to extract a widget to a named class', () async {
+      final outcome = await pipeline.extractWidget(
+        target,
+        documentVersion: 1,
+        name: 'Body',
+      );
+
+      expect(outcome.edit?.versions, {filePath: 2});
+      expect(server.editRequests.single, {
+        'command': 'refactor.perform',
+        'arguments': [
+          'EXTRACT_WIDGET',
+          filePath,
+          1,
+          0,
+          0,
+          {'name': 'Body'},
+        ],
+      });
+    });
+
+    // Verifies: FR-STR-007
+    test('refuses to extract to a name that is not a class name', () async {
+      await expectLater(
+        pipeline.extractWidget(target, documentVersion: 1, name: 'my body'),
+        throwsA(isA<UnsupportedEdit>()),
+      );
+
+      expect(server.editRequests, isEmpty);
+    });
+
     // Verifies: FR-DOC-005, FR-DOC-006
     test('undo and redo go through the same line and reload', () async {
       await setAlignment();

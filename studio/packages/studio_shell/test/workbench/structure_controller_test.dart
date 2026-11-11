@@ -46,6 +46,12 @@ final class _StructureApi implements StudioApi {
     required SwapPartner partner,
   }) => _record('swap ${partner.name}');
 
+  @override
+  Future<EditResult> extractWidget({
+    required WidgetRef target,
+    required String name,
+  }) => _record('extract $name');
+
   Future<EditResult> _record(String edit) async {
     edits.add(edit);
     return const EditResult(
@@ -133,7 +139,7 @@ void main() {
       expect(controller.options.value, isNull);
     });
 
-    // Verifies: FR-STR-001, FR-API-002
+    // Verifies: FR-STR-001, FR-STR-007, FR-API-002
     test('sends each edit to the service, for the selected widget', () async {
       studio.options = options;
       select(documentVersion: 1);
@@ -145,12 +151,14 @@ void main() {
       await controller.remove();
       await controller.reorder(MoveDirection.down);
       await controller.swap(SwapPartner.parent);
+      await controller.extract('Body');
 
       expect(studio.edits, [
         'wrap Center at 2',
         'remove, keepChildren true',
         'reorder down',
         'swap parent',
+        'extract Body',
       ]);
     });
   });

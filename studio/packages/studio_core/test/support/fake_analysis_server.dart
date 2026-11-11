@@ -19,10 +19,8 @@ final class FakeAnalysisServer {
         (Parameters _) => editableArguments,
       )
       ..registerMethod('dart/textDocument/editArgument', _handleEditArgument)
-      ..registerMethod(
-        'textDocument/codeAction',
-        (Parameters _) => codeActions,
-      );
+      ..registerMethod('textDocument/codeAction', (Parameters _) => codeActions)
+      ..registerMethod('workspace/executeCommand', _handleEditArgument);
     unawaited(_peer.listen());
     client = LspClient(controller.local, applyEdit: applyEdit);
   }

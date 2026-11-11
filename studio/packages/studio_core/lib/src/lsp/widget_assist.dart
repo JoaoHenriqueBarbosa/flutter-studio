@@ -29,6 +29,12 @@ extension type const WidgetAssist(String kind) {
   /// The assist that swaps a widget with its child.
   static const swapWithChild = WidgetAssist('$flutterPrefix.swap.withChild');
 
+  /// The assist that converts a `StatelessWidget` into a `StatefulWidget`,
+  /// offered at the declaration of the class.
+  static const toStatefulWidget = WidgetAssist(
+    '$flutterPrefix.convert.toStatefulWidget',
+  );
+
   static const _wrapPrefix = '$flutterPrefix.wrap.';
 
   /// Suffix of the wrap that asks the user for the widget. It names no

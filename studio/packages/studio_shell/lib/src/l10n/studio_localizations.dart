@@ -218,6 +218,30 @@ abstract class StudioLocalizations {
   /// **'Swap with the child'**
   String get swapWithChildAction;
 
+  /// Tooltip of the button and title of the dialog that extract the selected widget to a new class.
+  ///
+  /// In en, this message translates to:
+  /// **'Extract to a new widget'**
+  String get extractWidgetAction;
+
+  /// Label of the field with the name of the class that the extraction creates.
+  ///
+  /// In en, this message translates to:
+  /// **'Name of the new widget class'**
+  String get extractWidgetNameLabel;
+
+  /// Label of the button that confirms the extraction.
+  ///
+  /// In en, this message translates to:
+  /// **'Extract'**
+  String get extractAction;
+
+  /// Label of the button that closes a dialog without doing anything.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelAction;
+
   /// Text shown in the toolbar while the app is being built and started.
   ///
   /// In en, this message translates to:

@@ -61,6 +61,17 @@ final class _StructureToolbarState extends State<StructureToolbar> {
     widget.controller.edit,
   );
 
+  /// Asks for the name of the new class and extracts the selection to it.
+  Future<void> _extract(BuildContext context) async {
+    final name = await showDialog<String>(
+      context: context,
+      builder: (context) => _ExtractDialog(texts: widget.texts),
+    );
+    if (name != null && name.trim().isNotEmpty) {
+      await _structure.extract(name.trim());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final texts = widget.texts;
@@ -110,6 +121,12 @@ final class _StructureToolbarState extends State<StructureToolbar> {
             ),
             DevToolsButton(
               outlined: false,
+              icon: Icons.call_split,
+              tooltip: texts.extractWidgetAction,
+              onPressed: options == null ? null : () => _extract(context),
+            ),
+            DevToolsButton(
+              outlined: false,
               icon: Icons.delete_outline,
               tooltip: texts.removeWidgetAction,
               onPressed: options?.canRemove ?? false ? _structure.remove : null,
@@ -117,6 +134,51 @@ final class _StructureToolbarState extends State<StructureToolbar> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// The dialog that asks for the name of the class of an extracted widget.
+/// It closes with the name, or with `null` when the user gives up.
+final class _ExtractDialog extends StatefulWidget {
+  const _ExtractDialog({required this.texts});
+
+  final StudioLocalizations texts;
+
+  @override
+  State<_ExtractDialog> createState() => _ExtractDialogState();
+}
+
+final class _ExtractDialogState extends State<_ExtractDialog> {
+  final _name = TextEditingController();
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final texts = widget.texts;
+    return AlertDialog(
+      title: Text(texts.extractWidgetAction),
+      content: TextField(
+        controller: _name,
+        autofocus: true,
+        decoration: InputDecoration(labelText: texts.extractWidgetNameLabel),
+        onSubmitted: Navigator.of(context).pop,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(texts.cancelAction),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(_name.text),
+          child: Text(texts.extractAction),
+        ),
+      ],
     );
   }
 }

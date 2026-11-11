@@ -43,6 +43,13 @@ enum StudioMethod {
   /// Swaps a widget with its parent or with its child.
   swapWidget,
 
+  /// Extracts a widget and its subtree to a new widget class in the same file.
+  extractWidget,
+
+  /// Converts a StatelessWidget of the project into a StatefulWidget with its
+  /// State class.
+  convertToStatefulWidget,
+
   /// Undoes the last edit and restores the exact previous bytes of its files.
   undo,
 

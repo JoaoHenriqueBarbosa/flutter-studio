@@ -67,9 +67,12 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - Contrato 0.6.0: `getRuntimeTree`, com `RuntimeNode` e `Bounds`, e `SceneElement.className`. O `StudioService` monta a árvore em execução a partir da cena do quadro em tela e responde `NoSession` sem app com agente (FR-INS-001); `WidgetReader.runningScene`.
 - Testes para NFR-COMP-001 (nenhuma trava sobre o arquivo editado) e NFR-COMP-002 (as configurações globais da ferramenta `flutter` ficam como estavam depois de uma execução no host de design). 169 testes no `studio_core`.
 - `docs/interfaces/icd.md` 0.9, conforme a linha 0.24 da tabela do guia.
+- FR-STR-007: contrato 0.7.0 com `extractWidget` e `convertToStatefulWidget`. No `studio_core`, `LspClient.extractWidget` pede `refactor.perform` com `EXTRACT_WIDGET`, `EditPipeline.extractWidget` confere o nome da classe, e a conversão usa o assist `refactor.flutter.convert.toStatefulWidget`. No `studio_shell`, botão e diálogo de extrair na barra de estrutura, com quatro textos novos. 172 testes no `studio_core`, um de sistema que extrai, converte e desfaz as duas edições.
+- `docs/interfaces/icd.md` 0.10, conforme a linha 0.25 da tabela do guia.
 
 ### Corrigido
 
+- `DocumentSync` avisa o analysis server de uma mudança só na volta seguinte do laço de eventos. O aviso saía antes da resposta ao `workspace/applyEdit` que causou a mudança, e o servidor então dava por cancelado o refactor que tinha pedido a edição, embora ela já estivesse gravada.
 - `STUDIO-PATCH(4)`: a exportação de `api_classes.dart` inteiro em `devtools_app.dart` fazia o nome `Field` colidir com o do `vm_service` e impedia a compilação de dois testes herdados (`program_explorer_test.dart` e `vm_field_display_test.dart`). A exportação fica restrita aos sete tipos que o shell usa. A suíte herdada do `devtools_app` volta a passar inteira com o SDK candidato: 1683 testes, 8 pulados pelo upstream (NFR-MNT-004).
 - Saem do repositório cinco arquivos temporários de `packages/devtools_app/test/test_infra/fixtures/flutter_test_temp_SXOYYC/`, criados pela suíte herdada em execução e incluídos por engano no commit dos atalhos de desfazer.
 - `DocumentSync.ensureOpen` envia ao analysis server a versão atual do documento antes de qualquer pergunta. Uma leitura feita logo depois de uma edição era respondida sobre o texto anterior, porque o aviso da mudança saía depois da pergunta.

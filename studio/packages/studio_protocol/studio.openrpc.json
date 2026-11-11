@@ -2,7 +2,7 @@
   "openrpc": "1.4.0",
   "info": {
     "title": "Studio",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "description": "Operations of Studio: reading, selecting and editing the widgets of the open project."
   },
   "x-binding": {
@@ -30,7 +30,7 @@
           "result": {
             "name": "versionInfo",
             "value": {
-              "version": "0.6.0"
+              "version": "0.7.0"
             }
           }
         }
@@ -859,6 +859,185 @@
             {
               "name": "partner",
               "value": "parent"
+            }
+          ],
+          "result": {
+            "name": "editResult",
+            "value": {
+              "applied": true,
+              "changes": [
+                {
+                  "uri": "file:///work/sample_app/lib/main.dart",
+                  "edits": [
+                    {
+                      "range": {
+                        "start": {
+                          "line": 11,
+                          "character": 14
+                        },
+                        "end": {
+                          "line": 14,
+                          "character": 9
+                        }
+                      },
+                      "newText": "Center(child: Column())"
+                    }
+                  ]
+                }
+              ],
+              "documentVersions": {
+                "file:///work/sample_app/lib/main.dart": 2
+              },
+              "reload": "hotReload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "extractWidget",
+      "summary": "Extracts a widget and its subtree to a new widget class in the same file.",
+      "description": "What the subtree uses from its surroundings becomes a parameter of the new class.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "target",
+          "description": "The widget at the top of the subtree to extract.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
+        },
+        {
+          "name": "name",
+          "description": "Name of the new class, in UpperCamelCase.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "editResult",
+        "schema": {
+          "$ref": "#/components/schemas/EditResult"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/UnsupportedTarget"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
+      ],
+      "examples": [
+        {
+          "name": "extractColumn",
+          "params": [
+            {
+              "name": "target",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
+                "documentVersion": 1
+              }
+            },
+            {
+              "name": "name",
+              "value": "CounterBody"
+            }
+          ],
+          "result": {
+            "name": "editResult",
+            "value": {
+              "applied": true,
+              "changes": [
+                {
+                  "uri": "file:///work/sample_app/lib/main.dart",
+                  "edits": [
+                    {
+                      "range": {
+                        "start": {
+                          "line": 11,
+                          "character": 14
+                        },
+                        "end": {
+                          "line": 14,
+                          "character": 9
+                        }
+                      },
+                      "newText": "Center(child: Column())"
+                    }
+                  ]
+                }
+              ],
+              "documentVersions": {
+                "file:///work/sample_app/lib/main.dart": 2
+              },
+              "reload": "hotReload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "convertToStatefulWidget",
+      "summary": "Converts a StatelessWidget of the project into a StatefulWidget with its State class.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "declaration",
+          "description": "A position inside the name of the class, in its declaration, with the version of the document.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
+        }
+      ],
+      "result": {
+        "name": "editResult",
+        "schema": {
+          "$ref": "#/components/schemas/EditResult"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/UnsupportedTarget"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
+      ],
+      "examples": [
+        {
+          "name": "convertSampleApp",
+          "params": [
+            {
+              "name": "declaration",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
+                "documentVersion": 1
+              }
             }
           ],
           "result": {

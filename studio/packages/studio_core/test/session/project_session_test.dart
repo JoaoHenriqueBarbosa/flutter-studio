@@ -254,6 +254,48 @@ void main() {
       expect(File(mainPath).readAsStringSync(), sampleAppSource);
     }, timeout: const Timeout(Duration(minutes: 2)));
 
+    // Verifies: FR-STR-007, FR-DOC-006
+    test('extracts a widget and converts a class to stateful', () async {
+      await session.start();
+      final uri = '${Uri.file(mainPath)}';
+
+      final extracted = await session.service.extractWidget(
+        target: WidgetRef(
+          uri: uri,
+          position: const Position(line: 11, character: 14),
+          documentVersion: 1,
+        ),
+        name: 'Body',
+      );
+
+      expect(extracted.applied, isTrue);
+      final afterExtract = File(mainPath).readAsStringSync();
+      expect(afterExtract, contains('body: Body()'));
+      expect(afterExtract, contains('class Body extends StatelessWidget {'));
+
+      final converted = await session.service.convertToStatefulWidget(
+        declaration: WidgetRef(
+          uri: uri,
+          position: const Position(line: 4, character: 8),
+          documentVersion: 2,
+        ),
+      );
+
+      expect(converted.applied, isTrue);
+      expect(
+        File(mainPath).readAsStringSync(),
+        allOf(
+          contains('class SampleApp extends StatefulWidget {'),
+          contains('class _SampleAppState extends State<SampleApp> {'),
+        ),
+      );
+
+      await session.service.undo();
+      await session.service.undo();
+
+      expect(File(mainPath).readAsStringSync(), sampleAppSource);
+    }, timeout: const Timeout(Duration(minutes: 2)));
+
     // Verifies: FR-INS-002, IR-004
     test('derives the tree of widgets from the source of a file', () async {
       await session.start();

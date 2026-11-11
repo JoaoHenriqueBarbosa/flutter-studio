@@ -148,6 +148,32 @@ abstract interface class StudioApi {
     required SwapPartner partner,
   });
 
+  /// Extracts a widget and its subtree to a new widget class in the same file.
+  ///
+  /// What the subtree uses from its surroundings becomes a parameter of the new
+  /// class.
+  ///
+  /// The parameter [target]: the widget at the top of the subtree to extract.
+  ///
+  /// The parameter [name]: name of the new class, in UpperCamelCase.
+  ///
+  /// Errors: `StaleDocument`, `NotInProject`, `UnsupportedTarget`,
+  /// `ToolchainUnavailable`.
+  Future<EditResult> extractWidget({
+    required WidgetRef target,
+    required String name,
+  });
+
+  /// Converts a StatelessWidget of the project into a StatefulWidget with its
+  /// State class.
+  ///
+  /// The parameter [declaration]: a position inside the name of the class, in
+  /// its declaration, with the version of the document.
+  ///
+  /// Errors: `StaleDocument`, `NotInProject`, `UnsupportedTarget`,
+  /// `ToolchainUnavailable`.
+  Future<EditResult> convertToStatefulWidget({required WidgetRef declaration});
+
   /// Undoes the last edit and restores the exact previous bytes of its files.
   ///
   /// When there is nothing to undo, the result has applied set to false and no

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+- Contract 0.7.0: `extractWidget` and `convertToStatefulWidget`.
+
 ## 0.6.0
 
 - Contract 0.6.0: `getRuntimeTree`, `RuntimeNode`, `Bounds` and

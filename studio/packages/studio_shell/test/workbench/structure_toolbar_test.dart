@@ -54,7 +54,7 @@ void main() {
       final actions = tester.widgetList<DevToolsButton>(
         find.byType(DevToolsButton),
       );
-      expect(actions, hasLength(5));
+      expect(actions, hasLength(6));
       expect(actions.every((action) => action.onPressed == null), isTrue);
     });
   });

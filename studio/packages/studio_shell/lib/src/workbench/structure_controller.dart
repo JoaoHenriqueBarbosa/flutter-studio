@@ -61,6 +61,12 @@ final class StructureController extends DisposableController
     (studio, target) => studio.swapWidget(target: target, partner: partner),
   );
 
+  /// Extracts the selected widget, with its subtree, to a new widget class
+  /// called [name].
+  Future<void> extract(String name) => _run(
+    (studio, target) => studio.extractWidget(target: target, name: name),
+  );
+
   @override
   void dispose() {
     // Drops a read that is still on its way.

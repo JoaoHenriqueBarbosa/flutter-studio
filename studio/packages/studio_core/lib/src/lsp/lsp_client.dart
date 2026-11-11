@@ -166,6 +166,30 @@ final class LspClient {
     ];
   }
 
+  /// Asks the server to extract, to a new widget class called [name], the
+  /// widget created at [offset] of the file at [filePath], in the document
+  /// at [documentVersion].
+  ///
+  /// The server answers with a `workspace/applyEdit` before this call
+  /// completes. Throws [LspRequestFailed] when the server refuses.
+  Future<void> extractWidget(
+    String filePath, {
+    required int offset,
+    required int documentVersion,
+    required String name,
+  }) => _request('workspace/executeCommand', {
+    'command': 'refactor.perform',
+    'arguments': [
+      'EXTRACT_WIDGET',
+      filePath,
+      documentVersion,
+      offset,
+      // Length of the selection: none, the widget is found at the offset.
+      0,
+      {'name': name},
+    ],
+  });
+
   /// Asks the server to give the value [newValue] to the argument [name] of
   /// the constructor called at [location], in the document at
   /// [documentVersion].
