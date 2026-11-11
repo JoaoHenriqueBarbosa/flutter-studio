@@ -61,6 +61,24 @@ class StudioLocalizationsEn extends StudioLocalizations {
   String get redoAction => 'Redo';
 
   @override
+  String get wrapWithAction => 'Wrap with';
+
+  @override
+  String get removeWidgetAction => 'Remove the widget and keep its children';
+
+  @override
+  String get moveUpAction => 'Move up among the siblings';
+
+  @override
+  String get moveDownAction => 'Move down among the siblings';
+
+  @override
+  String get swapWithParentAction => 'Swap with the parent';
+
+  @override
+  String get swapWithChildAction => 'Swap with the child';
+
+  @override
   String get startingApp => 'Starting the app…';
 
   @override

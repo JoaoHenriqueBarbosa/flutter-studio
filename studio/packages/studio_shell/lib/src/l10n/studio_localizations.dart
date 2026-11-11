@@ -176,6 +176,42 @@ abstract class StudioLocalizations {
   /// **'Redo'**
   String get redoAction;
 
+  /// Label of the menu that wraps the selected widget with another widget.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrap with'**
+  String get wrapWithAction;
+
+  /// Tooltip of the button that removes the selected widget from the code.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the widget and keep its children'**
+  String get removeWidgetAction;
+
+  /// Tooltip of the button that moves the selected widget before its previous sibling.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up among the siblings'**
+  String get moveUpAction;
+
+  /// Tooltip of the button that moves the selected widget after its next sibling.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down among the siblings'**
+  String get moveDownAction;
+
+  /// Tooltip of the button that swaps the selected widget with its parent.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap with the parent'**
+  String get swapWithParentAction;
+
+  /// Tooltip of the button that swaps the selected widget with its child.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap with the child'**
+  String get swapWithChildAction;
+
   /// Text shown in the toolbar while the app is being built and started.
   ///
   /// In en, this message translates to:

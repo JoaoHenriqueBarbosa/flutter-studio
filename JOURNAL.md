@@ -4,6 +4,17 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**Dá para mexer na estrutura sem abrir o código.** Com um widget selecionado, o painel Propriedades ganhou uma barra: "Envolver com" (Center, Container, Padding, SizedBox, Column, Row e os builders; Expanded e Flexible quando o pai é uma linha ou coluna), mover para cima e para baixo entre os irmãos, trocar com o pai ou com o filho, e remover o widget mantendo os filhos. Cada botão só acende quando a operação vale para o widget selecionado. Tudo passa pelo serviço `Studio`, entra no desfazer e recarrega o app. Isso cobre a primeira metade do critério de saída do F1 ("alterar uma propriedade e envolver um widget sem abrir o código"); falta fazê-lo em dispositivo físico.
+
+Quem faz a edição é o analysis server, com as mesmas ações que os outros editores oferecem. A lista de widgets para envolver é a que ele conhece; envolver com um widget qualquer depende do motor de edição, do F3.
+
+Conferido por teste de sistema (envolver o `Column` com `Center` e desfazer, arquivo idêntico ao original) e na interface, em display virtual: envolver com `Padding`, desfazer, mover um `Text` para baixo, desfazer.
+
+Decisões que tomei e que vale conferir:
+
+- O contrato ganhou três operações que a especificação de interfaces não previa: `getStructureOptions` (o que o widget aceita), `reorderWidget` e `swapWidget`. Sem a primeira a interface não saberia que botões acender; as outras duas são pedidas por FR-STR-001. O contrato está na versão 0.2.0.
+- A interface chama o serviço dentro do próprio processo, pelo mesmo objeto que atende o daemon, e não por uma volta pelo daemon. As regras conferidas são as mesmas.
+
 **O Studio convive com outro editor aberto no mesmo projeto.** Quando outro programa salva um arquivo Dart do projeto, o Studio relê o arquivo, avisa o analysis server e recarrega o app, sem ninguém pedir (FR-DOC-003). Uma edição do Studio calculada sobre o texto antigo é recusada, em vez de apagar o que o outro programa gravou. O preço: depois de uma alteração feita por fora, as edições anteriores do Studio não podem mais ser desfeitas pelo Studio, porque o texto sobre o qual foram feitas não existe mais. Conferido em Linux, por teste com o SDK real.
 
 **O Studio agora edita pela própria API, e tem desfazer.** O desvio temporário de FR-API-002, aprovado para o primeiro entregável, está encerrado: quando se troca um valor no painel Propriedades, o painel chama o serviço `Studio`, e é o serviço que confere a versão do documento, pede a edição ao analysis server, grava e manda recarregar. A mesma porta fica aberta a qualquer programa que se conecte ao daemon da sessão, que é por onde um agente vai editar.

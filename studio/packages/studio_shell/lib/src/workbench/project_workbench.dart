@@ -9,6 +9,7 @@ import '../l10n/studio_localizations.dart';
 import 'history_buttons.dart';
 import 'output_pane.dart';
 import 'run_toolbar.dart';
+import 'structure_toolbar.dart';
 import 'workbench_controller.dart';
 
 /// The workbench of an open project: the widget tree of the running app,
@@ -101,6 +102,11 @@ final class ProjectWorkbench extends StatelessWidget {
         AreaPaneHeader(
           title: Text(texts.propertiesTitle),
           roundedTopBorder: false,
+        ),
+        StructureToolbar(
+          session: session,
+          controller: controller,
+          texts: texts,
         ),
         Expanded(
           child: PropertyEditorPanel(

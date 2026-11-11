@@ -61,6 +61,24 @@ class StudioLocalizationsPt extends StudioLocalizations {
   String get redoAction => 'Refazer';
 
   @override
+  String get wrapWithAction => 'Envolver com';
+
+  @override
+  String get removeWidgetAction => 'Remover o widget e manter os filhos';
+
+  @override
+  String get moveUpAction => 'Mover para cima entre os irmãos';
+
+  @override
+  String get moveDownAction => 'Mover para baixo entre os irmãos';
+
+  @override
+  String get swapWithParentAction => 'Trocar com o pai';
+
+  @override
+  String get swapWithChildAction => 'Trocar com o filho';
+
+  @override
   String get startingApp => 'Iniciando o app…';
 
   @override

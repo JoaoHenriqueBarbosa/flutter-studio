@@ -12,6 +12,9 @@ import '../inherited/inherited_dev_tools.dart';
 import 'app_run_status.dart';
 import 'workbench_state.dart';
 
+/// An edit operation of the `Studio` service.
+typedef ServiceEdit = Future<EditResult> Function(StudioApi studio);
+
 /// Opens the project, runs its app and links the selection of the inherited
 /// inspector to the tools of the project.
 final class WorkbenchController extends DisposableController
@@ -103,10 +106,22 @@ final class WorkbenchController extends DisposableController
   }
 
   /// Undoes the last edit of the open project, through the service.
-  Future<void> undo() => _editThroughService((studio) => studio.undo());
+  Future<void> undo() => edit((studio) => studio.undo());
 
   /// Redoes the last undone edit of the open project, through the service.
-  Future<void> redo() => _editThroughService((studio) => studio.redo());
+  Future<void> redo() => edit((studio) => studio.redo());
+
+  /// Runs the edit [operation] on the service of the open project and
+  /// writes a refusal to the output. Does nothing when no project is open.
+  Future<void> edit(ServiceEdit operation) async {
+    final session = _session;
+    if (session == null) return;
+    try {
+      await operation(session.service);
+    } on StudioFault catch (fault) {
+      _appendOutput('$fault\n');
+    }
+  }
 
   /// Ends the run of the app, if there is one.
   ///
@@ -134,20 +149,6 @@ final class WorkbenchController extends DisposableController
     _runStatus.dispose();
     _output.dispose();
     super.dispose();
-  }
-
-  /// Runs [operation] on the service of the open project and writes a
-  /// refusal to the output.
-  Future<void> _editThroughService(
-    Future<EditResult> Function(StudioApi studio) operation,
-  ) async {
-    final session = _session;
-    if (session == null) return;
-    try {
-      await operation(session.service);
-    } on StudioFault catch (fault) {
-      _appendOutput('$fault\n');
-    }
   }
 
   void _appendOutput(String text) {

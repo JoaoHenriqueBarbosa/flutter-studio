@@ -35,6 +35,8 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - Contrato 0.2.0 do serviço `Studio` em `studio_protocol`: `getStructureOptions`, `wrapWidget`, `removeWidget`, `reorderWidget` e `swapWidget`, com os tipos `WidgetSpec`, `StructureOptions`, `MoveDirection` e `SwapPartner` (FR-STR-001). 22 testes no pacote.
 - `studio_core`: segundo nível de edição da ADR-0006. `LspClient.assists` pede as code actions `refactor.flutter` com a edição embutida; `WidgetAssist` (extension type) e `ServerAssist`; `EditPipeline.applyAssist`; `StudioService` realiza as cinco operações de estrutura. 116 testes, um deles de sistema: envolver o `Column` com `Center` pelo serviço e desfazer, com o arquivo de volta byte a byte.
 - `docs/interfaces/icd.md` 0.4, conforme a linha 0.12 da tabela do guia.
+- `studio_shell`: `StructureToolbar` e `StructureController`, a barra do painel Propriedades com envolver, mover entre irmãos, trocar com pai ou filho e remover mantendo os filhos, habilitados conforme `getStructureOptions` da seleção (FR-STR-001); `WorkbenchController.edit` e o tipo `ServiceEdit`; seis textos novos nos dois ARB. 29 testes no pacote.
+- `docs/architecture/arc42.md` 0.8, conforme a linha 0.13 da tabela do guia.
 
 ### Alterado
 
