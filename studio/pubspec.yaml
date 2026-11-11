@@ -5,6 +5,7 @@ environment:
   sdk: ^3.13.0
 
 workspace:
+  - packages/studio_core
   - packages/studio_shell
   - packages/studio_tool
 
