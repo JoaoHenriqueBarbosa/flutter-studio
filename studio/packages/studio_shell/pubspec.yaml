@@ -1,0 +1,23 @@
+name: studio_shell
+description: Desktop shell of Studio, the visual editor for Flutter.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.0
+  flutter: ^3.47.0
+
+resolution: workspace
+
+dependencies:
+  devtools_app:
+  devtools_app_shared:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

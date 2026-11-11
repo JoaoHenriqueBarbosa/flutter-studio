@@ -10,6 +10,7 @@ O repositório é um fork de `flutter/devtools` mantido como fila de patches (AD
 
 - Antes de tocar em arquivo herdado, leia e siga o `AGENTS.md` e o `STYLE.md` da raiz, que são do upstream.
 - Toda alteração em arquivo herdado leva o marcador `STUDIO-PATCH(n)` e uma linha em `PATCHES.md`, que também registra o commit base do fork.
+- Os pacotes `studio_*` ficam em `studio/packages/`, num workspace do pub próprio, e usam o Flutter estável fixado em `studio/flutter-version.txt`. O workspace herdado, na raiz, usa o candidato de `flutter-candidate.txt`, que o `dt` instala em `tool/flutter-sdk/` (ADR-0014). Rode cada comando com o SDK do workspace em que ele está.
 - `docs/README.md` e os arquivos em maiúsculas da raiz (`CONTRIBUTING.md`, `TESTING.md` e os demais) são do upstream. A documentação do Studio é a do mapa em `docs/guide.md`.
 
 ## Sempre no contexto

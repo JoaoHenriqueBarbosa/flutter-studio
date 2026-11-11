@@ -26,12 +26,17 @@ final _log = Logger('app_error_handling');
 ///
 /// [appStartCallback] should be a callback that creates the main Flutter
 /// application.
-void setupErrorHandling(Future Function() appStartCallback) {
+void setupErrorHandling(
+  Future Function() appStartCallback, {
+  // STUDIO-PATCH(2): Lets an embedding app install its own binding.
+  WidgetsBinding Function()? ensureBindingInitialized,
+}) {
   // First, run all our code in a new zone.
   unawaited(
     runZonedGuarded<Future<void>>(
       () async {
-        WidgetsFlutterBinding.ensureInitialized();
+        // STUDIO-PATCH(2): Lets an embedding app install its own binding.
+        (ensureBindingInitialized ?? WidgetsFlutterBinding.ensureInitialized)();
 
         await _initializeSourceMapping();
 

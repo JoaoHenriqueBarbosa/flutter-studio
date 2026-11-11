@@ -1,6 +1,6 @@
 # Padrão de código
 
-Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.1, rascunho para revisão.
+Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.2, rascunho para revisão.
 
 ## 1. Propósito, alcance e precedência
 
@@ -95,7 +95,7 @@ Todo pacote Dart próprio tem a mesma forma.
 | `test/` | Espelho de `lib/src/`: `lib/src/edit/edit_pipeline.dart` é testado em `test/edit/edit_pipeline_test.dart` |
 | `README.md`, `CHANGELOG.md` | Página inicial da referência gerada; mudanças por versão |
 | `pubspec.yaml` | Dependências em ordem alfabética; nenhuma sem uso |
-| `analysis_options.yaml` | Uma linha: inclui o arquivo comum (CS-QLT-002) |
+| `analysis_options.yaml` | Inclui o arquivo comum (CS-QLT-002) e não declara regra. Em pacote com runner de plataforma, traz também as exclusões de diretório que a ferramenta do Flutter mantém (ADR-0014) |
 
 O código Rust segue o layout padrão do Cargo, com os lints declarados na tabela `[workspace.lints]` do `Cargo.toml`.
 
@@ -252,7 +252,7 @@ Cada conhecimento do sistema tem uma única fonte com autoridade, e todo o resto
 | Cores, tipografia e espaçamento | Tema de `devtools_app_shared` | Todo widget próprio | `no-magic-number`; Revisão |
 | Versão do produto | `pubspec.yaml` do `studio_shell` | Método `getVersion`, tela Sobre, changelog | Constante gerada |
 | Regras de análise e limites | Arquivo comum de análise | `analysis_options.yaml` de cada pacote | `include` |
-| Versões de toolchain | `flutter-candidate.txt`, herdado, e `rust-toolchain.toml` | CI e ambiente local | Lidos pelo `st` |
+| Versões de toolchain | `studio/flutter-version.txt` para o produto, `flutter-candidate.txt`, herdado, para o código herdado (ADR-0014), e `rust-toolchain.toml` | CI e ambiente local | Lidos pelo `st` |
 | Grafia de termos e abreviações | `cspell.config.yaml` | Identificadores, comentários e documentos | QG-07 |
 | Passos do portão | Comando `st verify` | Hook local e CI | O CI só chama `st verify` |
 | Rastreabilidade entre requisito e teste | Comentários `// Verifies:` nos testes | Matriz por requisito (Verificação, 5) | `st trace` |
@@ -333,8 +333,9 @@ O grafo tem um sentido só: o shell conhece todos, e o `studio_protocol` não co
 | O histórico local precisa de armazenamento separado da lógica | Repository | Histórico em `.dart_tool/studio/history/` |
 | Canal de plataforma sem implementação não pode derrubar o app | Null Object | `studio_design_agent` |
 | Recurso do sistema precisa de liberação garantida | RAII em Rust, `dispose` em Dart | Memória compartilhada, texturas, processos |
+| O código herdado pede assets por chaves que só valem no aplicativo raiz | Decorator | `InheritedAssetMessenger` (ADR-0015, proposta) |
 
-O vocabulário é o de Gamma et al. para Command, Strategy, Adapter, Facade, Mediator, Observer, State, Visitor e Builder. Gateway e Repository vêm de Fowler; Pipes and Filters, de Buschmann et al.; Null Object, de Woolf.
+O vocabulário é o de Gamma et al. para Command, Strategy, Adapter, Facade, Mediator, Observer, State, Visitor, Builder e Decorator. Gateway e Repository vêm de Fowler; Pipes and Filters, de Buschmann et al.; Null Object, de Woolf.
 
 ## 7. Comentários
 

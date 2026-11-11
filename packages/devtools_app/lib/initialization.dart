@@ -35,6 +35,8 @@ void runDevTools({
   List<DevToolsJsonFile> sampleData = const [],
   List<DevToolsScreen>? screens,
   Future<void> Function()? onDevToolsInitialized,
+  // STUDIO-PATCH(2): Lets an embedding app install its own binding.
+  WidgetsBinding Function()? ensureBindingInitialized,
 }) {
   setupErrorHandling(() async {
     await initializeDevTools(
@@ -54,7 +56,8 @@ void runDevTools({
         await analyticsController,
       ),
     );
-  });
+    // STUDIO-PATCH(2): Lets an embedding app install its own binding.
+  }, ensureBindingInitialized: ensureBindingInitialized);
 }
 
 @visibleForTesting

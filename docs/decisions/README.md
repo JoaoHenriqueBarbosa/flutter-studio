@@ -19,5 +19,7 @@ Decisões do Studio no formato MADR 4.0. Cada decisão é um arquivo nesta pasta
 | [ADR-0011](0011-two-sdks-studio-and-project.md) | Dois SDKs: o do Studio e o do projeto | Proposta | 11/11/2026 |
 | [ADR-0012](0012-api-first-ui-is-a-client-of-the-studio-service.md) | API primeiro: a interface é cliente do serviço `Studio` | Proposta | 11/11/2026 |
 | [ADR-0013](0013-contract-types-generated-from-a-single-source.md) | Tipos de contrato gerados de uma única fonte | Proposta | 11/11/2026 |
+| [ADR-0014](0014-product-built-with-stable-flutter.md) | Produto construído com o Flutter estável | Aceita | 11/11/2026 |
+| [ADR-0015](0015-inherited-assets-resolved-in-the-shell-binding.md) | Assets e fontes do código herdado resolvidos no binding do shell | Proposta | 11/11/2026 |
 
 Estados usados: proposta, aceita, rejeitada, substituída por outra ADR. Uma ADR aceita não é editada: uma decisão nova a substitui. Em todas, quem decide é o dono do produto.

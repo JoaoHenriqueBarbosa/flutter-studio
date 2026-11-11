@@ -1,0 +1,21 @@
+name: _studio
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+workspace:
+  - packages/studio_shell
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+
+dependency_overrides:
+  devtools_app:
+    path: ../packages/devtools_app
+  devtools_app_shared:
+    path: ../packages/devtools_app_shared
+  devtools_extensions:
+    path: ../packages/devtools_extensions
+  devtools_shared:
+    path: ../packages/devtools_shared
