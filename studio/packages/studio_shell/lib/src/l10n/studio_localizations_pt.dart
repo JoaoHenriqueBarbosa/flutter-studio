@@ -55,6 +55,12 @@ class StudioLocalizationsPt extends StudioLocalizations {
   String get hotRestartAction => 'Reiniciar';
 
   @override
+  String get undoAction => 'Desfazer';
+
+  @override
+  String get redoAction => 'Refazer';
+
+  @override
   String get startingApp => 'Iniciando o app…';
 
   @override

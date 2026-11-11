@@ -20,9 +20,18 @@ import 'property_editor_view.dart';
 
 /// The side panel for the Property Editor.
 class PropertyEditorPanel extends StatefulWidget {
-  const PropertyEditorPanel(this.dtdManager, {super.key});
+  const PropertyEditorPanel(
+    this.dtdManager, {
+    super.key,
+    this.editorClientBuilder,
+  });
 
   final DTDManager dtdManager;
+
+  // STUDIO-PATCH(4): Lets the host provide the client that reads and edits.
+  /// Creates the [EditorClient] of the panel. When null, the panel creates
+  /// an [EditorClient] over [dtdManager].
+  final EditorClient Function(DTDManager dtdManager)? editorClientBuilder;
 
   @override
   State<PropertyEditorPanel> createState() => _PropertyEditorPanelState();
@@ -38,7 +47,10 @@ class _PropertyEditorPanelState extends State<PropertyEditorPanel> {
   void initState() {
     super.initState();
 
-    final editor = EditorClient(widget.dtdManager);
+    // STUDIO-PATCH(4): Lets the host provide the client that reads and edits.
+    final editor =
+        widget.editorClientBuilder?.call(widget.dtdManager) ??
+        EditorClient(widget.dtdManager);
     ga.screen(gac.PropertyEditorSidebar.id);
     unawaited(
       _editor = editor.initialized.then((_) {

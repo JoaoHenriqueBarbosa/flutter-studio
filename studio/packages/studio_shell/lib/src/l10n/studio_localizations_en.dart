@@ -55,6 +55,12 @@ class StudioLocalizationsEn extends StudioLocalizations {
   String get hotRestartAction => 'Restart';
 
   @override
+  String get undoAction => 'Undo';
+
+  @override
+  String get redoAction => 'Redo';
+
+  @override
   String get startingApp => 'Starting the app…';
 
   @override

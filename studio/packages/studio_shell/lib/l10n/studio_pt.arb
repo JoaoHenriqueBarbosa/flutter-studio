@@ -11,6 +11,8 @@
   "runAction": "Executar",
   "stopAction": "Parar",
   "hotRestartAction": "Reiniciar",
+  "undoAction": "Desfazer",
+  "redoAction": "Refazer",
   "startingApp": "Iniciando o app…",
   "widgetTreePlaceholder": "Execute o app para ver a árvore de widgets.",
   "propertiesTitle": "Propriedades",

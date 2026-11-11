@@ -21,6 +21,7 @@ dependencies:
   material_ui: ^1.1.0
   path: ^1.9.0
   studio_core:
+  studio_protocol:
 
 dev_dependencies:
   flutter_test:

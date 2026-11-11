@@ -66,5 +66,13 @@ dependencies:
         ),
       );
     });
+
+    // Verifies: FR-DOC-005
+    test('undo and redo do nothing while no project is open', () async {
+      await controller.undo();
+      await controller.redo();
+
+      expect(controller.output.value, isEmpty);
+    });
   });
 }

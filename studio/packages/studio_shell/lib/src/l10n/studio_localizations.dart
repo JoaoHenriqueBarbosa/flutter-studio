@@ -164,6 +164,18 @@ abstract class StudioLocalizations {
   /// **'Restart'**
   String get hotRestartAction;
 
+  /// Label of the button that undoes the last edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undoAction;
+
+  /// Label of the button that applies again the edit that was undone.
+  ///
+  /// In en, this message translates to:
+  /// **'Redo'**
+  String get redoAction;
+
   /// Text shown in the toolbar while the app is being built and started.
   ///
   /// In en, this message translates to:

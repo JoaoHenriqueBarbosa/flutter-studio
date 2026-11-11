@@ -55,7 +55,7 @@ final class WorkbenchView extends StatelessWidget {
         WorkbenchReady(:final session) => ProjectWorkbench(
           controller: controller,
           devTools: devTools,
-          project: session.project,
+          session: session,
           texts: texts,
         ),
       },

@@ -6,6 +6,7 @@ import 'package:devtools_app_shared/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:studio_core/studio_core.dart';
+import 'package:studio_protocol/studio_protocol.dart';
 
 import '../inherited/inherited_dev_tools.dart';
 import 'app_run_status.dart';
@@ -101,6 +102,12 @@ final class WorkbenchController extends DisposableController
     }
   }
 
+  /// Undoes the last edit of the open project, through the service.
+  Future<void> undo() => _editThroughService((studio) => studio.undo());
+
+  /// Redoes the last undone edit of the open project, through the service.
+  Future<void> redo() => _editThroughService((studio) => studio.redo());
+
   /// Ends the run of the app, if there is one.
   ///
   /// The inherited panels are disconnected first: they call the app while
@@ -127,6 +134,20 @@ final class WorkbenchController extends DisposableController
     _runStatus.dispose();
     _output.dispose();
     super.dispose();
+  }
+
+  /// Runs [operation] on the service of the open project and writes a
+  /// refusal to the output.
+  Future<void> _editThroughService(
+    Future<EditResult> Function(StudioApi studio) operation,
+  ) async {
+    final session = _session;
+    if (session == null) return;
+    try {
+      await operation(session.service);
+    } on StudioFault catch (fault) {
+      _appendOutput('$fault\n');
+    }
   }
 
   void _appendOutput(String text) {

@@ -4,6 +4,20 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**O Studio agora edita pela própria API, e tem desfazer.** O desvio temporário de FR-API-002, aprovado para o primeiro entregável, está encerrado: quando se troca um valor no painel Propriedades, o painel chama o serviço `Studio`, e é o serviço que confere a versão do documento, pede a edição ao analysis server, grava e manda recarregar. A mesma porta fica aberta a qualquer programa que se conecte ao daemon da sessão, que é por onde um agente vai editar.
+
+O que entrou, em cinco commits:
+
+- Desfazer e refazer. Há dois botões na barra, ao lado de Run. Desfazer devolve o arquivo byte a byte ao que era; um teste aplica cem edições sorteadas, desfaz todas e compara.
+- O contrato do serviço, escrito em OpenRPC, com sete operações: versão, seleção (ler e mudar), propriedades (ler e alterar), desfazer e refazer. Os tipos Dart saem desse arquivo por `st generate`, e o portão ganhou o passo QG-09, que reprova código gerado desatualizado. Três dos treze passos do portão rodam agora.
+- O Studio passou a manter no analysis server os documentos que edita, com número de versão. Um pedido feito sobre uma versão antiga é recusado em vez de editar no lugar errado.
+
+Como foi conferido: um teste de sistema faz um cliente externo ler as propriedades do `Column`, trocar o alinhamento, tentar de novo com a versão antiga (recusado) e desfazer, com o SDK real. Na interface, repeti o fluxo num display virtual, sem usar a tela desta máquina: editar, desfazer, refazer e desfazer, com o diff do projeto vazio no fim e o app recarregando a cada passo.
+
+O que mudou para pior, de propósito: os botões "Wrap with…" do painel de propriedades sumiram. Eles editavam por fora do serviço. Voltam quando o serviço tiver a operação de envolver widget (FR-STR-001), que é o próximo passo.
+
+O que continua faltando no F1: envolver e remover widget, árvore de fonte, recarga de arquivo alterado por fora, remover argumento (voltar ao valor padrão) e expressão não literal como texto editável.
+
 **Primeiro entregável concluído: a primeira edição visual.** No Studio, em Linux: abre-se um projeto Flutter, clica-se em Run, o app sobe e a árvore de widgets aparece; seleciona-se o `Column` na árvore e o painel Propriedades lista os parâmetros do construtor; troca-se `mainAxisAlignment` de `.center` para `.end` na lista do painel. O arquivo `lib/main.dart` do projeto muda só nesse argumento, o app recarrega em cerca de um quarto de segundo e o texto desce para o pé da janela. Nenhuma linha de código foi aberta. Os seis marcos do caminho estão feitos.
 
 Como foi conferido: o fluxo foi executado duas vezes na interface, com captura das janelas antes e depois e o diff do arquivo; e dois testes de sistema fazem o mesmo sem interface, com o SDK real, um comparando o arquivo byte a byte e o outro esperando o hot reload do app em execução.

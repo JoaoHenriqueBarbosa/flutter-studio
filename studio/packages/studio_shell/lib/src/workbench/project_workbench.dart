@@ -4,7 +4,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:studio_core/studio_core.dart';
 
 import '../inherited/inherited_dev_tools.dart';
+import '../inherited/studio_editor_client.dart';
 import '../l10n/studio_localizations.dart';
+import 'history_buttons.dart';
 import 'output_pane.dart';
 import 'run_toolbar.dart';
 import 'workbench_controller.dart';
@@ -12,12 +14,12 @@ import 'workbench_controller.dart';
 /// The workbench of an open project: the widget tree of the running app,
 /// the properties of the selected widget and the output of the run.
 final class ProjectWorkbench extends StatelessWidget {
-  /// Creates the workbench of [project].
+  /// Creates the workbench of the project of [session].
   const ProjectWorkbench({
     super.key,
     required this.controller,
     required this.devTools,
-    required this.project,
+    required this.session,
     required this.texts,
   });
 
@@ -35,8 +37,8 @@ final class ProjectWorkbench extends StatelessWidget {
   /// Adapter that provides the inherited panels.
   final InheritedDevTools devTools;
 
-  /// The open project.
-  final FlutterProject project;
+  /// The session of the open project.
+  final ProjectSession session;
 
   /// Text of the interface in the language of the user.
   final StudioLocalizations texts;
@@ -45,7 +47,24 @@ final class ProjectWorkbench extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        RunToolbar(controller: controller, project: project, texts: texts),
+        Row(
+          children: [
+            Expanded(
+              child: RunToolbar(
+                controller: controller,
+                project: session.project,
+                texts: texts,
+              ),
+            ),
+            const SizedBox(width: defaultSpacing),
+            HistoryButtons(
+              controller: controller,
+              canUndo: session.documents.canUndo,
+              canRedo: session.documents.canRedo,
+              texts: texts,
+            ),
+          ],
+        ),
         const SizedBox(height: denseSpacing),
         Expanded(
           child: SplitPane(
@@ -83,7 +102,13 @@ final class ProjectWorkbench extends StatelessWidget {
           title: Text(texts.propertiesTitle),
           roundedTopBorder: false,
         ),
-        Expanded(child: PropertyEditorPanel(devTools.daemonManager)),
+        Expanded(
+          child: PropertyEditorPanel(
+            devTools.daemonManager,
+            editorClientBuilder: (daemonManager) =>
+                StudioEditorClient(daemonManager, session.service),
+          ),
+        ),
       ],
     ),
   );

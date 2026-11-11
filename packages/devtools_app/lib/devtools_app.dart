@@ -85,6 +85,8 @@ export 'src/shared/console/primitives/simple_items.dart';
 export 'src/shared/console/widgets/description.dart';
 export 'src/shared/diagnostics/diagnostics_node.dart';
 export 'src/shared/diagnostics/inspector_service.dart';
+// STUDIO-PATCH(4): Exports the types that a subclass of EditorClient names.
+export 'src/shared/editor/api_classes.dart';
 export 'src/shared/editor/editor_client.dart';
 export 'src/shared/environment_parameters/environment_parameters_base.dart';
 export 'src/shared/environment_parameters/environment_parameters_external.dart';
