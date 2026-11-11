@@ -24,7 +24,7 @@ void main() {
     addTearDown(session.close);
     await session.start();
 
-    final run = await session.startApp(deviceId: 'linux');
+    final run = await session.startApp(target: RunTarget.desktop());
     final output = StringBuffer();
     final reloaded = run.output
         .map((text) => (output..write(text)).toString())

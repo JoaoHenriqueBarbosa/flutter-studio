@@ -45,9 +45,11 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `studio_tool`: comando `st trace`, com `--check`, e o passo QG-12 do portão (`TraceStep`). Em `lib/src/trace/`: `IdentifierCatalog` lê dos documentos os identificadores definidos e, do SRS, o incremento e o método de cada requisito; `TestTrace` lê os comentários `// Verifies:`; `TraceReport` aponta identificador inexistente e requisito com método T, até o incremento de `studio/current-increment.txt` (hoje `F1`), sem teste. 64 testes no pacote. O passo reprova hoje por doze requisitos sem teste: FR-INS-001, FR-INS-004, FR-INS-007, FR-PRP-007, FR-PRP-008, FR-PRP-011, FR-STR-007, NFR-REL-001, NFR-MNT-004, NFR-MNT-007, NFR-COMP-001 e NFR-COMP-002.
 - `docs/engineering/coding-standard.md` 0.5, conforme a linha 0.16 da tabela do guia.
 - `docs/requirements/srs.md` 0.5: resultado dos experimentos de ASM-01 e ASM-02 no apêndice A.
+- `studio_core`: primeiro degrau do canvas (ADR-0009), ainda sem o agente de design. `RunTarget`, com `designHost` (o dispositivo `flutter-tester` do SDK, com `--show-test-device`), `desktop` e `device`; `FrameTransport` e `ScreenshotFrameTransport`, que pede o quadro ao engine por `_flutter.screenshot` no VM Service; `CanvasController`, que busca um quadro a cada 500 ms e depois de cada hot reload e guarda o último quando o app termina (FR-CNV-001, FR-CNV-008, FR-HST-002). `ProjectSession.startApp` recebe o `RunTarget` e liga o canvas ao app. Dependência nova: `vm_service`. 141 testes, um deles de sistema e sem janela: o app roda no host de design, o quadro chega, uma edição pelo serviço muda o quadro.
 
 ### Alterado
 
+- `studio_core`: `ProjectSession.startApp`, `AppRun.start` e `DapClient.launch` recebem o alvo de execução no lugar do identificador de dispositivo.
 - `studio_core`: `ArgumentReader` passa a `WidgetReader`, com `arguments` e `assists`.
 - `ProjectWorkbench` recebe a `ProjectSession` no lugar do `FlutterProject`.
 - `docs/architecture/arc42.md` 0.7, conforme a linha 0.11 da tabela do guia.

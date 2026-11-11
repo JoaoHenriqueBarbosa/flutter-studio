@@ -210,6 +210,43 @@ void main() {
       );
     }, timeout: const Timeout(Duration(minutes: 2)));
 
+    // Verifies: FR-CNV-001, FR-CNV-008, FR-HST-002, FR-RUN-001, FR-DOC-002
+    test('runs the app on the design host and shows its frames', () async {
+      await session.start();
+      const pngSignature = [0x89, 0x50, 0x4E, 0x47];
+      Future<Frame> nextFrame({required int after}) async {
+        while ((session.canvas.frame.value?.id ?? 0) <= after) {
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+        }
+        return session.canvas.frame.value ?? (throw StateError('No frame.'));
+      }
+
+      await session.startApp(target: const RunTarget.designHost());
+      final first = await nextFrame(after: 0);
+
+      expect(first.pngBytes.take(pngSignature.length), pngSignature);
+      expect(session.canvas.isLive.value, isTrue);
+
+      final result = await session.service.setProperty(
+        target: WidgetRef(
+          uri: '${Uri.file(mainPath)}',
+          position: const Position(line: 11, character: 14),
+          documentVersion: 1,
+        ),
+        name: 'mainAxisAlignment',
+        value: const Expression(source: 'MainAxisAlignment.end'),
+      );
+      final second = await nextFrame(after: first.id);
+
+      expect(result.reload, ReloadKind.hotReload);
+      expect(second.pngBytes, isNot(first.pngBytes));
+
+      await session.stopApp();
+
+      expect(session.canvas.isLive.value, isFalse);
+      expect(session.canvas.frame.value, isNotNull);
+    }, timeout: const Timeout(Duration(minutes: 3)));
+
     // Verifies: FR-DOC-003, FR-API-004
     test('follows a file that another program saves', () async {
       await session.start();

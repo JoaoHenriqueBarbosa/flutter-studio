@@ -44,7 +44,8 @@ final class DapClient {
   Future<void> get terminated => _terminated.future;
 
   /// Builds and starts the project at [projectPath] on the device
-  /// [deviceId], in debug mode.
+  /// [deviceId], in debug mode. [toolArguments] are extra arguments for the
+  /// `flutter` tool.
   ///
   /// Completes when the adapter accepts the launch. The app is running only
   /// when [vmServiceUri] completes. Throws [DapRequestFailed] when the
@@ -52,12 +53,13 @@ final class DapClient {
   Future<void> launch({
     required String projectPath,
     required String deviceId,
+    List<String> toolArguments = const [],
   }) async {
     await _request('initialize', {'clientID': 'studio', 'adapterID': 'dart'});
     final launched = _request('launch', {
       'cwd': projectPath,
       'program': 'lib/main.dart',
-      'toolArgs': ['-d', deviceId],
+      'toolArgs': ['-d', deviceId, ...toolArguments],
     });
     await _adapterReady.future;
     await _request('configurationDone');

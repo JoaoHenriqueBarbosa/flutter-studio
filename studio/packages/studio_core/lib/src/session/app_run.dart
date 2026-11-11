@@ -3,6 +3,7 @@ import 'dart:io';
 import '../dap/dap_client.dart';
 import '../project/flutter_project.dart';
 import '../toolchain/base_protocol_channel.dart';
+import 'run_target.dart';
 
 /// One run of the app of the project, driven by the Flutter debug adapter
 /// (FR-RUN-001).
@@ -22,13 +23,13 @@ final class AppRun {
   /// Completes when the run ends.
   Future<void> get ended => _client.terminated;
 
-  /// Builds and starts [project] on the device [deviceId].
+  /// Builds and starts [project] on [target].
   ///
   /// Completes when the debug adapter accepts the launch. Throws a
   /// [ProcessException] when the adapter cannot be started.
   static Future<AppRun> start(
     FlutterProject project, {
-    required String deviceId,
+    required RunTarget target,
   }) async {
     final adapter = await Process.start(project.sdk.flutterPath, const [
       'debug-adapter',
@@ -36,7 +37,11 @@ final class AppRun {
     final client = DapClient(
       baseProtocolChannel(adapter.stdout, adapter.stdin),
     );
-    await client.launch(projectPath: project.rootPath, deviceId: deviceId);
+    await client.launch(
+      projectPath: project.rootPath,
+      deviceId: target.deviceId,
+      toolArguments: target.toolArguments,
+    );
     return AppRun._(adapter, client);
   }
 

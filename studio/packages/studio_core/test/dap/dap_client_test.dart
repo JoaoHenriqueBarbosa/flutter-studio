@@ -81,6 +81,23 @@ void main() {
       });
     });
 
+    // Verifies: FR-HST-002
+    test('passes to the tool the arguments that the device needs', () async {
+      final adapter = _FakeAdapter(controller.foreign);
+
+      await client.launch(
+        projectPath: '/work/sample_app',
+        deviceId: 'flutter-tester',
+        toolArguments: ['--show-test-device'],
+      );
+
+      expect(
+        (adapter.requests[1]['arguments']
+            as Map<String, Object?>?)?['toolArgs'],
+        ['-d', 'flutter-tester', '--show-test-device'],
+      );
+    });
+
     // Verifies: FR-RUN-001
     test('fails the launch that the adapter refuses', () async {
       _FakeAdapter(controller.foreign, failingCommand: 'launch');

@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:studio_protocol/studio_protocol.dart';
 
+import '../canvas/canvas_controller.dart';
+import '../canvas/screenshot_frame_transport.dart';
 import '../dap/dap_request_failed.dart';
 import '../document/document_change.dart';
 import '../document/document_store.dart';
@@ -19,6 +22,7 @@ import '../structure/source_trees.dart';
 import '../toolchain/toolchain_supervisor.dart';
 import 'analysis_server_child.dart';
 import 'app_run.dart';
+import 'run_target.dart';
 import 'tooling_daemon_child.dart';
 
 /// An open project with its tools: daemon, analysis server, documents, the
@@ -48,6 +52,9 @@ final class ProjectSession {
   late final _sync = DocumentSync(documents);
 
   late final _watcher = ProjectFileWatcher(project.rootPath, documents);
+
+  /// The frames of the running app (FR-CNV-001).
+  final canvas = CanvasController();
 
   /// The source trees of the files open in the analysis server
   /// (FR-INS-002).
@@ -113,17 +120,21 @@ final class ProjectSession {
     );
   }
 
-  /// Builds and starts the app on the device [deviceId].
+  /// Builds and starts the app on [target].
   ///
   /// Completes when the debug adapter accepts the launch. A run that is
-  /// already in progress is ended first.
-  Future<AppRun> startApp({required String deviceId}) async {
+  /// already in progress is ended first. The canvas shows the frames of the
+  /// app from the moment it starts until the run ends.
+  Future<AppRun> startApp({required RunTarget target}) async {
     await stopApp();
-    final run = await AppRun.start(project, deviceId: deviceId);
+    final run = await AppRun.start(project, target: target);
     _appRun.value = run;
+    unawaited(_showOnCanvas(run));
     unawaited(
-      run.ended.then((_) {
-        if (_appRun.value == run) _appRun.value = null;
+      run.ended.then((_) async {
+        if (_appRun.value != run) return;
+        _appRun.value = null;
+        await canvas.detach();
       }),
     );
     return run;
@@ -133,12 +144,14 @@ final class ProjectSession {
   Future<void> stopApp() async {
     final run = _appRun.value;
     _appRun.value = null;
+    await canvas.detach();
     await run?.stop();
   }
 
   /// Ends the app and the tools and releases the resources of the session.
   Future<void> close() async {
     await stopApp();
+    await canvas.dispose();
     selection.selection.removeListener(_handleSelection);
     await _changes?.cancel();
     await _externalChanges?.cancel();
@@ -181,9 +194,25 @@ final class ProjectSession {
     return true;
   }
 
+  /// Attaches the canvas to [run] once the app has started, unless the run
+  /// ended or gave place to another one in the meantime.
+  Future<void> _showOnCanvas(AppRun run) async {
+    final vmServiceUri = await Future.any<Uri?>([
+      run.vmServiceUri,
+      run.ended.then((_) => null),
+    ]);
+    if (vmServiceUri == null || _appRun.value != run) return;
+    try {
+      await canvas.attach(await ScreenshotFrameTransport.connect(vmServiceUri));
+    } on IOException {
+      // The app ended while the canvas was connecting to it.
+    }
+  }
+
   Future<void> _reload(AppRun run) async {
     try {
       await run.hotReload();
+      await canvas.refresh();
     } on DapRequestFailed {
       // The run ended between the edit and the reload. The edit is on disk,
       // and the next run starts from it.

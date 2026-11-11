@@ -1,6 +1,10 @@
 /// Core of Studio, without widgets.
 library;
 
+export 'src/canvas/canvas_controller.dart';
+export 'src/canvas/frame.dart';
+export 'src/canvas/frame_transport.dart';
+export 'src/canvas/screenshot_frame_transport.dart';
 export 'src/dap/dap_client.dart';
 export 'src/dap/dap_request_failed.dart';
 export 'src/document/applied_edit.dart';
@@ -38,6 +42,7 @@ export 'src/service/studio_service.dart';
 export 'src/session/analysis_server_child.dart';
 export 'src/session/app_run.dart';
 export 'src/session/project_session.dart';
+export 'src/session/run_target.dart';
 export 'src/session/tooling_daemon_child.dart';
 export 'src/structure/source_node.dart';
 export 'src/structure/source_tree.dart';

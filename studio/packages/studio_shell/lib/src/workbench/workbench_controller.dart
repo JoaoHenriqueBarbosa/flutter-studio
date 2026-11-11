@@ -76,7 +76,7 @@ final class WorkbenchController extends DisposableController
     _runStatus.value = AppRunStatus.starting;
     _output.value = '';
     try {
-      final run = await session.startApp(deviceId: Platform.operatingSystem);
+      final run = await session.startApp(target: RunTarget.desktop());
       // The stream closes when the run ends, which ends the subscription.
       unawaited(run.output.forEach(_appendOutput));
       unawaited(run.ended.then((_) => _handleRunEnded(router)));

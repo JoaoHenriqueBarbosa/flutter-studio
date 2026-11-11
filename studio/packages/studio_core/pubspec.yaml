@@ -17,6 +17,7 @@ dependencies:
   path: ^1.9.0
   stream_channel: ^2.1.0
   studio_protocol:
+  vm_service: ^15.0.0
   yaml: ^3.1.2
 
 dev_dependencies:
