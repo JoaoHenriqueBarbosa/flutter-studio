@@ -42,6 +42,11 @@ void main() {
     ) async {
       await collect(tester);
 
+      expect(scene.elements.map((element) => element.className), [
+        'Directionality',
+        'Align',
+        'SizedBox',
+      ]);
       expect(scene.elements.map((element) => element.position), [
         positionOf('Directionality('),
         positionOf('Align('),

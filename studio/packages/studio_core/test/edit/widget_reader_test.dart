@@ -37,6 +37,7 @@ void main() {
       sync,
       SourceTrees(store, sync),
       () => isServerRunning ? server.client : null,
+      runningScene: () => null,
     );
 
     // Verifies: FR-PRP-001

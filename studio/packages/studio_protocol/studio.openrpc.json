@@ -2,7 +2,7 @@
   "openrpc": "1.4.0",
   "info": {
     "title": "Studio",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "description": "Operations of Studio: reading, selecting and editing the widgets of the open project."
   },
   "x-binding": {
@@ -30,7 +30,7 @@
           "result": {
             "name": "versionInfo",
             "value": {
-              "version": "0.5.0"
+              "version": "0.6.0"
             }
           }
         }
@@ -108,6 +108,56 @@
                     "children": []
                   }
                 ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "getRuntimeTree",
+      "summary": "Returns the widgets of the project in the running app, each with its creation location.",
+      "description": "The tree comes from the frame on the canvas. Widgets created outside the project are left out, and their descendants created in the project take their place.",
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "runtimeTree",
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/RuntimeNode"
+          }
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/NoSession"
+        }
+      ],
+      "examples": [
+        {
+          "name": "oneWidget",
+          "params": [],
+          "result": {
+            "name": "runtimeTree",
+            "value": [
+              {
+                "className": "Column",
+                "ref": {
+                  "uri": "file:///work/sample_app/lib/main.dart",
+                  "position": {
+                    "line": 11,
+                    "character": 14
+                  },
+                  "documentVersion": 1
+                },
+                "bounds": {
+                  "left": 0,
+                  "top": 0,
+                  "width": 800,
+                  "height": 600
+                },
+                "children": []
               }
             ]
           }
@@ -1321,6 +1371,7 @@
         "description": "One element created in the project, in the frame on screen.",
         "type": "object",
         "required": [
+          "className",
           "uri",
           "position",
           "parentIndex",
@@ -1330,6 +1381,10 @@
           "height"
         ],
         "properties": {
+          "className": {
+            "description": "Class of the widget of the element.",
+            "type": "string"
+          },
           "uri": {
             "description": "The file URI of the document that creates the widget of the element.",
             "type": "string"
@@ -1387,6 +1442,65 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SceneElement"
+            }
+          }
+        }
+      },
+      "Bounds": {
+        "description": "A rectangle on the surface of the app, in logical pixels.",
+        "type": "object",
+        "required": [
+          "left",
+          "top",
+          "width",
+          "height"
+        ],
+        "properties": {
+          "left": {
+            "description": "Left edge.",
+            "type": "number"
+          },
+          "top": {
+            "description": "Top edge.",
+            "type": "number"
+          },
+          "width": {
+            "description": "Width.",
+            "type": "number"
+          },
+          "height": {
+            "description": "Height.",
+            "type": "number"
+          }
+        }
+      },
+      "RuntimeNode": {
+        "description": "A widget of the project in the tree of the running app.",
+        "type": "object",
+        "required": [
+          "className",
+          "ref",
+          "bounds",
+          "children"
+        ],
+        "properties": {
+          "className": {
+            "description": "Class of the widget.",
+            "type": "string"
+          },
+          "ref": {
+            "description": "The creation location of the widget, in the current version of its document.",
+            "$ref": "#/components/schemas/WidgetRef"
+          },
+          "bounds": {
+            "description": "Where the widget is on the surface.",
+            "$ref": "#/components/schemas/Bounds"
+          },
+          "children": {
+            "description": "The nearest descendants created in the project, in tree order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuntimeNode"
             }
           }
         }

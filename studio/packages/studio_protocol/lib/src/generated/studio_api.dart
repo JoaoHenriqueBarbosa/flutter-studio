@@ -5,6 +5,7 @@ import 'edit_result.dart';
 import 'expression.dart';
 import 'move_direction.dart';
 import 'property.dart';
+import 'runtime_node.dart';
 import 'source_node.dart';
 import 'structure_options.dart';
 import 'swap_partner.dart';
@@ -31,6 +32,16 @@ abstract interface class StudioApi {
   ///
   /// Errors: `NotInProject`, `UnsupportedTarget`, `ToolchainUnavailable`.
   Future<List<SourceNode>> getSourceTree({required String uri});
+
+  /// Returns the widgets of the project in the running app, each with its
+  /// creation location.
+  ///
+  /// The tree comes from the frame on the canvas. Widgets created outside the
+  /// project are left out, and their descendants created in the project take
+  /// their place.
+  ///
+  /// Errors: `NoSession`.
+  Future<List<RuntimeNode>> getRuntimeTree();
 
   /// Returns the selected widget, or null when nothing is selected.
   Future<WidgetRef?> getSelection();

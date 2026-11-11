@@ -118,6 +118,7 @@ void main() {
         devicePixelRatio: 1,
         elements: [
           SceneElement(
+            className: 'Column',
             uri: '${Uri.file(filePath)}',
             position: const Position(line: 0, character: 0),
             parentIndex: -1,

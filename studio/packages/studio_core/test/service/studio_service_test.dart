@@ -18,6 +18,7 @@ void main() {
     late EditPipeline pipeline;
     late StudioService service;
     late SourceTrees trees;
+    Scene? runningScene;
     var isServerRunning = true;
 
     WidgetRef reference({int documentVersion = 1, String? uri}) => WidgetRef(
@@ -46,7 +47,12 @@ void main() {
       sync.attach(server.client);
       LspClient? currentServer() => isServerRunning ? server.client : null;
       trees = SourceTrees(store, sync)..attach(server.client);
-      final reader = WidgetReader(sync, trees, currentServer);
+      final reader = WidgetReader(
+        sync,
+        trees,
+        currentServer,
+        runningScene: () => runningScene,
+      );
       pipeline = EditPipeline(
         store,
         reader,
@@ -248,6 +254,56 @@ void main() {
       await expectLater(
         service.getSourceTree(uri: 'file:///etc/hosts'),
         throwsFault(StudioErrorCode.notInProject, 'file:///etc/hosts'),
+      );
+    });
+
+    // Verifies: FR-API-001, FR-INS-001
+    test(
+      'returns the running tree with a creation location in each node',
+      () async {
+        SceneElement element(String className, int parentIndex) => SceneElement(
+          className: className,
+          uri: '${Uri.file(filePath)}',
+          position: const Position(line: 0, character: 0),
+          parentIndex: parentIndex,
+          left: 1,
+          top: 2,
+          width: 3,
+          height: 4,
+        );
+        runningScene = Scene(
+          width: 800,
+          height: 600,
+          devicePixelRatio: 3,
+          elements: [
+            element('Column', -1),
+            element('Text', 0),
+            element('Icon', 0),
+          ],
+        );
+
+        final roots = await service.getRuntimeTree();
+
+        expect(roots.single.className, 'Column');
+        expect(roots.single.ref, reference());
+        expect(
+          roots.single.bounds,
+          const Bounds(left: 1, top: 2, width: 3, height: 4),
+        );
+        expect(roots.single.children.map((node) => node.className), [
+          'Text',
+          'Icon',
+        ]);
+      },
+    );
+
+    // Verifies: FR-API-001
+    test('reports that no app is running when asked for its tree', () {
+      runningScene = null;
+
+      expect(
+        service.getRuntimeTree,
+        throwsFault(StudioErrorCode.noSession, isA<String>()),
       );
     });
 

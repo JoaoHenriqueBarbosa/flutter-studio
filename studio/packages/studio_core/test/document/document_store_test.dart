@@ -79,6 +79,18 @@ void main() {
       );
     });
 
+    // Verifies: NFR-COMP-001
+    test('holds no lock on a file after it edits the file', () async {
+      await store.apply(replaceCenter(filePath));
+
+      // Another program renames the file, writes a new one and removes it.
+      final moved = File(filePath).renameSync('$filePath.moved');
+      File(filePath).writeAsStringSync('// By another program.\n');
+      File(filePath).deleteSync();
+
+      expect(moved.readAsStringSync(), 'alignment: .end,\n');
+    });
+
     // Verifies: NFR-REL-003
     test('changes no file when one edit of the set is invalid', () async {
       final otherPath = path.join(project.path, 'lib', 'other.dart');

@@ -59,6 +59,7 @@ final class SceneCollector {
     final bounds = _boundsOf(element.findRenderObject());
     if (bounds == null) return null;
     return SceneElement(
+      className: '${element.widget.runtimeType}',
       uri: location.uri,
       position: location.position,
       parentIndex: parentIndex,

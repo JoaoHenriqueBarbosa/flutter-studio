@@ -114,5 +114,6 @@ Fontes técnicas verificadas para esta baseline:
 | 0.21 | 11/11/2026 | ADR-0016, proposta: pacote `studio_package_assets`, usado pelo shell e pelo agente de design. Padrão de código 0.6: seções 6.1 e 6.3. Arquitetura 0.12: bloco novo na seção 5.1 e dívida técnica do projeto host atualizada. |
 | 0.22 | 11/11/2026 | `setProperty` remove argumento e aceita expressão não literal (FR-PRP-007, FR-PRP-008). Interfaces 0.7: alcance de `setProperty`. Arquitetura 0.13: a edição de texto de argumento no shell entra na dívida técnica. |
 | 0.23 | 11/11/2026 | Aviso de app sem rastreamento de criação de widgets (FR-INS-007). Interfaces 0.8: contrato 0.5.0, com `isWidgetCreationTracked` na resposta de `hello`. |
+| 0.24 | 11/11/2026 | Interfaces 0.9: contrato 0.6.0, com `getRuntimeTree`, `RuntimeNode`, `Bounds` e `className` no elemento de cena (FR-INS-001). |
 
 Esta tabela registra as mudanças de conteúdo da baseline. O detalhe técnico de cada mudança fica em `CHANGELOG.md`, e o relato para quem aprova, em `JOURNAL.md`, os dois na raiz do repositório.

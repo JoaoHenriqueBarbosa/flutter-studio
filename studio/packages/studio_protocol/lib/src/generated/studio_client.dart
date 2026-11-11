@@ -6,6 +6,7 @@ import 'edit_result.dart';
 import 'expression.dart';
 import 'move_direction.dart';
 import 'property.dart';
+import 'runtime_node.dart';
 import 'source_node.dart';
 import 'structure_options.dart';
 import 'studio_api.dart';
@@ -39,6 +40,15 @@ final class StudioClient implements StudioApi {
     return [
       for (final item in asJson<List<Object?>>(result))
         SourceNode.fromJson(item),
+    ];
+  }
+
+  @override
+  Future<List<RuntimeNode>> getRuntimeTree() async {
+    final result = await _call(StudioMethod.getRuntimeTree, {});
+    return [
+      for (final item in asJson<List<Object?>>(result))
+        RuntimeNode.fromJson(item),
     ];
   }
 

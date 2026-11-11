@@ -21,6 +21,12 @@ final class _ExampleApi implements StudioApi {
   ];
 
   @override
+  Future<List<RuntimeNode>> getRuntimeTree() async => [
+    for (final item in asJson<List<Object?>>(_result))
+      RuntimeNode.fromJson(item),
+  ];
+
+  @override
   Future<WidgetRef?> getSelection() async =>
       _result == null ? null : WidgetRef.fromJson(_result);
 

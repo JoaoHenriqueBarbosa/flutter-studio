@@ -22,6 +22,22 @@ Future<void> _waitForLspMethod(DartToolingDaemon tool, String method) async {
   }
 }
 
+/// Returns the global settings of the Flutter tool of this user, or `null`
+/// when the tool has written none.
+String? _readFlutterSettings() {
+  final home = Platform.environment['HOME'] ?? '';
+  final configHome =
+      Platform.environment['XDG_CONFIG_HOME'] ?? path.join(home, '.config');
+  for (final settingsPath in [
+    path.join(configHome, 'flutter', 'settings'),
+    path.join(home, '.flutter_settings'),
+  ]) {
+    final file = File(settingsPath);
+    if (file.existsSync()) return file.readAsStringSync();
+  }
+  return null;
+}
+
 void main() {
   group('ProjectSession', () {
     late Directory sandbox;
@@ -264,7 +280,7 @@ void main() {
     }, timeout: const Timeout(Duration(minutes: 2)));
 
     // Verifies: FR-CNV-001, FR-CNV-006, FR-CNV-008, FR-HST-001, FR-HST-002,
-    // FR-RUN-001, FR-DOC-002, IR-004
+    // FR-RUN-001, FR-DOC-002, FR-INS-001, IR-004, NFR-COMP-002
     test('runs the app on the design host and shows its frames', () async {
       await session.close();
       session = ProjectSession(
@@ -273,6 +289,7 @@ void main() {
       );
       await session.start();
       const pngSignature = [0x89, 0x50, 0x4E, 0x47];
+      final flutterSettings = _readFlutterSettings();
       Future<Frame> nextFrame({required int after}) async {
         while ((session.canvas.frame.value?.id ?? 0) <= after ||
             session.canvas.frame.value?.scene == null) {
@@ -301,6 +318,19 @@ void main() {
         const Position(line: 13, character: 21),
       ]);
       expect((scene.width, scene.height), (800, 600));
+      final runtimeTree = await session.service.getRuntimeTree();
+      expect(runtimeTree.single.className, 'SampleApp');
+      expect(
+        runtimeTree.single.children.single.children.single.children.single.ref,
+        WidgetRef(
+          uri: '${Uri.file(mainPath)}',
+          position: const Position(line: 11, character: 14),
+          documentVersion: 1,
+        ),
+      );
+      // Running the app leaves the settings of the SDK of the user as they
+      // were (NFR-COMP-002).
+      expect(_readFlutterSettings(), flutterSettings);
       expect(
         File(path.join(session.project.rootPath, 'pubspec.yaml'))
             .readAsStringSync(),

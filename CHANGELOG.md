@@ -64,6 +64,9 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `docs/interfaces/icd.md` 0.7 e `docs/architecture/arc42.md` 0.13, conforme a linha 0.22 da tabela do guia.
 - FR-INS-007: contrato 0.5.0 com `AgentInfo.isWidgetCreationTracked`; o `DesignAgent` responde com o que o framework informa; `FrameTransport.readAgentInfo` e `CanvasController.isSelectable` no `studio_core`; o `CanvasPane` avisa e não seleciona quando o app tem o agente e não rastreia a criação de widgets. 166 testes no `studio_core`, 35 no `studio_shell`, 6 no `studio_design_agent`.
 - `docs/interfaces/icd.md` 0.8, conforme a linha 0.23 da tabela do guia.
+- Contrato 0.6.0: `getRuntimeTree`, com `RuntimeNode` e `Bounds`, e `SceneElement.className`. O `StudioService` monta a árvore em execução a partir da cena do quadro em tela e responde `NoSession` sem app com agente (FR-INS-001); `WidgetReader.runningScene`.
+- Testes para NFR-COMP-001 (nenhuma trava sobre o arquivo editado) e NFR-COMP-002 (as configurações globais da ferramenta `flutter` ficam como estavam depois de uma execução no host de design). 169 testes no `studio_core`.
+- `docs/interfaces/icd.md` 0.9, conforme a linha 0.24 da tabela do guia.
 
 ### Corrigido
 

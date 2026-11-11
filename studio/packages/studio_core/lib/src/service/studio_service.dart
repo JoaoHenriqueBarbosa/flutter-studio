@@ -40,6 +40,9 @@ final class StudioService implements StudioApi {
 
   final WidgetReader _reader;
 
+  /// Index of the parent of a scene element that has no ancestor.
+  static const _noParent = -1;
+
   /// The library that exports every widget the analysis server wraps with.
   static const _widgetsLibrary = 'package:flutter/widgets.dart';
 
@@ -55,6 +58,18 @@ final class StudioService implements StudioApi {
         final tree = await _reader.sourceTree(filePath);
         return [for (final root in tree.roots) _nodeOf(root, tree)];
       });
+
+  @override
+  Future<List<RuntimeNode>> getRuntimeTree() async {
+    final scene = _reader.runningScene();
+    if (scene == null) {
+      throw const StudioFault(
+        StudioErrorCode.noSession,
+        data: 'No app with the design agent is running.',
+      );
+    }
+    return _runtimeNodesUnder(scene, _noParent);
+  }
 
   @override
   Future<WidgetRef?> getSelection() async =>
@@ -223,6 +238,30 @@ final class StudioService implements StudioApi {
       ),
     );
   }
+
+  /// Returns the elements of [scene] whose parent is the element at
+  /// [parentIndex], each with its own descendants.
+  List<RuntimeNode> _runtimeNodesUnder(Scene scene, int parentIndex) => [
+    for (final (index, element) in scene.elements.indexed)
+      if (element.parentIndex == parentIndex)
+        RuntimeNode(
+          className: element.className,
+          ref: WidgetRef(
+            uri: element.uri,
+            position: element.position,
+            documentVersion: _documents
+                .document(Uri.parse(element.uri).toFilePath())
+                .version,
+          ),
+          bounds: Bounds(
+            left: element.left,
+            top: element.top,
+            width: element.width,
+            height: element.height,
+          ),
+          children: _runtimeNodesUnder(scene, index),
+        ),
+  ];
 
   /// Returns the path of the file that [uri] names.
   String _filePathOf(String uri) {

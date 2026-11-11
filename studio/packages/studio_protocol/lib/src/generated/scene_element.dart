@@ -8,6 +8,7 @@ import 'position.dart';
 final class SceneElement {
   /// Creates the value from its fields.
   const SceneElement({
+    required this.className,
     required this.uri,
     required this.position,
     required this.parentIndex,
@@ -23,6 +24,7 @@ final class SceneElement {
   factory SceneElement.fromJson(Object? json) {
     final fields = asJson<Map<String, Object?>>(json);
     return SceneElement(
+      className: asJson<String>(fields['className']),
       uri: asJson<String>(fields['uri']),
       position: Position.fromJson(fields['position']),
       parentIndex: asJson<int>(fields['parentIndex']),
@@ -32,6 +34,9 @@ final class SceneElement {
       height: asJson<num>(fields['height']).toDouble(),
     );
   }
+
+  /// Class of the widget of the element.
+  final String className;
 
   /// The file URI of the document that creates the widget of the element.
   final String uri;
@@ -57,6 +62,7 @@ final class SceneElement {
 
   /// Encodes the value in the form it has on the wire.
   Map<String, Object?> toJson() => {
+    'className': className,
     'uri': uri,
     'position': position.toJson(),
     'parentIndex': parentIndex,

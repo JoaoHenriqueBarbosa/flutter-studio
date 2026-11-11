@@ -4,6 +4,7 @@ import 'package:studio_protocol/studio_protocol.dart';
 
 SceneElement _element(int line, List<double> rect, {int parentIndex = -1}) =>
     SceneElement(
+      className: 'Column',
       uri: 'file:///work/lib/main.dart',
       position: Position(line: line, character: 4),
       parentIndex: parentIndex,

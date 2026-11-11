@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 import 'package:studio_core/studio_core.dart';
+import 'package:studio_protocol/studio_protocol.dart' show Scene;
 
 import '../support/fake_analysis_server.dart';
 
@@ -15,6 +16,7 @@ void main() {
     late FakeAnalysisServer server;
     late EditPipeline pipeline;
     late SourceTrees trees;
+    Scene? runningScene;
     late SourceLocation target;
     var reloadCount = 0;
     var isAppRunning = true;
@@ -38,7 +40,12 @@ void main() {
       trees = SourceTrees(store, sync)..attach(server.client);
       pipeline = EditPipeline(
         store,
-        WidgetReader(sync, trees, currentServer),
+        WidgetReader(
+          sync,
+          trees,
+          currentServer,
+          runningScene: () => runningScene,
+        ),
         server: currentServer,
         requestReload: () {
           if (isAppRunning) reloadCount++;

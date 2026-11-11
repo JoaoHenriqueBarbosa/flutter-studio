@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0
+
+- Contract 0.6.0: `getRuntimeTree`, `RuntimeNode`, `Bounds` and
+  `SceneElement.className`.
+
 ## 0.5.0
 
 - Contract 0.5.0: `AgentInfo.isWidgetCreationTracked`.

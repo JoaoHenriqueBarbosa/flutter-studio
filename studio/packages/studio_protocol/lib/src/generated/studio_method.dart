@@ -11,6 +11,10 @@ enum StudioMethod {
   /// Returns the widgets that the source of a file creates.
   getSourceTree,
 
+  /// Returns the widgets of the project in the running app, each with its
+  /// creation location.
+  getRuntimeTree,
+
   /// Returns the selected widget, or null when nothing is selected.
   getSelection,
 

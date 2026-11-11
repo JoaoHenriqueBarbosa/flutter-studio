@@ -79,7 +79,12 @@ final class ProjectSession {
   /// (FR-INS-002).
   late final sourceTrees = SourceTrees(documents, _sync);
 
-  late final _reader = WidgetReader(_sync, sourceTrees, () => _server);
+  late final _reader = WidgetReader(
+    _sync,
+    sourceTrees,
+    () => _server,
+    runningScene: () => canvas.isLive.value ? canvas.frame.value?.scene : null,
+  );
 
   late final _pipeline = EditPipeline(
     documents,

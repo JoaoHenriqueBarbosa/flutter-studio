@@ -1,3 +1,5 @@
+import 'package:studio_protocol/studio_protocol.dart' show Scene;
+
 import '../document/edit_failure.dart';
 import '../document/source_location.dart';
 import '../lsp/document_sync.dart';
@@ -15,8 +17,15 @@ final class WidgetReader {
   /// source trees from [_trees].
   ///
   /// [_server] returns the current client of the analysis server, or `null`
-  /// while the server is not running.
-  const WidgetReader(this._sync, this._trees, this._server);
+  /// while the server is not running. [runningScene] returns the scene of
+  /// the frame on the canvas, or `null` while no app with the design agent
+  /// is running.
+  const WidgetReader(
+    this._sync,
+    this._trees,
+    this._server, {
+    required this.runningScene,
+  });
 
   /// Name of the analysis server in a [ToolUnavailable].
   static const serverName = 'analysis-server';
@@ -26,6 +35,9 @@ final class WidgetReader {
   final SourceTrees _trees;
 
   final LspClient? Function() _server;
+
+  /// Returns the scene mirror of the running app, when there is one.
+  final Scene? Function() runningScene;
 
   /// Completes with the parameters of the constructor called at [target].
   ///

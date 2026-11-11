@@ -36,6 +36,9 @@ final class StudioDispatcher {
           uri: asJson<String>(params['uri']),
         );
         return [for (final item in result) item.toJson()];
+      case StudioMethod.getRuntimeTree:
+        final result = await _api.getRuntimeTree();
+        return [for (final item in result) item.toJson()];
       case StudioMethod.getSelection:
         final result = await _api.getSelection();
         return switch (result) {
