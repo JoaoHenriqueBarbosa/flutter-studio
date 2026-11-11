@@ -19,6 +19,7 @@ export 'src/document/text_edit.dart';
 export 'src/document/workspace_edit.dart';
 export 'src/dtd/dtd_connection.dart';
 export 'src/edit/argument_literal.dart';
+export 'src/edit/argument_source_edit.dart';
 export 'src/edit/edit_outcome.dart';
 export 'src/edit/edit_pipeline.dart';
 export 'src/edit/widget_reader.dart';

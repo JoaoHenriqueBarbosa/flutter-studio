@@ -12,6 +12,7 @@ final class OutlineNode {
     required this.children,
     this.className,
     this.elementName,
+    this.argumentRanges = const {},
   });
 
   /// The source of the node, from its first token.
@@ -27,4 +28,8 @@ final class OutlineNode {
   /// Name of the declaration, such as a class or a method, or `null` when
   /// the node creates a widget.
   final String? elementName;
+
+  /// Where the value of each argument of the creation is, by the name of
+  /// the parameter. The server lists the arguments that are not widgets.
+  final Map<String, DocumentRange> argumentRanges;
 }

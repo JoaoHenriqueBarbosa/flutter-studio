@@ -1,6 +1,6 @@
 # Documentação de arquitetura
 
-Arquitetura do Studio no modelo arc42, com diagramas C4. Versão 0.12, rascunho para revisão.
+Arquitetura do Studio no modelo arc42, com diagramas C4. Versão 0.13, rascunho para revisão.
 
 ## 1. Introdução e objetivos
 
@@ -300,6 +300,7 @@ Dívida técnica assumida nesta baseline:
 - A captura de quadro é suspensa durante o hot reload e o hot restart: o engine do `flutter_tester` deixa de responder ao VM Service quando recebe o pedido de quadro enquanto o código é trocado. Um teste de sistema repete o caso.
 - O painel de propriedades herdado edita pelo serviço `Studio`, mas ainda lê os argumentos direto do analysis server, pelo daemon, e não por `getProperties`. Os botões de refactor do próprio painel ficam ocultos, porque ele os executaria como comando do servidor, por fora do serviço; as mesmas operações estão na barra de estrutura do shell, que chama o serviço.
 - A seleção ainda não é única entre todas as vistas (FR-INS-003): o que se seleciona no inspetor herdado aparece na árvore de fonte e nas propriedades, mas o que se seleciona na árvore de fonte não move a seleção do inspetor herdado, cujos nós não trazem o local de criação.
+- A troca de um argumento por expressão não literal e a remoção de um argumento são feitas no shell, sobre o texto, com os intervalos que o Flutter Outline dá, e sem a validação da seção 8.3. Passam ao motor de edição quando ele existir (ADR-0006, ADR-0007).
 - Um cliente do daemon ainda pode pedir `editArgument` direto ao serviço `Lsp` do analysis server. A edição resultante passa pelo `DocumentStore` e entra no desfazer, mas não passa pelas verificações do serviço `Studio`.
 - O Dart Tooling Daemon não termina quando o processo pai morre. O shell o encerra ao sair e ao receber sinal de término, mas um shell morto à força deixa o daemon rodando.
 

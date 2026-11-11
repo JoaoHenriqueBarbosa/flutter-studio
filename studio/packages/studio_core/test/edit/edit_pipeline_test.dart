@@ -14,6 +14,7 @@ void main() {
     late DocumentSync sync;
     late FakeAnalysisServer server;
     late EditPipeline pipeline;
+    late SourceTrees trees;
     late SourceLocation target;
     var reloadCount = 0;
     var isAppRunning = true;
@@ -34,9 +35,10 @@ void main() {
       );
       sync.attach(server.client);
       LspClient? currentServer() => isServerRunning ? server.client : null;
+      trees = SourceTrees(store, sync)..attach(server.client);
       pipeline = EditPipeline(
         store,
-        WidgetReader(sync, SourceTrees(store, sync), currentServer),
+        WidgetReader(sync, trees, currentServer),
         server: currentServer,
         requestReload: () {
           if (isAppRunning) reloadCount++;
@@ -46,7 +48,12 @@ void main() {
       server
         ..editableArguments = {
           'arguments': [
-            {'name': 'alignment', 'type': 'enum', 'isEditable': true},
+            {
+              'name': 'alignment',
+              'type': 'enum',
+              'isEditable': true,
+              'options': ['Alignment.end', 'Alignment.center'],
+            },
             {'name': 'children', 'type': 'widget', 'isEditable': false},
           ],
         }
@@ -71,6 +78,7 @@ void main() {
     });
 
     tearDown(() async {
+      await trees.dispose();
       await sync.dispose();
       await server.close();
       await store.dispose();
@@ -87,6 +95,82 @@ void main() {
       name: name,
       source: source,
     );
+
+    /// Publishes the outline of the file: one `Column` whose argument
+    /// `alignment` has its value at characters 18 to 25.
+    Future<void> publishOutline() async {
+      sync.ensureOpen(filePath);
+      await server.settled;
+      server.publishOutline(filePath, {
+        'range': {
+          'start': {'line': 0, 'character': 0},
+          'end': {'line': 1, 'character': 0},
+        },
+        'children': [
+          {
+            'className': 'Column',
+            'range': {
+              'start': {'line': 0, 'character': 0},
+              'end': {'line': 0, 'character': 26},
+            },
+            'attributes': [
+              {
+                'name': 'alignment',
+                'valueRange': {
+                  'start': {'line': 0, 'character': 18},
+                  'end': {'line': 0, 'character': 25},
+                },
+              },
+            ],
+          },
+        ],
+      });
+    }
+
+    // Verifies: FR-PRP-008
+    test('removes an argument from the code', () async {
+      await publishOutline();
+
+      final outcome = await setAlignment(source: null);
+
+      expect(File(filePath).readAsStringSync(), 'Column()\n');
+      expect(outcome.isReloadRequested, isTrue);
+      expect(server.editRequests, isEmpty);
+    });
+
+    // Verifies: FR-PRP-008
+    test('changes nothing when the argument to remove is not there', () async {
+      await publishOutline();
+
+      final outcome = await setAlignment(name: 'children', source: null);
+
+      expect(outcome.edit, isNull);
+      expect(File(filePath).readAsStringSync(), 'Column(alignment: .center)\n');
+    });
+
+    // Verifies: FR-PRP-007
+    test('writes an expression that is not a literal as text', () async {
+      await publishOutline();
+
+      await setAlignment(source: 'widget.alignment');
+
+      expect(
+        File(filePath).readAsStringSync(),
+        'Column(alignment: widget.alignment)\n',
+      );
+      expect(server.editRequests, isEmpty);
+      expect(store.canUndo.value, isTrue);
+    });
+
+    // Verifies: FR-PRP-007
+    test('refuses an expression for an argument that is not there', () async {
+      await publishOutline();
+
+      await expectLater(
+        setAlignment(name: 'children', source: 'buildChildren()'),
+        throwsA(isA<UnsupportedEdit>()),
+      );
+    });
 
     // Verifies: FR-PRP-003, FR-DOC-002
     test('writes the edit of the server and asks for the reload', () async {
@@ -149,19 +233,7 @@ void main() {
     });
 
     // Verifies: FR-PRP-003
-    test('refuses what the first level cannot edit', () async {
-      await expectLater(
-        setAlignment(source: null),
-        throwsA(isA<UnsupportedEdit>()),
-      );
-      await expectLater(
-        setAlignment(source: 'someVariable'),
-        throwsA(isA<UnsupportedEdit>()),
-      );
-      await expectLater(
-        setAlignment(name: 'children', source: 'null'),
-        throwsA(isA<UnsupportedEdit>()),
-      );
+    test('refuses what the widget does not have', () async {
       await expectLater(
         setAlignment(name: 'missing'),
         throwsA(isA<UnsupportedEdit>()),

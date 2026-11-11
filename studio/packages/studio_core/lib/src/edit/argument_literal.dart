@@ -9,7 +9,11 @@ import '../lsp/editable_argument.dart';
 final class ArgumentLiteral {
   /// Creates the converter for arguments of [_kind], one of the kinds of
   /// [EditableArgument.kind].
-  const ArgumentLiteral(this._kind);
+  ///
+  /// [enumOptions] are the constants that an enum parameter accepts. When
+  /// they are given, only they count as literals of an enum; otherwise any
+  /// dotted name does.
+  const ArgumentLiteral(this._kind, {this.enumOptions});
 
   static const _nullSource = 'null';
 
@@ -30,6 +34,9 @@ final class ArgumentLiteral {
 
   final String _kind;
 
+  /// The constants that the enum parameter accepts, when they are known.
+  final List<String>? enumOptions;
+
   /// Returns the Dart source of [value], a value of the kind as the server
   /// gives it.
   String sourceOf(Object? value) => switch (value) {
@@ -49,13 +56,15 @@ final class ArgumentLiteral {
       EditableArgument.intKind => int.tryParse(trimmed),
       EditableArgument.doubleKind => double.tryParse(trimmed),
       EditableArgument.boolKind => bool.tryParse(trimmed),
-      EditableArgument.enumKind =>
-        _enumConstant.hasMatch(trimmed) ? trimmed : null,
+      EditableArgument.enumKind => _isEnumConstant(trimmed) ? trimmed : null,
       _ => null,
     };
     if (value != null) return value;
     throw FormatException('Not a literal of kind $_kind.', source);
   }
+
+  bool _isEnumConstant(String source) =>
+      enumOptions?.contains(source) ?? _enumConstant.hasMatch(source);
 
   String _quote(String text) {
     final escaped = text

@@ -303,11 +303,32 @@ final class LspClient {
           {'name': final String name} => name,
           _ => null,
         },
+        argumentRanges: {
+          if (node['attributes'] case final List<Object?> attributes)
+            for (final attribute in attributes)
+              ...?_argumentRangeFrom(attribute),
+        },
         children: [
           if (node['children'] case final List<Object?> children)
             for (final child in children) ?_outlineFrom(child),
         ],
       );
+    }
+    return null;
+  }
+
+  /// Returns the range of the value of one attribute of the outline, by
+  /// the name of its parameter, or `null` when the attribute has no range.
+  Map<String, DocumentRange>? _argumentRangeFrom(Object? attribute) {
+    if (attribute case {
+      'name': final String name,
+      'valueRange': {'start': final Object? start, 'end': final Object? end},
+    }) {
+      final startPosition = _positionFrom(start);
+      final endPosition = _positionFrom(end);
+      if (startPosition != null && endPosition != null) {
+        return {name: (start: startPosition, end: endPosition)};
+      }
     }
     return null;
   }

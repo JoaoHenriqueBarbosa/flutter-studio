@@ -1,6 +1,6 @@
 # Especificação de interfaces
 
-Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.6, rascunho para revisão.
+Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.7, rascunho para revisão.
 
 ## 1. Inventário de interfaces
 
@@ -89,7 +89,7 @@ O contrato 0.3.0 traz `getVersion`, `getSourceTree`, `getSelection`, `select`, `
 
 Limites da versão 0.3.0, que realiza os dois primeiros níveis da ADR-0006:
 
-- `setProperty` aceita como `value` um literal do gênero do parâmetro (ou `null` escrito como expressão) e responde `UnsupportedTarget` para outra expressão e para `value` nulo, que pede a remoção do argumento (FR-PRP-007, FR-PRP-008).
+- `setProperty` grava um literal do gênero do parâmetro pelo analysis server, esteja o argumento no código ou não. Outra expressão só substitui a de um argumento que já está no código, e `value` nulo remove do código um argumento nomeado; as duas são edições do texto do argumento, sem validação pelo analisador nesta versão (FR-PRP-007, FR-PRP-008). Expressão não literal para argumento ausente e remoção de argumento posicional respondem `UnsupportedTarget`.
 - `wrapWidget` aceita os widgets que `getStructureOptions` lista em `wrappers`, que são os que o analysis server sabe envolver. Outro widget responde `UnsupportedTarget` até o motor de edição existir.
 - `removeWidget` com `keepChildren` falso responde `UnsupportedTarget`: excluir a subárvore é FR-STR-005, de F3.
 

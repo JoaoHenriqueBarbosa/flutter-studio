@@ -11,6 +11,7 @@ final class SourceNode {
     required this.position,
     required this.children,
     this.owner,
+    this.argumentRanges = const {},
   });
 
   /// Class of the widget.
@@ -28,4 +29,19 @@ final class SourceNode {
   /// `MyHomePage.build`. Set only in a widget that no other widget
   /// contains.
   final String? owner;
+
+  /// Where the value of each argument of the constructor call is, by the
+  /// name of the parameter. Arguments that are widgets are not listed.
+  final Map<String, DocumentRange> argumentRanges;
+
+  /// Returns the node of the widget created at [position], which is this
+  /// node or one below it, or `null` when there is none.
+  SourceNode? nodeAt(DocumentPosition position) {
+    if (position == this.position) return this;
+    for (final child in children) {
+      final found = child.nodeAt(position);
+      if (found != null) return found;
+    }
+    return null;
+  }
 }

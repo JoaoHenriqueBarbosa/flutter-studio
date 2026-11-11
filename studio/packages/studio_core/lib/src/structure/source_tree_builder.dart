@@ -43,6 +43,7 @@ final class SourceTreeBuilder {
         className: className,
         position: _creationPosition(node.range.start),
         owner: owner,
+        argumentRanges: node.argumentRanges,
         children: [for (final child in node.children) ..._widgetsUnder(child)],
       );
 

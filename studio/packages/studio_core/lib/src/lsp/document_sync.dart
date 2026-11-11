@@ -39,13 +39,19 @@ final class DocumentSync {
     _openPaths.forEach(_send);
   }
 
-  /// Opens the file at [filePath] in the server, unless it is open already.
+  /// Makes sure that the server has the current version of the file at
+  /// [filePath], opening the file in the server the first time.
+  ///
+  /// The changes of the store reach this class a moment after they are
+  /// made. Whoever is about to ask the server about a document calls this
+  /// first, so that the question is not answered from the previous text.
   ///
   /// Throws a `FileSystemException` when the file cannot be read.
   void ensureOpen(String filePath) {
     final normalized = path.normalize(filePath);
     _documents.document(normalized);
-    if (_openPaths.add(normalized)) _send(normalized);
+    _openPaths.add(normalized);
+    _send(normalized);
   }
 
   /// Stops following the store.

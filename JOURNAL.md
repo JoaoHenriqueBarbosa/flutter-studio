@@ -4,6 +4,10 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**A API já remove argumento e aceita expressão; a interface ainda não.** Pelo serviço `Studio`, `setProperty` agora tira um argumento do código (o widget volta ao valor padrão) e troca o valor de um argumento por qualquer expressão, não só por um literal. Um agente conectado ao daemon já consegue usar. Na interface não há como pedir isso ainda: o painel de propriedades é o do DevTools, que só edita literais; vem com o painel próprio do Studio.
+
+Essas duas edições mexem no texto direto, sem a conferência pelo analisador que o projeto prevê para edições estruturais. Uma expressão digitada errada é gravada como veio; desfazer resolve. Está na dívida técnica, até o motor de edição existir.
+
 **As imagens do projeto aparecem no canvas. Há uma decisão esperando aprovação.** O conserto anunciado na entrada abaixo está feito: no canvas, o app acha as imagens e as fontes declaradas no `pubspec.yaml` do projeto. Um teste roda um app com uma imagem do projeto e outra que não existe, e confere que só a segunda falha.
 
 Para não manter duas cópias do mesmo mecanismo (o shell já fazia isso para as imagens do DevTools), criei um pacote pequeno, `studio_package_assets`, usado pelos dois lados. Isso acrescenta um pacote e duas ligações ao desenho que o padrão de código fixa, o que pela regra só vale com decisão registrada. Escrevi a ADR-0016 como proposta, e o código já segue o que ela diz, como aconteceu com a ADR-0015.

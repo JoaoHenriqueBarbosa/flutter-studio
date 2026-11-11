@@ -58,5 +58,16 @@ void main() {
         'MainAxisAlignment.end',
       );
     });
+
+    // Verifies: FR-PRP-003, FR-PRP-007
+    test('takes as enum literal only one of the known constants', () {
+      const literal = ArgumentLiteral(
+        'enum',
+        enumOptions: ['MainAxisAlignment.start', 'MainAxisAlignment.end'],
+      );
+
+      expect(literal.valueOf('MainAxisAlignment.end'), 'MainAxisAlignment.end');
+      expect(() => literal.valueOf('widget.alignment'), throwsFormatException);
+    });
   });
 }

@@ -60,9 +60,12 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `studio_design_agent`: `DesignAgent.start` instala o `PackageAssetBinding` do projeto e registra as fontes dele antes do `main` do projeto; o projeto host gerado espera por isso. Teste de sistema no `studio_core`: o host de design carrega um asset do projeto e acusa o que o projeto não tem (FR-HST-001). 151 testes no `studio_core`.
 - ADR-0016 e `docs/decisions/README.md` 0.5; `docs/engineering/coding-standard.md` 0.6 e `docs/architecture/arc42.md` 0.12, conforme a linha 0.21 da tabela do guia.
 - `studio_shell`: Ctrl+Z desfaz e Ctrl+Shift+Z ou Ctrl+Y refazem a última edição do projeto, com o foco em qualquer ponto da bancada que não seja um campo de texto (FR-DOC-005, NFR-INTR-004). 34 testes no pacote.
+- `studio_core`: `ArgumentSourceEdit` edita o texto de um argumento a partir do intervalo do valor; `EditPipeline.setArgument` passa a remover um argumento nomeado (`source` nulo) e a trocar por expressão não literal o valor de um argumento presente (FR-PRP-007, FR-PRP-008); `OutlineNode` e `SourceNode` levam `argumentRanges`, e `SourceNode.nodeAt` acha o nó de uma posição; `ArgumentLiteral` aceita `enumOptions`, e só as constantes do enum contam como literal. 163 testes, um deles de sistema: troca por expressão, remoção, leitura das propriedades e dois desfazer, com o arquivo de volta byte a byte.
+- `docs/interfaces/icd.md` 0.7 e `docs/architecture/arc42.md` 0.13, conforme a linha 0.22 da tabela do guia.
 
 ### Corrigido
 
+- `DocumentSync.ensureOpen` envia ao analysis server a versão atual do documento antes de qualquer pergunta. Uma leitura feita logo depois de uma edição era respondida sobre o texto anterior, porque o aviso da mudança saía depois da pergunta.
 - O app no host de design parava de responder quando um quadro era pedido durante o hot reload; o canvas congelava e os reloads seguintes não aconteciam. Visto na interface, reproduzido por teste e resolvido com a suspensão da captura.
 
 ### Alterado

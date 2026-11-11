@@ -5,11 +5,13 @@ import '../document/applied_edit.dart';
 import '../document/document_store.dart';
 import '../document/edit_failure.dart';
 import '../document/source_location.dart';
+import '../document/text_edit.dart';
 import '../document/workspace_edit.dart';
 import '../lsp/lsp_client.dart';
 import '../lsp/lsp_request_failed.dart';
 import '../lsp/widget_assist.dart';
 import 'argument_literal.dart';
+import 'argument_source_edit.dart';
 import 'edit_outcome.dart';
 import 'widget_reader.dart';
 
@@ -18,7 +20,8 @@ import 'widget_reader.dart';
 ///
 /// Pipes and Filters, with the stages run in a fixed order and one edit at
 /// a time, in arrival order. This version has the first two levels of
-/// ADR-0006, in which the analysis server produces the edit.
+/// ADR-0006, in which the analysis server produces the edit, and the edits
+/// of the text of one argument.
 final class EditPipeline {
   /// Creates the pipeline over [_documents], which reads the arguments of
   /// a target through [_reader].
@@ -32,8 +35,6 @@ final class EditPipeline {
     required this._server,
     required this._requestReload,
   });
-
-  static const _serverName = 'analysis-server';
 
   final DocumentStore _documents;
 
@@ -54,7 +55,13 @@ final class EditPipeline {
   var _isRunning = false;
 
   /// Gives the value written in [source] to the argument [name] of the
-  /// constructor called at [target].
+  /// constructor called at [target], or removes the argument when [source]
+  /// is `null`.
+  ///
+  /// A literal of the kind of the parameter is written by the analysis
+  /// server. Another expression takes the place of the one in the code, and
+  /// a removal takes the argument out of the code; both are edits of the
+  /// text of the argument.
   ///
   /// [documentVersion] is the version of the document that the caller read.
   /// Completes when the files are on disk. Throws an [EditFailure] and
@@ -65,24 +72,28 @@ final class EditPipeline {
     required String name,
     required String? source,
   }) => _enqueue(() async {
-    _documents.documentAt(target.filePath, version: documentVersion);
+    final document = _documents.documentAt(
+      target.filePath,
+      version: documentVersion,
+    );
+    final editor = ArgumentSourceEdit(document);
     if (source == null) {
-      throw const UnsupportedEdit('Removing an argument is not built yet.');
+      final range = await _valueRangeOf(target, name);
+      return range == null
+          ? const EditOutcome(edit: null, isReloadRequested: false)
+          : _applyTo(target, editor.removingArgument(range));
     }
-    final server = _server();
-    if (server == null) throw const ToolUnavailable(_serverName);
-    final newValue = await _valueFor(target, name, source);
-    try {
-      await server.editArgument(
-        target,
-        documentVersion: documentVersion,
-        name: name,
-        newValue: newValue,
+    final literal = await _literalValueFor(target, name, source);
+    if (literal != null) {
+      return _editThroughServer(target, documentVersion, name, literal.value);
+    }
+    final range = await _valueRangeOf(target, name);
+    if (range == null) {
+      throw UnsupportedEdit(
+        'Only a literal can be given to $name, which is not in the code.',
       );
-    } on LspRequestFailed catch (failure) {
-      throw UnsupportedEdit(failure.message);
     }
-    return _outcomeOf(_merge(_appliedByServer));
+    return _applyTo(target, editor.replacingValue(range, source));
   });
 
   /// Applies to the widget created at [target] the assist [assist] of the
@@ -151,22 +162,78 @@ final class EditPipeline {
     return result;
   }
 
+  /// Asks the server to give [newValue] to the argument [name], and
+  /// completes with what the server made the store apply.
+  Future<EditOutcome> _editThroughServer(
+    SourceLocation target,
+    int documentVersion,
+    String name,
+    Object? newValue,
+  ) async {
+    final server = _server();
+    if (server == null) throw const ToolUnavailable(WidgetReader.serverName);
+    try {
+      await server.editArgument(
+        target,
+        documentVersion: documentVersion,
+        name: name,
+        newValue: newValue,
+      );
+    } on LspRequestFailed catch (failure) {
+      throw UnsupportedEdit(failure.message);
+    }
+    return _outcomeOf(_merge(_appliedByServer));
+  }
+
+  /// Applies [edit] to the document of [target] and asks for the reload.
+  Future<EditOutcome> _applyTo(SourceLocation target, TextEdit edit) async =>
+      _outcomeOf(
+        await _documents.apply(
+          WorkspaceEdit([
+            (filePath: target.filePath, edits: [edit]),
+          ]),
+        ),
+      );
+
+  /// Completes with where the value of the argument [name] of the widget
+  /// created at [target] is in the code, or with `null` when the code gives
+  /// no such argument.
+  Future<DocumentRange?> _valueRangeOf(
+    SourceLocation target,
+    String name,
+  ) async {
+    final tree = await _reader.sourceTree(target.filePath);
+    for (final root in tree.roots) {
+      final node = root.nodeAt(target.position);
+      if (node != null) return node.argumentRanges[name];
+    }
+    throw const UnsupportedEdit('No widget is created at the position.');
+  }
+
   /// Completes with the value that the server takes for [source] as the
-  /// argument [name] of the constructor at [target].
-  Future<Object?> _valueFor(
+  /// argument [name] of the constructor at [target], inside a record, or
+  /// with `null` when [source] is not a literal that the server can write.
+  ///
+  /// The record tells a literal `null` apart from no literal at all.
+  Future<({Object? value})?> _literalValueFor(
     SourceLocation target,
     String name,
     String source,
   ) async {
     final arguments = await _reader.arguments(target);
     final argument = arguments.where((each) => each.name == name).firstOrNull;
-    if (argument == null || !argument.isEditable) {
-      throw UnsupportedEdit('The argument $name is not editable.');
+    if (argument == null) {
+      throw UnsupportedEdit('The widget has no argument $name.');
     }
+    if (!argument.isEditable) return null;
     try {
-      return ArgumentLiteral(argument.kind).valueOf(source);
-    } on FormatException catch (exception) {
-      throw UnsupportedEdit(exception.message);
+      final literal = ArgumentLiteral(
+        argument.kind,
+        enumOptions: argument.options,
+      );
+      return (value: literal.valueOf(source));
+    } on FormatException {
+      return null;
     }
   }
 

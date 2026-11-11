@@ -112,5 +112,6 @@ Fontes técnicas verificadas para esta baseline:
 | 0.19 | 11/11/2026 | Pacote `studio_design_agent`, com as extensões `hello` e `scene`. Interfaces 0.6: contrato 0.4.0, chave `x-agent` e forma JSON provisória do espelho de cena (IF-06). |
 | 0.20 | 11/11/2026 | Projeto host gerado e seleção por clique no canvas, com contorno (FR-HST-001, FR-CNV-006, FR-INS-003). Arquitetura 0.11: limites do canvas e do projeto host na dívida técnica. |
 | 0.21 | 11/11/2026 | ADR-0016, proposta: pacote `studio_package_assets`, usado pelo shell e pelo agente de design. Padrão de código 0.6: seções 6.1 e 6.3. Arquitetura 0.12: bloco novo na seção 5.1 e dívida técnica do projeto host atualizada. |
+| 0.22 | 11/11/2026 | `setProperty` remove argumento e aceita expressão não literal (FR-PRP-007, FR-PRP-008). Interfaces 0.7: alcance de `setProperty`. Arquitetura 0.13: a edição de texto de argumento no shell entra na dívida técnica. |
 
 Esta tabela registra as mudanças de conteúdo da baseline. O detalhe técnico de cada mudança fica em `CHANGELOG.md`, e o relato para quem aprova, em `JOURNAL.md`, os dois na raiz do repositório.

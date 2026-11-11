@@ -186,6 +186,58 @@ void main() {
       expect(File(mainPath).readAsStringSync(), sampleAppSource);
     }, timeout: const Timeout(Duration(minutes: 2)));
 
+    // Verifies: FR-PRP-007, FR-PRP-008, FR-DOC-006
+    test('edits the text of an argument through the service', () async {
+      await session.start();
+      final uri = '${Uri.file(mainPath)}';
+      WidgetRef column(int documentVersion) => WidgetRef(
+        uri: uri,
+        position: const Position(line: 11, character: 14),
+        documentVersion: documentVersion,
+      );
+
+      await session.service.setProperty(
+        target: column(1),
+        name: 'mainAxisAlignment',
+        value: const Expression(source: 'MainAxisAlignment.values.first'),
+      );
+
+      expect(
+        File(mainPath).readAsStringSync(),
+        sampleAppSource.replaceFirst(
+          'MainAxisAlignment.center',
+          'MainAxisAlignment.values.first',
+        ),
+      );
+
+      final removed = await session.service.setProperty(
+        target: column(2),
+        name: 'mainAxisAlignment',
+        value: null,
+      );
+
+      expect(removed.applied, isTrue);
+      expect(
+        File(mainPath).readAsStringSync(),
+        sampleAppSource.replaceFirst(
+          '          mainAxisAlignment: MainAxisAlignment.center,\n',
+          '',
+        ),
+      );
+      final properties = await session.service.getProperties(target: column(3));
+      expect(
+        properties
+            .firstWhere((property) => property.name == 'mainAxisAlignment')
+            .isSet,
+        isFalse,
+      );
+
+      await session.service.undo();
+      await session.service.undo();
+
+      expect(File(mainPath).readAsStringSync(), sampleAppSource);
+    }, timeout: const Timeout(Duration(minutes: 2)));
+
     // Verifies: FR-INS-002, IR-004
     test('derives the tree of widgets from the source of a file', () async {
       await session.start();

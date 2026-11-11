@@ -408,12 +408,12 @@ void main() {
       await expectLater(
         service.setProperty(
           target: reference(),
-          name: 'style',
+          name: 'missing',
           value: const Expression(source: 'null'),
         ),
         throwsFault(
           StudioErrorCode.unsupportedTarget,
-          'The argument style is not editable.',
+          'The widget has no argument missing.',
         ),
       );
     });
