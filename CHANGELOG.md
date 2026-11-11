@@ -52,6 +52,7 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - Contrato 0.4.0 em `studio_protocol`: chave `x-agent` com as extensões `hello` e `scene` do agente de design, e os tipos `AgentInfo`, `Scene` e `SceneElement`; o gerador emite o enum `StudioAgentExtension`. O pacote passa a aceitar Dart 3.10, o do Flutter mais antigo da janela (NFR-FLEX-001).
 - Pacote `studio/packages/studio_design_agent` 0.1.0 (IF-06): `DesignAgent` registra as extensões de serviço dentro do app; `SceneCollector` percorre a árvore de elementos e devolve, de cada widget criado sob as raízes do projeto, o local de criação e o retângulo na superfície. Depende só do Flutter e do `studio_protocol`. 5 testes de widget.
 - `docs/interfaces/icd.md` 0.6, conforme a linha 0.19 da tabela do guia.
+- `studio_core`: `DesignHostProject` gera o projeto host em `.dart_tool/studio/host/` do projeto do usuário, com dependência por caminho para o projeto e para o agente e um `main` que inicia o `DesignAgent` e chama o `main` do projeto, e resolve os pacotes com `flutter pub get --offline` (FR-HST-001, ADR-0008). `ProjectSession` aceita `studioPackagesPath` e, com ele, executa o host de design pelo projeto host. `Frame` e `FrameTransport` passam a levar o espelho de cena (`Scene`), que o `ScreenshotFrameTransport` lê de `ext.studio.agent.scene`. 147 testes; o de sistema confere que a cena traz só os widgets do projeto, nas mesmas posições da árvore de fonte.
 
 ### Corrigido
 
@@ -59,6 +60,7 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 
 ### Alterado
 
+- `studio_core`: `AppRun.start` recebe o SDK e o diretório do projeto a executar; `FrameTransport.capture` devolve `CapturedFrame`.
 - `WorkbenchController.runApp` recebe o `RunTarget`.
 - `studio_core`: `ProjectSession.startApp`, `AppRun.start` e `DapClient.launch` recebem o alvo de execução no lugar do identificador de dispositivo.
 - `studio_core`: `ArgumentReader` passa a `WidgetReader`, com `arguments` e `assists`.

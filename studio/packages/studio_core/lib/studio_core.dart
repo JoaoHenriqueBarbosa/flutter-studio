@@ -21,6 +21,7 @@ export 'src/edit/argument_literal.dart';
 export 'src/edit/edit_outcome.dart';
 export 'src/edit/edit_pipeline.dart';
 export 'src/edit/widget_reader.dart';
+export 'src/host/design_host_project.dart';
 export 'src/lsp/document_sync.dart';
 export 'src/lsp/editable_argument.dart';
 export 'src/lsp/file_outline.dart';

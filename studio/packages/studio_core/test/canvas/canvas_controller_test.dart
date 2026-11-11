@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:studio_core/studio_core.dart';
+import 'package:studio_protocol/studio_protocol.dart' show Scene;
 
 import '../support/fake_frame_transport.dart';
 
@@ -94,6 +95,22 @@ void main() {
       expect(result, capturesBefore);
       await canvas.refresh();
       expect(transport.captureCount, capturesBefore + 1);
+    });
+
+    // Verifies: FR-CNV-006
+    test('publishes a frame when only the scene changes', () async {
+      await canvas.attach(transport);
+      transport.scene = const Scene(
+        width: 800,
+        height: 600,
+        devicePixelRatio: 3,
+        elements: [],
+      );
+
+      await canvas.refresh();
+
+      expect(canvas.frame.value?.id, 2);
+      expect(canvas.frame.value?.scene, transport.scene);
     });
   });
 }

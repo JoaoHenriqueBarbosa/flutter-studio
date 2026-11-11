@@ -15,7 +15,7 @@ final class _OneFrameTransport implements FrameTransport {
   final Uint8List _image;
 
   @override
-  Future<Uint8List?> capture() async => _image;
+  Future<CapturedFrame?> capture() async => (pngBytes: _image, scene: null);
 
   @override
   Future<void> close() async {}

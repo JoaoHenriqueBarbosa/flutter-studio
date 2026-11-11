@@ -9,7 +9,8 @@ import 'frame_transport.dart';
 /// (FR-CNV-001).
 ///
 /// While a transport is attached, the controller asks it for a frame at a
-/// fixed interval and publishes the frame when the image has changed.
+/// fixed interval and publishes the frame when the image or the scene has
+/// changed.
 final class CanvasController {
   /// Creates a controller that looks for a new frame every [interval].
   CanvasController({this.interval = const Duration(milliseconds: 500)});
@@ -99,12 +100,18 @@ final class CanvasController {
   }
 
   Future<void> _captureFrom(FrameTransport transport) async {
-    final pngBytes = await transport.capture();
+    final captured = await transport.capture();
     final last = _frame.value;
-    if (pngBytes != null &&
-        identical(transport, _transport) &&
-        !listEquals(pngBytes, last?.pngBytes)) {
-      _frame.value = Frame(id: (last?.id ?? 0) + 1, pngBytes: pngBytes);
-    }
+    if (captured == null || !identical(transport, _transport)) return;
+    final isSameImage = listEquals(captured.pngBytes, last?.pngBytes);
+    if (isSameImage && captured.scene == last?.scene) return;
+    _frame.value = Frame(
+      id: (last?.id ?? 0) + 1,
+      // Keeps the list that the widgets already decoded.
+      pngBytes: isSameImage
+          ? last?.pngBytes ?? captured.pngBytes
+          : captured.pngBytes,
+      scene: captured.scene,
+    );
   }
 }

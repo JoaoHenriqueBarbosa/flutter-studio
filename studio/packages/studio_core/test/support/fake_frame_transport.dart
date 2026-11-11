@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:studio_core/studio_core.dart';
+import 'package:studio_protocol/studio_protocol.dart' show Scene;
 
 /// A [FrameTransport] that answers with the image that the test sets.
 final class FakeFrameTransport implements FrameTransport {
@@ -13,10 +14,14 @@ final class FakeFrameTransport implements FrameTransport {
   /// Whether [close] was called.
   var isClosed = false;
 
+  /// The scene of the next capture.
+  Scene? scene;
+
   @override
-  Future<Uint8List?> capture() async {
+  Future<CapturedFrame?> capture() async {
     captureCount++;
-    return image;
+    final image = this.image;
+    return image == null ? null : (pngBytes: image, scene: scene);
   }
 
   @override

@@ -210,12 +210,19 @@ void main() {
       );
     }, timeout: const Timeout(Duration(minutes: 2)));
 
-    // Verifies: FR-CNV-001, FR-CNV-008, FR-HST-002, FR-RUN-001, FR-DOC-002
+    // Verifies: FR-CNV-001, FR-CNV-006, FR-CNV-008, FR-HST-001, FR-HST-002,
+    // FR-RUN-001, FR-DOC-002, IR-004
     test('runs the app on the design host and shows its frames', () async {
+      await session.close();
+      session = ProjectSession(
+        session.project,
+        studioPackagesPath: Directory.current.parent.path,
+      );
       await session.start();
       const pngSignature = [0x89, 0x50, 0x4E, 0x47];
       Future<Frame> nextFrame({required int after}) async {
-        while ((session.canvas.frame.value?.id ?? 0) <= after) {
+        while ((session.canvas.frame.value?.id ?? 0) <= after ||
+            session.canvas.frame.value?.scene == null) {
           await Future<void>.delayed(const Duration(milliseconds: 100));
         }
         return session.canvas.frame.value ?? (throw StateError('No frame.'));
@@ -226,6 +233,26 @@ void main() {
 
       expect(first.pngBytes.take(pngSignature.length), pngSignature);
       expect(session.canvas.isLive.value, isTrue);
+      // The scene has the widgets of the project, and only them, at the
+      // locations where the source tree has them.
+      final scene = first.scene ?? (throw StateError('No scene.'));
+      expect(
+        scene.elements.every((it) => it.uri == '${Uri.file(mainPath)}'),
+        isTrue,
+      );
+      expect(scene.elements.map((it) => it.position), [
+        const Position(line: 2, character: 28),
+        const Position(line: 9, character: 17),
+        const Position(line: 10, character: 12),
+        const Position(line: 11, character: 14),
+        const Position(line: 13, character: 21),
+      ]);
+      expect((scene.width, scene.height), (800, 600));
+      expect(
+        File(path.join(session.project.rootPath, 'pubspec.yaml'))
+            .readAsStringSync(),
+        isNot(contains('studio_design')),
+      );
 
       final result = await session.service.setProperty(
         target: WidgetRef(

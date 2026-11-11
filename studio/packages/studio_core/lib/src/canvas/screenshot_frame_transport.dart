@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:studio_protocol/studio_protocol.dart';
 import 'package:vm_service/vm_service.dart';
 import 'package:vm_service/vm_service_io.dart';
 
@@ -22,6 +22,9 @@ final class ScreenshotFrameTransport implements FrameTransport {
 
   final VmService _service;
 
+  /// The isolate of the app that answers for the agent, once it is known.
+  String? _isolateId;
+
   /// Connects to the VM Service of the app at [vmServiceUri], the address
   /// that the debug adapter reports.
   static Future<ScreenshotFrameTransport> connect(Uri vmServiceUri) async {
@@ -38,15 +41,40 @@ final class ScreenshotFrameTransport implements FrameTransport {
   }
 
   @override
-  Future<Uint8List?> capture() async {
+  Future<CapturedFrame?> capture() async {
     try {
       final response = await _service.callMethod(_screenshotMethod);
       return switch (response.json?[_imageKey]) {
-        final String image => base64Decode(image),
+        final String image => (
+          pngBytes: base64Decode(image),
+          scene: await _readScene(),
+        ),
         _ => null,
       };
     } on RPCError {
       // The app ended, or has no frame to show yet.
+      return null;
+    }
+  }
+
+  /// Completes with the scene mirror that the design agent gives, or with
+  /// `null` when the app has no agent.
+  Future<Scene?> _readScene() async {
+    try {
+      final isolateId = _isolateId ??=
+          (await _service.getVM()).isolates?.firstOrNull?.id;
+      if (isolateId == null) return null;
+      final response = await _service.callServiceExtension(
+        StudioAgentExtension.scene.method,
+        isolateId: isolateId,
+      );
+      return Scene.fromJson(response.json);
+    } on RPCError {
+      // No agent in this app, or the isolate was replaced by a restart:
+      // the next capture looks for the isolate again.
+      _isolateId = null;
+      return null;
+    } on FormatException {
       return null;
     }
   }

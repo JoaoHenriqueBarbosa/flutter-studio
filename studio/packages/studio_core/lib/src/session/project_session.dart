@@ -13,6 +13,7 @@ import '../document/project_file_watcher.dart';
 import '../dtd/dtd_connection.dart';
 import '../edit/edit_pipeline.dart';
 import '../edit/widget_reader.dart';
+import '../host/design_host_project.dart';
 import '../lsp/document_sync.dart';
 import '../lsp/lsp_client.dart';
 import '../project/flutter_project.dart';
@@ -32,9 +33,20 @@ final class ProjectSession {
   ///
   /// The frames of the app go to [canvas], or to a canvas of the session
   /// when none is given.
-  ProjectSession(this.project, {CanvasController? canvas})
-    : documents = DocumentStore(project.rootPath),
-      canvas = canvas ?? CanvasController();
+  ///
+  /// [studioPackagesPath] is the directory with the sources of the design
+  /// agent. With it, the design host runs the app through a generated host
+  /// project that starts the agent (ADR-0008); without it, the app runs as
+  /// it is, and the canvas shows frames with no scene.
+  ProjectSession(
+    this.project, {
+    CanvasController? canvas,
+    String? studioPackagesPath,
+  }) : documents = DocumentStore(project.rootPath),
+       canvas = canvas ?? CanvasController(),
+       _designHost = studioPackagesPath == null
+           ? null
+           : DesignHostProject(project, studioPackagesPath);
 
   /// The project of the session.
   final FlutterProject project;
@@ -60,6 +72,8 @@ final class ProjectSession {
 
   /// The frames of the running app (FR-CNV-001).
   final CanvasController canvas;
+
+  final DesignHostProject? _designHost;
 
   /// The source trees of the files open in the analysis server
   /// (FR-INS-002).
@@ -132,7 +146,11 @@ final class ProjectSession {
   /// app from the moment it starts until the run ends.
   Future<AppRun> startApp({required RunTarget target}) async {
     await stopApp();
-    final run = await AppRun.start(project, target: target);
+    final run = await AppRun.start(
+      project.sdk,
+      rootPath: await _rootPathFor(target),
+      target: target,
+    );
     _appRun.value = run;
     unawaited(_showOnCanvas(run));
     unawaited(
@@ -143,6 +161,18 @@ final class ProjectSession {
       }),
     );
     return run;
+  }
+
+  /// Returns the directory of the Flutter project to run on [target]: the
+  /// generated host project on the design host, when the session has the
+  /// sources of the agent, and the project of the user otherwise.
+  Future<String> _rootPathFor(RunTarget target) async {
+    final designHost = _designHost;
+    if (designHost == null || target != const RunTarget.designHost()) {
+      return project.rootPath;
+    }
+    await designHost.generate();
+    return designHost.rootPath;
   }
 
   /// Restarts the running app with the code on disk, losing its state.
