@@ -106,6 +106,10 @@ class StudioLocalizationsEn extends StudioLocalizations {
   String get canvasStale => 'The app is not running. This is its last frame.';
 
   @override
+  String get canvasNotTracked =>
+      'This app was built without the tracking of widget creation. Selecting on the canvas is off for this run.';
+
+  @override
   String get propertiesTitle => 'Properties';
 
   @override

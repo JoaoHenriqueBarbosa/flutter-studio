@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:studio_package_assets/studio_package_assets.dart';
 import 'package:studio_protocol/studio_protocol.dart';
 
@@ -43,7 +44,11 @@ final class DesignAgent {
     final collector = SceneCollector(binding, projectRootUris);
     _register(
       StudioAgentExtension.hello,
-      () => const AgentInfo(protocolVersion: protocolVersion).toJson(),
+      () => AgentInfo(
+        protocolVersion: protocolVersion,
+        isWidgetCreationTracked: WidgetInspectorService.instance
+            .isWidgetCreationTracked(),
+      ).toJson(),
     );
     _register(StudioAgentExtension.scene, () => collector.collect().toJson());
   }

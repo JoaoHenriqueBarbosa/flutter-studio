@@ -108,6 +108,10 @@ class StudioLocalizationsPt extends StudioLocalizations {
       'O app não está em execução. Este é o último quadro.';
 
   @override
+  String get canvasNotTracked =>
+      'Este app foi compilado sem o rastreamento de criação de widgets. A seleção no canvas fica desligada nesta execução.';
+
+  @override
   String get propertiesTitle => 'Propriedades';
 
   @override

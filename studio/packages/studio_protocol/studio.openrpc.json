@@ -2,7 +2,7 @@
   "openrpc": "1.4.0",
   "info": {
     "title": "Studio",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "description": "Operations of Studio: reading, selecting and editing the widgets of the open project."
   },
   "x-binding": {
@@ -30,7 +30,7 @@
           "result": {
             "name": "versionInfo",
             "value": {
-              "version": "0.4.0"
+              "version": "0.5.0"
             }
           }
         }
@@ -1303,12 +1303,17 @@
         "description": "What the design agent tells about itself.",
         "type": "object",
         "required": [
-          "protocolVersion"
+          "protocolVersion",
+          "isWidgetCreationTracked"
         ],
         "properties": {
           "protocolVersion": {
             "description": "Version of the protocol between the shell and the agent.",
             "type": "integer"
+          },
+          "isWidgetCreationTracked": {
+            "description": "Whether the app was built with the tracking of widget creation, without which no widget can be linked to its source.",
+            "type": "boolean"
           }
         }
       },

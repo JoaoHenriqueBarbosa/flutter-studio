@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:studio_core/studio_core.dart';
-import 'package:studio_protocol/studio_protocol.dart' show Scene;
+import 'package:studio_protocol/studio_protocol.dart' show AgentInfo, Scene;
 
 void main() {
   group('ScreenshotFrameTransport', () {
@@ -81,6 +81,33 @@ void main() {
       addTearDown(transport.close);
 
       expect((await transport.capture())?.scene, scene);
+    });
+
+    // Verifies: FR-INS-007
+    test('reads what the design agent tells about itself', () async {
+      const info = AgentInfo(protocolVersion: 1, isWidgetCreationTracked: true);
+      answers = {
+        'getVM': {
+          'type': 'VM',
+          'isolates': [
+            {'type': '@Isolate', 'id': 'isolates/1', 'name': 'main'},
+          ],
+        },
+        'ext.studio.agent.hello': info.toJson(),
+      };
+      final transport = await connect();
+      addTearDown(transport.close);
+
+      expect(await transport.readAgentInfo(), info);
+    });
+
+    // Verifies: FR-INS-007
+    test('finds no agent in an app that runs without it', () async {
+      answers = const {};
+      final transport = await connect();
+      addTearDown(transport.close);
+
+      expect(await transport.readAgentInfo(), isNull);
     });
 
     // Verifies: FR-CNV-001

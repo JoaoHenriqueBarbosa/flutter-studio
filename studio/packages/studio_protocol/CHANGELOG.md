@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+- Contract 0.5.0: `AgentInfo.isWidgetCreationTracked`.
+
 ## 0.4.0
 
 - Contract 0.4.0: the extensions of the design agent, `hello` and `scene`,

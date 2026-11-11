@@ -54,27 +54,44 @@ final class ScreenshotFrameTransport implements FrameTransport {
     } on RPCError {
       // The app ended, or has no frame to show yet.
       return null;
+    } on FormatException {
+      // The agent answered in a form that this Studio does not read.
+      return null;
     }
+  }
+
+  @override
+  Future<AgentInfo?> readAgentInfo() async {
+    final answer = await _askAgent(StudioAgentExtension.hello);
+    return answer == null ? null : AgentInfo.fromJson(answer);
   }
 
   /// Completes with the scene mirror that the design agent gives, or with
   /// `null` when the app has no agent.
   Future<Scene?> _readScene() async {
+    final answer = await _askAgent(StudioAgentExtension.scene);
+    return answer == null ? null : Scene.fromJson(answer);
+  }
+
+  /// Calls [extension] of the design agent and completes with its answer
+  /// in JSON form, or with `null` when the app has no agent or the answer
+  /// does not come.
+  Future<Map<String, Object?>?> _askAgent(
+    StudioAgentExtension extension,
+  ) async {
     try {
       final isolateId = _isolateId ??=
           (await _service.getVM()).isolates?.firstOrNull?.id;
       if (isolateId == null) return null;
       final response = await _service.callServiceExtension(
-        StudioAgentExtension.scene.method,
+        extension.method,
         isolateId: isolateId,
       );
-      return Scene.fromJson(response.json);
+      return response.json;
     } on RPCError {
       // No agent in this app, or the isolate was replaced by a restart:
-      // the next capture looks for the isolate again.
+      // the next call looks for the isolate again.
       _isolateId = null;
-      return null;
-    } on FormatException {
       return null;
     }
   }

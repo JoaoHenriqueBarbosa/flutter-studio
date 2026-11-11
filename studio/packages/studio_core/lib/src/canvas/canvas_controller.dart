@@ -22,6 +22,8 @@ final class CanvasController {
 
   final _isLive = ValueNotifier(false);
 
+  final _isSelectable = ValueNotifier(false);
+
   FrameTransport? _transport;
 
   Timer? _timer;
@@ -40,6 +42,12 @@ final class CanvasController {
   /// Whether [frame] comes from an app that is running now.
   ValueListenable<bool> get isLive => _isLive;
 
+  /// Whether a widget can be selected on the frames of the running app:
+  /// the app has the design agent and was built with the tracking of
+  /// widget creation. Without the tracking no widget is linked to its
+  /// source, and visual editing is off for the session (FR-INS-007).
+  ValueListenable<bool> get isSelectable => _isSelectable;
+
   /// Starts showing the frames that [transport] brings, in place of the
   /// transport that was attached before.
   Future<void> attach(FrameTransport transport) async {
@@ -48,6 +56,10 @@ final class CanvasController {
     _isLive.value = true;
     _timer = Timer.periodic(interval, (_) => unawaited(refresh()));
     await refresh();
+    final agent = await transport.readAgentInfo();
+    if (identical(transport, _transport)) {
+      _isSelectable.value = agent?.isWidgetCreationTracked ?? false;
+    }
   }
 
   /// Stops asking for frames and closes the transport. The last frame
@@ -58,6 +70,7 @@ final class CanvasController {
     final transport = _transport;
     _transport = null;
     _isLive.value = false;
+    _isSelectable.value = false;
     await transport?.close();
   }
 
@@ -97,6 +110,7 @@ final class CanvasController {
     await detach();
     _frame.dispose();
     _isLive.dispose();
+    _isSelectable.dispose();
   }
 
   Future<void> _captureFrom(FrameTransport transport) async {

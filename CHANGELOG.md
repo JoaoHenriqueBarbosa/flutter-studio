@@ -62,6 +62,8 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `studio_shell`: Ctrl+Z desfaz e Ctrl+Shift+Z ou Ctrl+Y refazem a última edição do projeto, com o foco em qualquer ponto da bancada que não seja um campo de texto (FR-DOC-005, NFR-INTR-004). 34 testes no pacote.
 - `studio_core`: `ArgumentSourceEdit` edita o texto de um argumento a partir do intervalo do valor; `EditPipeline.setArgument` passa a remover um argumento nomeado (`source` nulo) e a trocar por expressão não literal o valor de um argumento presente (FR-PRP-007, FR-PRP-008); `OutlineNode` e `SourceNode` levam `argumentRanges`, e `SourceNode.nodeAt` acha o nó de uma posição; `ArgumentLiteral` aceita `enumOptions`, e só as constantes do enum contam como literal. 163 testes, um deles de sistema: troca por expressão, remoção, leitura das propriedades e dois desfazer, com o arquivo de volta byte a byte.
 - `docs/interfaces/icd.md` 0.7 e `docs/architecture/arc42.md` 0.13, conforme a linha 0.22 da tabela do guia.
+- FR-INS-007: contrato 0.5.0 com `AgentInfo.isWidgetCreationTracked`; o `DesignAgent` responde com o que o framework informa; `FrameTransport.readAgentInfo` e `CanvasController.isSelectable` no `studio_core`; o `CanvasPane` avisa e não seleciona quando o app tem o agente e não rastreia a criação de widgets. 166 testes no `studio_core`, 35 no `studio_shell`, 6 no `studio_design_agent`.
+- `docs/interfaces/icd.md` 0.8, conforme a linha 0.23 da tabela do guia.
 
 ### Corrigido
 

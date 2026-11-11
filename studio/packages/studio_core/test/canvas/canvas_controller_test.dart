@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:studio_core/studio_core.dart';
-import 'package:studio_protocol/studio_protocol.dart' show Scene;
+import 'package:studio_protocol/studio_protocol.dart' show AgentInfo, Scene;
 
 import '../support/fake_frame_transport.dart';
 
@@ -111,6 +111,29 @@ void main() {
 
       expect(canvas.frame.value?.id, 2);
       expect(canvas.frame.value?.scene, transport.scene);
+    });
+
+    // Verifies: FR-INS-007
+    test('lets select only in an app that tracks widget creation', () async {
+      await canvas.attach(transport);
+      expect(canvas.isSelectable.value, isFalse);
+
+      transport.agentInfo = const AgentInfo(
+        protocolVersion: 1,
+        isWidgetCreationTracked: false,
+      );
+      await canvas.attach(transport);
+      expect(canvas.isSelectable.value, isFalse);
+
+      transport.agentInfo = const AgentInfo(
+        protocolVersion: 1,
+        isWidgetCreationTracked: true,
+      );
+      await canvas.attach(transport);
+      expect(canvas.isSelectable.value, isTrue);
+
+      await canvas.detach();
+      expect(canvas.isSelectable.value, isFalse);
     });
   });
 }

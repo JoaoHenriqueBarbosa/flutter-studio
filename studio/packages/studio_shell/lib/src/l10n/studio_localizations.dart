@@ -266,6 +266,12 @@ abstract class StudioLocalizations {
   /// **'The app is not running. This is its last frame.'**
   String get canvasStale;
 
+  /// Notice over the canvas when the running app cannot link its widgets to the source.
+  ///
+  /// In en, this message translates to:
+  /// **'This app was built without the tracking of widget creation. Selecting on the canvas is off for this run.'**
+  String get canvasNotTracked;
+
   /// Title of the pane that edits the arguments of the selected widget.
   ///
   /// In en, this message translates to:

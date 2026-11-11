@@ -71,6 +71,8 @@
   "@canvasPlaceholder": {"description": "Text shown in the canvas before the app has drawn anything."},
   "canvasStale": "The app is not running. This is its last frame.",
   "@canvasStale": {"description": "Notice over the canvas when the frame on screen is of an app that ended."},
+  "canvasNotTracked": "This app was built without the tracking of widget creation. Selecting on the canvas is off for this run.",
+  "@canvasNotTracked": {"description": "Notice over the canvas when the running app cannot link its widgets to the source."},
   "propertiesTitle": "Properties",
   "@propertiesTitle": {"description": "Title of the pane that edits the arguments of the selected widget."},
   "outputTitle": "Output",

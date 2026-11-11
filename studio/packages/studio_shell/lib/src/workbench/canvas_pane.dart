@@ -39,19 +39,30 @@ final class CanvasPane extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiValueListenableBuilder(
-      listenables: [canvas.frame, canvas.isLive, selection.selection],
+      listenables: [
+        canvas.frame,
+        canvas.isLive,
+        canvas.isSelectable,
+        selection.selection,
+      ],
       builder: (context, _, _) {
         final frame = canvas.frame.value;
         if (frame == null) return Center(child: Text(texts.canvasPlaceholder));
         final isLive = canvas.isLive.value;
+        // An app with the agent that cannot be selected on is one built
+        // without the tracking of widget creation (FR-INS-007).
+        final isUntracked =
+            isLive && frame.scene != null && !canvas.isSelectable.value;
         return Padding(
           padding: const EdgeInsets.all(denseSpacing),
           child: Column(
             children: [
-              if (!isLive)
+              if (!isLive || isUntracked)
                 Padding(
                   padding: const EdgeInsets.only(bottom: denseSpacing),
-                  child: Text(texts.canvasStale),
+                  child: Text(
+                    isLive ? texts.canvasNotTracked : texts.canvasStale,
+                  ),
                 ),
               Expanded(
                 child: Opacity(
@@ -74,7 +85,7 @@ final class CanvasPane extends StatelessWidget {
       gaplessPlayback: true,
     );
     final scene = frame.scene;
-    if (scene == null) return image;
+    if (scene == null || !canvas.isSelectable.value) return image;
     final geometry = SceneGeometry(scene);
     final selected = selection.selection.value;
     return Center(

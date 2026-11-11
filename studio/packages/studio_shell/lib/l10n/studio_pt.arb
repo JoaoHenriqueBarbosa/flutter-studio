@@ -28,6 +28,7 @@
   "inspectorTitle": "Inspetor",
   "canvasPlaceholder": "Execute o app para vê-lo aqui.",
   "canvasStale": "O app não está em execução. Este é o último quadro.",
+  "canvasNotTracked": "Este app foi compilado sem o rastreamento de criação de widgets. A seleção no canvas fica desligada nesta execução.",
   "propertiesTitle": "Propriedades",
   "outputTitle": "Saída"
 }

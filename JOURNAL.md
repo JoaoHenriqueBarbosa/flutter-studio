@@ -4,7 +4,9 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
-**Dois erros meus, achados e corrigidos.** O patch 4 no código herdado, de ontem para hoje no histórico, quebrava a compilação de dois testes do DevTools: eu tinha rodado só os 61 testes vizinhos da mudança, e não a suíte inteira. Corrigido, e a suíte herdada inteira passa de novo (1683 testes). E um commit levou junto cinco arquivos temporários que a suíte herdada cria enquanto roda; saíram no commit seguinte, mas continuam no histórico do commit `78522f971`. Passei a rodar a suíte herdada inteira depois de todo patch e a não commitar enquanto ela roda.
+**O canvas avisa quando não dá para ligar o que se vê ao código.** Se o app for compilado sem o rastreamento de criação de widgets, o agente informa, o canvas mostra um aviso e deixa de selecionar por clique nessa execução (FR-INS-007). Nas execuções normais em modo debug o rastreamento vem ligado, e nada muda.
+
+**Dois erros meus, achados e corrigidos.** O patch 4 no código herdado quebrava a compilação de dois testes do DevTools: eu tinha rodado só os 61 testes vizinhos da mudança, e não a suíte inteira. Corrigido, e a suíte herdada inteira passa de novo (1683 testes). E um commit levou junto cinco arquivos temporários que a suíte herdada cria enquanto roda; saíram no commit seguinte, mas continuam no histórico do commit `78522f971`. Passei a rodar a suíte herdada inteira depois de todo patch e a não commitar enquanto ela roda.
 
 **A API já remove argumento e aceita expressão; a interface ainda não.** Pelo serviço `Studio`, `setProperty` agora tira um argumento do código (o widget volta ao valor padrão) e troca o valor de um argumento por qualquer expressão, não só por um literal. Um agente conectado ao daemon já consegue usar. Na interface não há como pedir isso ainda: o painel de propriedades é o do DevTools, que só edita literais; vem com o painel próprio do Studio.
 
