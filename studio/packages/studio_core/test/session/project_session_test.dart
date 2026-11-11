@@ -151,5 +151,45 @@ void main() {
       },
       timeout: const Timeout(Duration(minutes: 2)),
     );
+
+    // Verifies: FR-DOC-003, FR-API-004
+    test('follows a file that another program saves', () async {
+      await session.start();
+      final daemonUri = session.daemonUri.value;
+      if (daemonUri == null) fail('The daemon did not start.');
+      final tool = await DartToolingDaemon.connect(daemonUri);
+      addTearDown(tool.close);
+      await tool.streamListen(StudioContract.streamName);
+      final externalChange = tool
+          .onEvent(StudioContract.streamName)
+          .where((event) => event.kind == StudioEvent.documentChanged.name)
+          .map((event) => DocumentChanged.fromJson(event.data))
+          .firstWhere((change) => change.origin == ChangeOrigin.external);
+      final column = WidgetRef(
+        uri: '${Uri.file(mainPath)}',
+        position: const Position(line: 11, character: 14),
+        documentVersion: 1,
+      );
+      await session.service.select(target: column);
+
+      File(mainPath)
+          .writeAsStringSync(sampleAppSource.replaceFirst('.center', '.start'));
+
+      expect((await externalChange).documentVersion, 2);
+      final properties = await session.service.getProperties(
+        target: WidgetRef(
+          uri: column.uri,
+          position: column.position,
+          documentVersion: 2,
+        ),
+      );
+      expect(
+        properties
+            .firstWhere((property) => property.name == 'mainAxisAlignment')
+            .expression
+            ?.source,
+        'MainAxisAlignment.start',
+      );
+    }, timeout: const Timeout(Duration(minutes: 2)));
   });
 }

@@ -39,6 +39,10 @@ final class DocumentStore {
 
   final _redoSteps = <_Step>[];
 
+  /// Files that this store is writing right now. What the disk shows for
+  /// them in the meantime is the work of the store, not of another process.
+  final _pathsBeingWritten = <String>{};
+
   final _canUndo = ValueNotifier(false);
 
   final _canRedo = ValueNotifier(false);
@@ -55,6 +59,10 @@ final class DocumentStore {
   /// Whether the file at [filePath] is under the root of the project.
   bool contains(String filePath) =>
       path.isWithin(_rootPath, path.normalize(filePath));
+
+  /// Whether the store has read the file at [filePath].
+  bool isLoaded(String filePath) =>
+      _documents.containsKey(path.normalize(filePath));
 
   /// Returns the current document of the file at [filePath], reading it from
   /// disk the first time.
@@ -76,6 +84,7 @@ final class DocumentStore {
   TextDocument documentAt(String filePath, {required int version}) {
     if (!contains(filePath)) throw EditOutsideProject(filePath);
     try {
+      refresh(filePath);
       final current = document(filePath);
       if (current.version != version) throw StaleDocument(current.version);
       return current;
@@ -84,19 +93,52 @@ final class DocumentStore {
     }
   }
 
+  /// Reads again the file at [filePath] when another process has changed
+  /// it on disk, and returns whether it had (FR-DOC-003).
+  ///
+  /// Only a file that the store has read before is compared. The new text
+  /// becomes the next version of the document. The edits made so far can no
+  /// longer be undone, because they were made over a text that is gone.
+  bool refresh(String filePath) {
+    final normalized = path.normalize(filePath);
+    final current = _documents[normalized];
+    if (current == null || _pathsBeingWritten.contains(normalized)) {
+      return false;
+    }
+    final textOnDisk = _readOrNull(normalized);
+    if (textOnDisk == current.text) return false;
+    _undoSteps.clear();
+    _redoSteps.clear();
+    _announceHistory();
+    if (textOnDisk == null) {
+      _documents.remove(normalized);
+      return true;
+    }
+    final next = current.replacing(textOnDisk);
+    _documents[normalized] = next;
+    _changes.add((
+      filePath: normalized,
+      document: next,
+      origin: ChangeOrigin.external,
+    ));
+    return true;
+  }
+
   /// Applies [edit], writes every changed file to disk and makes the edit
   /// the next one to undo.
   ///
   /// The new text of all files is computed before anything is written, so
   /// an invalid edit changes no file. Completes when all files are on disk.
   /// Throws [EditOutsideProject] when [edit] names a file outside the
-  /// project, and [InvalidEdit] for invalid ranges.
+  /// project, [InvalidEdit] for invalid ranges, and [StaleDocument] when
+  /// another process changed one of the files since the store read it.
   Future<AppliedEdit> apply(WorkspaceEdit edit) async {
     final updated = <String, TextDocument>{};
     final changes = <FileEdit>[];
     for (final fileEdit in edit.fileEdits) {
       final filePath = path.normalize(fileEdit.filePath);
       if (!contains(filePath)) throw EditOutsideProject(filePath);
+      if (refresh(filePath)) throw StaleDocument(document(filePath).version);
       final current = updated[filePath] ?? document(filePath);
       updated[filePath] = current.applying(fileEdit.edits);
       changes.add((filePath: filePath, edits: fileEdit.edits));
@@ -138,7 +180,8 @@ final class DocumentStore {
     List<_Step> destination,
   ) async {
     final step = source.lastOrNull;
-    if (step == null) return null;
+    // A file changed by another process empties the history in [refresh].
+    if (step == null || step.keys.where(refresh).isNotEmpty) return null;
     final updated = <String, TextDocument>{};
     final changes = <FileEdit>[];
     for (final MapEntry(key: filePath, value: texts) in step.entries) {
@@ -158,13 +201,26 @@ final class DocumentStore {
 
   Future<void> _commit(Map<String, TextDocument> updated) async {
     for (final MapEntry(key: filePath, value: document) in updated.entries) {
-      await _writeAtomically(filePath, document.text);
+      _pathsBeingWritten.add(filePath);
+      try {
+        await _writeAtomically(filePath, document.text);
+      } finally {
+        _pathsBeingWritten.remove(filePath);
+      }
       _documents[filePath] = document;
       _changes.add((
         filePath: filePath,
         document: document,
         origin: ChangeOrigin.studio,
       ));
+    }
+  }
+
+  String? _readOrNull(String filePath) {
+    try {
+      return File(filePath).readAsStringSync();
+    } on FileSystemException {
+      return null;
     }
   }
 

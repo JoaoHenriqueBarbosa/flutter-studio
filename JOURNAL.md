@@ -4,6 +4,8 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**O Studio convive com outro editor aberto no mesmo projeto.** Quando outro programa salva um arquivo Dart do projeto, o Studio relê o arquivo, avisa o analysis server e recarrega o app, sem ninguém pedir (FR-DOC-003). Uma edição do Studio calculada sobre o texto antigo é recusada, em vez de apagar o que o outro programa gravou. O preço: depois de uma alteração feita por fora, as edições anteriores do Studio não podem mais ser desfeitas pelo Studio, porque o texto sobre o qual foram feitas não existe mais. Conferido em Linux, por teste com o SDK real.
+
 **O Studio agora edita pela própria API, e tem desfazer.** O desvio temporário de FR-API-002, aprovado para o primeiro entregável, está encerrado: quando se troca um valor no painel Propriedades, o painel chama o serviço `Studio`, e é o serviço que confere a versão do documento, pede a edição ao analysis server, grava e manda recarregar. A mesma porta fica aberta a qualquer programa que se conecte ao daemon da sessão, que é por onde um agente vai editar.
 
 O que entrou, em cinco commits:

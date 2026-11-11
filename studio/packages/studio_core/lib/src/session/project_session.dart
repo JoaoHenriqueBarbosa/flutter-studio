@@ -6,6 +6,7 @@ import 'package:studio_protocol/studio_protocol.dart';
 import '../dap/dap_request_failed.dart';
 import '../document/document_change.dart';
 import '../document/document_store.dart';
+import '../document/project_file_watcher.dart';
 import '../dtd/dtd_connection.dart';
 import '../edit/argument_reader.dart';
 import '../edit/edit_pipeline.dart';
@@ -45,6 +46,8 @@ final class ProjectSession {
 
   late final _sync = DocumentSync(documents);
 
+  late final _watcher = ProjectFileWatcher(project.rootPath, documents);
+
   late final _reader = ArgumentReader(_sync, () => _server);
 
   late final _pipeline = EditPipeline(
@@ -68,6 +71,8 @@ final class ProjectSession {
 
   StreamSubscription<DocumentChange>? _changes;
 
+  StreamSubscription<Set<String>>? _externalChanges;
+
   /// Address of the Dart Tooling Daemon, or `null` while it is not running.
   ValueListenable<Uri?> get daemonUri => _daemonUri;
 
@@ -87,6 +92,10 @@ final class ProjectSession {
   Future<void> start() async {
     selection.selection.addListener(_handleSelection);
     _changes = documents.changes.listen(_handleChange);
+    // A file saved by another program is reloaded into the running app as
+    // an edit of Studio is (FR-DOC-003).
+    _externalChanges = _watcher.externalChanges.listen((_) => _requestReload());
+    _watcher.start();
     await _supervisor.start(
       ToolingDaemonChild(project.sdk, _handleDaemonConnected),
     );
@@ -127,6 +136,8 @@ final class ProjectSession {
     await stopApp();
     selection.selection.removeListener(_handleSelection);
     await _changes?.cancel();
+    await _externalChanges?.cancel();
+    await _watcher.dispose();
     await _sync.dispose();
     await _server?.close();
     await _daemon?.close();

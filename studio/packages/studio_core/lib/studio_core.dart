@@ -7,6 +7,7 @@ export 'src/document/applied_edit.dart';
 export 'src/document/document_change.dart';
 export 'src/document/document_store.dart';
 export 'src/document/edit_failure.dart';
+export 'src/document/project_file_watcher.dart';
 export 'src/document/source_location.dart';
 export 'src/document/text_document.dart';
 export 'src/document/text_edit.dart';

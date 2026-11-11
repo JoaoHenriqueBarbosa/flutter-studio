@@ -202,6 +202,68 @@ void main() {
       );
     });
 
+    // Verifies: FR-DOC-003
+    test('reads again a file that another process changed', () async {
+      await store.apply(replaceCenter(filePath));
+      final changed = expectLater(
+        store.changes,
+        emits(
+          isA<DocumentChange>()
+              .having((change) => change.document.version, 'version', 3)
+              .having(
+                (change) => change.origin,
+                'origin',
+                ChangeOrigin.external,
+              ),
+        ),
+      );
+      File(filePath).writeAsStringSync('alignment: .start,\n');
+
+      expect(store.refresh(filePath), isTrue);
+      expect(store.refresh(filePath), isFalse);
+
+      await changed;
+      expect(store.document(filePath).text, 'alignment: .start,\n');
+      expect(store.canUndo.value, isFalse);
+    });
+
+    // Verifies: FR-DOC-003
+    test('refuses an edit made for a text that changed on disk', () async {
+      store.document(filePath);
+      File(filePath).writeAsStringSync('// By another editor.\n');
+
+      await expectLater(
+        store.apply(replaceCenter(filePath)),
+        throwsA(
+          isA<StaleDocument>().having(
+            (failure) => failure.currentVersion,
+            'currentVersion',
+            2,
+          ),
+        ),
+      );
+
+      expect(File(filePath).readAsStringSync(), '// By another editor.\n');
+    });
+
+    // Verifies: FR-DOC-003, FR-DOC-006
+    test('does not undo over a change of another process', () async {
+      await store.apply(replaceCenter(filePath));
+      File(filePath).writeAsStringSync('// By another editor.\n');
+
+      expect(await store.undo(), isNull);
+      expect(File(filePath).readAsStringSync(), '// By another editor.\n');
+    });
+
+    // Verifies: FR-DOC-003
+    test('forgets a file that another process removed', () {
+      store.document(filePath);
+      File(filePath).deleteSync();
+
+      expect(store.refresh(filePath), isTrue);
+      expect(store.isLoaded(filePath), isFalse);
+    });
+
     // Verifies: IR-005
     test('refuses to edit a file outside the project', () async {
       final outside = Directory.systemTemp.createTempSync('outside_project');
