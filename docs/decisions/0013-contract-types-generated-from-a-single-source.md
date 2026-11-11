@@ -1,6 +1,6 @@
 # ADR-0013: Tipos de contrato gerados de uma única fonte
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

@@ -1,6 +1,6 @@
 # ADR-0009: Escada de hosts de design
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

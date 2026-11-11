@@ -1,6 +1,6 @@
 # ADR-0004: Funil único de edição no `DocumentStore`
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

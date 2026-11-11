@@ -1,6 +1,6 @@
 # ADR-0003: Shell desktop cliente de LSP, DAP e DTD
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

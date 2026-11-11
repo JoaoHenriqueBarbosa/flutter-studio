@@ -1,6 +1,6 @@
 # ADR-0005: Junção das árvores pelo local de criação
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

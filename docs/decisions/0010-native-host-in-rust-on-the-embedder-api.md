@@ -1,6 +1,6 @@
 # ADR-0010: Host nativo em Rust sobre a API de embedder
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

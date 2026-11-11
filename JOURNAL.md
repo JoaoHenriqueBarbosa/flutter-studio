@@ -4,6 +4,8 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**ADR-0003 a ADR-0013 estão aceitas.** O dono do produto informou que aprovou todas ao publicar a baseline em `docs/`, e que só faltou trocar o estado. Trocado. A ADR-0015, escrita depois, continua como proposta.
+
 **Decidido: o produto é construído com o Flutter estável.** O dono do produto aceitou a alternativa levantada mais abaixo, e ela virou a ADR-0014. Os pacotes do Studio ficam em `studio/`, com dependências resolvidas pelo estável 3.47.9, e o código herdado continua sendo testado com a pré-versão que o upstream usa. O preço é ter dois SDKs no repositório e conferir, a cada rebase, se o código herdado ainda compila com o estável.
 
 **O shell do Studio existe e abre em Linux.** O pacote `studio_shell` é um app próprio que sobe o DevTools herdado por dentro. Nesta máquina a janela abre inteira, com ícones e fontes iguais aos do DevTools rodando sozinho. Por enquanto ele não faz nada além disso: é a casca onde o resto do F0 entra. Para funcionar foi preciso um patch pequeno no código herdado (o patch 2 do `PATCHES.md`) e um mecanismo no shell que acha as imagens e as fontes do DevTools.

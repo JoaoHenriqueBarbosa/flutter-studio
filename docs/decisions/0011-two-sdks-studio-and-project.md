@@ -1,6 +1,6 @@
 # ADR-0011: Dois SDKs: o do Studio e o do projeto
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

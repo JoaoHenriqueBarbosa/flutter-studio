@@ -1,6 +1,6 @@
 # ADR-0012: API primeiro: a interface é cliente do serviço `Studio`
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

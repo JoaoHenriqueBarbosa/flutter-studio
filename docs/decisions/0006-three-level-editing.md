@@ -1,6 +1,6 @@
 # ADR-0006: Edição em três níveis
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

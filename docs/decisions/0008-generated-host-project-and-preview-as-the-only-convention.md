@@ -1,6 +1,6 @@
 # ADR-0008: Projeto host gerado e `@Preview` como única convenção
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

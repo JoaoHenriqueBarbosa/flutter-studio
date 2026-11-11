@@ -96,5 +96,6 @@ Fontes técnicas verificadas para esta baseline:
 | 0.3 | 11/11/2026 | Documentos movidos para os caminhos do mapa; decisões divididas em um arquivo por ADR, com índice; `CHANGELOG.md` e `JOURNAL.md` na raiz. |
 | 0.4 | 11/11/2026 | Início do F0: situação das premissas no apêndice A do SRS, com o resultado parcial de ASM-06; RSK-11, sobre regressões no SDK candidato do upstream. |
 | 0.5 | 11/11/2026 | ADR-0014, aceita: produto construído com o Flutter estável, em workspace próprio. ADR-0015, proposta: assets e fontes do código herdado resolvidos no binding do shell. Padrão de código 0.2: seções 2.2, 5.2 e 6.3. Arquitetura 0.4: RSK-11 e local dos pacotes `studio_*`. |
+| 0.6 | 11/11/2026 | ADR-0003 a ADR-0013 passam a aceitas: o dono do produto as aprovou ao publicar a baseline, e o estado não tinha sido atualizado. |
 
 Esta tabela registra as mudanças de conteúdo da baseline. O detalhe técnico de cada mudança fica em `CHANGELOG.md`, e o relato para quem aprova, em `JOURNAL.md`, os dois na raiz do repositório.

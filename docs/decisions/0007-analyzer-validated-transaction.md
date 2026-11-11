@@ -1,6 +1,6 @@
 # ADR-0007: Transação validada pelo analisador
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 
