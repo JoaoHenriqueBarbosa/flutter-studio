@@ -20,3 +20,8 @@ when a generated file is stale, which is step QG-09 of the gate.
 ```sh
 dart run studio_tool:st generate
 ```
+
+`st trace` prints which test files verify each requirement of the SRS, from the
+`// Verifies:` comments. With `--check` it fails when a test cites an
+identifier that no document defines, or when a requirement of the increment in
+`current-increment.txt` has no test, which is step QG-12 of the gate.

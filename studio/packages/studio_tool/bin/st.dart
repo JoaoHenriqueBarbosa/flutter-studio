@@ -16,7 +16,8 @@ Future<void> main(List<String> arguments) async {
   );
   final runner = CommandRunner<int>('st', 'Development tool of Studio.')
     ..addCommand(VerifyCommand(gate, stdout))
-    ..addCommand(GenerateCommand(processRunner, stdout));
+    ..addCommand(GenerateCommand(processRunner, stdout))
+    ..addCommand(TraceCommand(stdout));
   try {
     exitCode = await runner.run(arguments) ?? exitCode;
   } on UsageException catch (exception) {

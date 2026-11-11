@@ -42,6 +42,8 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `docs/requirements/srs.md` 0.4 e `docs/interfaces/icd.md` 0.5, conforme a linha 0.14 da tabela do guia.
 - `studio_shell`: `SourceTreePane` e `SourceTreeController`, o painel Estrutura com a árvore de fonte do arquivo da seleção, ou de `lib/main.dart` enquanto nada está selecionado (FR-INS-002); clicar num nó seleciona pelo serviço `Studio`. A bancada passa a três colunas: Estrutura, inspetor herdado e Propriedades. Textos `structureTitle` e `structurePlaceholder`. 35 testes no pacote.
 - `docs/architecture/arc42.md` 0.9, conforme a linha 0.15 da tabela do guia.
+- `studio_tool`: comando `st trace`, com `--check`, e o passo QG-12 do portão (`TraceStep`). Em `lib/src/trace/`: `IdentifierCatalog` lê dos documentos os identificadores definidos e, do SRS, o incremento e o método de cada requisito; `TestTrace` lê os comentários `// Verifies:`; `TraceReport` aponta identificador inexistente e requisito com método T, até o incremento de `studio/current-increment.txt` (hoje `F1`), sem teste. 64 testes no pacote. O passo reprova hoje por doze requisitos sem teste: FR-INS-001, FR-INS-004, FR-INS-007, FR-PRP-007, FR-PRP-008, FR-PRP-011, FR-STR-007, NFR-REL-001, NFR-MNT-004, NFR-MNT-007, NFR-COMP-001 e NFR-COMP-002.
+- `docs/engineering/coding-standard.md` 0.5, conforme a linha 0.16 da tabela do guia.
 
 ### Alterado
 

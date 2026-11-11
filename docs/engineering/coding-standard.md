@@ -1,6 +1,6 @@
 # Padrão de código
 
-Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.4, rascunho para revisão.
+Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.5, rascunho para revisão.
 
 ## 1. Propósito, alcance e precedência
 
@@ -256,6 +256,7 @@ Cada conhecimento do sistema tem uma única fonte com autoridade, e todo o resto
 | Grafia de termos e abreviações | `cspell.config.yaml` | Identificadores, comentários e documentos | QG-07 |
 | Passos do portão | Comando `st verify` | Hook local e CI | O CI só chama `st verify` |
 | Rastreabilidade entre requisito e teste | Comentários `// Verifies:` nos testes | Matriz por requisito (Verificação, 5) | `st trace` |
+| Incremento em construção | `studio/current-increment.txt` | Requisitos que `st trace --check` exige com teste | Lido pelo `st` |
 
 ### 5.3 Código gerado
 

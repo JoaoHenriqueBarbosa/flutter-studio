@@ -1,4 +1,5 @@
 import '../generate/generated_code_step.dart';
+import '../trace/trace_step.dart';
 import 'gate_step.dart';
 import 'process_runner.dart';
 import 'process_step.dart';
@@ -48,6 +49,7 @@ final class GateStepCatalog {
       ],
     ),
     GeneratedCodeStep(_runner),
+    const TraceStep(),
     ProcessStep(
       _runner,
       id: 'QG-04',
