@@ -1,6 +1,6 @@
 # Registro de decisões de arquitetura
 
-Decisões do Studio no formato MADR 4.0. Cada decisão é um arquivo nesta pasta. Versão 0.4, rascunho para revisão.
+Decisões do Studio no formato MADR 4.0. Cada decisão é um arquivo nesta pasta. Versão 0.5, rascunho para revisão.
 
 ## Índice
 
@@ -21,5 +21,6 @@ Decisões do Studio no formato MADR 4.0. Cada decisão é um arquivo nesta pasta
 | [ADR-0013](0013-contract-types-generated-from-a-single-source.md) | Tipos de contrato gerados de uma única fonte | Aceita | 11/11/2026 |
 | [ADR-0014](0014-product-built-with-stable-flutter.md) | Produto construído com o Flutter estável | Aceita | 11/11/2026 |
 | [ADR-0015](0015-inherited-assets-resolved-in-the-shell-binding.md) | Assets e fontes do código herdado resolvidos no binding do shell | Aceita | 11/11/2026 |
+| [ADR-0016](0016-package-assets-resolved-by-a-shared-package.md) | Assets de pacote dependente resolvidos por um pacote compartilhado | Proposta | 11/11/2026 |
 
 Estados usados: proposta, aceita, rejeitada, substituída por outra ADR. Uma ADR aceita não é editada: uma decisão nova a substitui. Em todas, quem decide é o dono do produto.

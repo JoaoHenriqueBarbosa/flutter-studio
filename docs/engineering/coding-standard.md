@@ -1,6 +1,6 @@
 # Padrão de código
 
-Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.5, rascunho para revisão.
+Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.6, rascunho para revisão.
 
 ## 1. Propósito, alcance e precedência
 
@@ -290,7 +290,8 @@ O grafo tem um sentido só: o shell conhece todos, e o `studio_protocol` não co
 | --- | --- |
 | `studio_protocol` | Só o SDK do Dart; nenhum pacote de terceiros |
 | `studio_source_engine` | Sem Flutter (NFR-MNT-003); de terceiros, só o `analyzer` e seus pacotes de apoio |
-| `studio_design_agent` | Só o SDK do Flutter e o `studio_protocol`; roda dentro do app do usuário |
+| `studio_design_agent` | Só o SDK do Flutter, o `studio_protocol` e o `studio_package_assets`; roda dentro do app do usuário |
+| `studio_package_assets` | Só o SDK do Flutter; importado pelo `studio_shell` e pelo `studio_design_agent` (ADR-0016, proposta) |
 | `studio_core` | Do Flutter, importa só `foundation`; não importa `devtools_app` |
 | `studio_shell` | Único pacote com widgets próprios e único que importa `devtools_app` |
 | `studio_design_host` | Recebe o contrato como módulo gerado; não reimplementa lógica do Dart |
@@ -334,7 +335,7 @@ O grafo tem um sentido só: o shell conhece todos, e o `studio_protocol` não co
 | O histórico local precisa de armazenamento separado da lógica | Repository | Histórico em `.dart_tool/studio/history/` |
 | Canal de plataforma sem implementação não pode derrubar o app | Null Object | `studio_design_agent` |
 | Recurso do sistema precisa de liberação garantida | RAII em Rust, `dispose` em Dart | Memória compartilhada, texturas, processos |
-| O código herdado pede assets por chaves que só valem no aplicativo raiz | Decorator | `InheritedAssetMessenger` (ADR-0015) |
+| O código de um pacote pede assets por chaves que só valem quando ele é o aplicativo raiz | Decorator | `PackageAssetMessenger` (ADR-0015; ADR-0016, proposta) |
 
 O vocabulário é o de Gamma et al. para Command, Strategy, Adapter, Facade, Mediator, Observer, State, Visitor, Builder e Decorator. Gateway e Repository vêm de Fowler; Pipes and Filters, de Buschmann et al.; Null Object, de Woolf.
 

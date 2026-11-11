@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dtd/dtd.dart';
@@ -272,6 +273,62 @@ void main() {
 
       expect(session.canvas.isLive.value, isFalse);
       expect(session.canvas.frame.value, isNotNull);
+    }, timeout: const Timeout(Duration(minutes: 3)));
+
+    // Verifies: FR-HST-001
+    test('the design host finds the assets of the project', () async {
+      final rootPath = session.project.rootPath;
+      File(path.join(rootPath, 'assets', 'dot.png'))
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(
+          base64Decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhf'
+            'DwAChwGA60e6kgAAAABJRU5ErkJggg==',
+          ),
+        );
+      final manifest = File(path.join(rootPath, 'pubspec.yaml'));
+      manifest.writeAsStringSync(
+        manifest.readAsStringSync().replaceFirst(
+          '  uses-material-design: true',
+          '  uses-material-design: true\n  assets:\n    - assets/dot.png',
+        ),
+      );
+      File(mainPath).writeAsStringSync('''
+import 'package:flutter/widgets.dart';
+
+void main() => runApp(
+  Directionality(
+    textDirection: TextDirection.ltr,
+    child: Column(
+      children: [
+        Image.asset('assets/dot.png', width: 40, height: 40),
+        Image.asset('assets/missing.png', width: 40, height: 40),
+      ],
+    ),
+  ),
+);
+''');
+      await session.close();
+      session = ProjectSession(
+        session.project,
+        studioPackagesPath: Directory.current.parent.path,
+      );
+      await session.start();
+
+      final run = await session.startApp(target: const RunTarget.designHost());
+      final output = StringBuffer();
+      final subscription = run.output.listen(output.write);
+      addTearDown(subscription.cancel);
+      while (session.canvas.frame.value?.scene?.elements.length != 4) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      }
+      // Time for the image to be loaded, or to fail, after the first frame.
+      await Future<void>.delayed(const Duration(seconds: 2));
+
+      // The image that the project does not have fails as in any app, which
+      // shows that a failure would be seen here.
+      expect('$output', contains('Unable to load asset: "assets/missing.png"'));
+      expect('$output', isNot(contains('"assets/dot.png"')));
     }, timeout: const Timeout(Duration(minutes: 3)));
 
     // Verifies: FR-CNV-001, NFR-REL-001

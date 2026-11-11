@@ -2,14 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
-/// Registers the fonts of an inherited package under their original names.
+/// Registers the fonts of a package that the application depends on under
+/// their original names.
 ///
 /// A font family declared by a dependency is bundled as
-/// `packages/<package>/<family>`. The inherited code refers to the bare
-/// family name, so each family is loaded again under that name (ADR-0015).
-class InheritedFontRegistry {
+/// `packages/<package>/<family>`. The code of the package refers to the
+/// bare family name, so each family is loaded again under that name
+/// (ADR-0015).
+final class PackageFontRegistry {
   /// Creates a registry that reads the fonts of [packageName] from [_bundle].
-  InheritedFontRegistry(this._bundle, {required String packageName})
+  PackageFontRegistry(this._bundle, {required String packageName})
     : _familyPrefix = 'packages/$packageName/';
 
   /// Key of the font manifest that the Flutter tool writes to every bundle.
@@ -44,12 +46,10 @@ class InheritedFontRegistry {
     if (manifest is! List<Object?>) return const {};
     return {
       for (final entry in manifest)
-        if (entry
-            case {
-              'family': final String family,
-              'fonts': final List<Object?> fonts,
-            }
-            when family.startsWith(_familyPrefix))
+        if (entry case {
+          'family': final String family,
+          'fonts': final List<Object?> fonts,
+        } when family.startsWith(_familyPrefix))
           family.substring(_familyPrefix.length): [
             for (final font in fonts)
               if (font case {'asset': final String asset}) asset,

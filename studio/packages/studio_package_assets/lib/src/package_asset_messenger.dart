@@ -4,16 +4,17 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
 
-/// A [BinaryMessenger] that resolves asset requests of an inherited package.
+/// A [BinaryMessenger] that resolves the asset requests of a package that
+/// the application depends on.
 ///
 /// Applies the Decorator pattern to the messenger of the binding. A request
 /// on the asset channel that finds no asset is repeated with the key the
 /// asset has when its package is a dependency: `packages/<package>/<key>`.
 /// Every other message passes through unchanged.
-class InheritedAssetMessenger implements BinaryMessenger {
+final class PackageAssetMessenger implements BinaryMessenger {
   /// Creates a messenger that forwards to [_delegate] and retries missed
   /// asset requests inside the package named [packageName].
-  InheritedAssetMessenger(this._delegate, {required String packageName})
+  PackageAssetMessenger(this._delegate, {required String packageName})
     : _keyPrefix = utf8.encode('packages/$packageName/');
 
   /// Channel on which the framework asks the engine for an asset.

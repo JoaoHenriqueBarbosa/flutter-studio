@@ -3,12 +3,8 @@ library;
 
 export 'src/inherited/inherited_dev_tools.dart';
 export 'src/inherited/studio_editor_client.dart';
-export 'src/inherited_assets/inherited_asset_messenger.dart';
-export 'src/inherited_assets/inherited_font_registry.dart';
-export 'src/inherited_assets/message_channel_asset_bundle.dart';
 export 'src/l10n/studio_localizations.dart';
 export 'src/studio_packages_locator.dart';
-export 'src/studio_widgets_binding.dart';
 export 'src/workbench/app_run_status.dart';
 export 'src/workbench/canvas_pane.dart';
 export 'src/workbench/history_buttons.dart';

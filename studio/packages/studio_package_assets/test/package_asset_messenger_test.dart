@@ -3,14 +3,14 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:studio_shell/studio_shell.dart';
+import 'package:studio_package_assets/studio_package_assets.dart';
 
 void main() {
   // Verifies: NFR-FLEX-002
-  group('InheritedAssetMessenger', () {
+  group('PackageAssetMessenger', () {
     test('returns the asset found under the requested key', () async {
       final engine = _FakeEngineMessenger({'icons/app.png': 'root'});
-      final messenger = InheritedAssetMessenger(
+      final messenger = PackageAssetMessenger(
         engine,
         packageName: 'devtools_app',
       );
@@ -28,7 +28,7 @@ void main() {
       final engine = _FakeEngineMessenger({
         'packages/devtools_app/assets/dart_syntax.json': 'inherited',
       });
-      final messenger = InheritedAssetMessenger(
+      final messenger = PackageAssetMessenger(
         engine,
         packageName: 'devtools_app',
       );
@@ -47,7 +47,7 @@ void main() {
 
     test('answers null when the package has no such asset either', () async {
       final engine = _FakeEngineMessenger(const {});
-      final messenger = InheritedAssetMessenger(
+      final messenger = PackageAssetMessenger(
         engine,
         packageName: 'devtools_app',
       );
@@ -62,7 +62,7 @@ void main() {
 
     test('does not retry a message of another channel', () async {
       final engine = _FakeEngineMessenger(const {});
-      final messenger = InheritedAssetMessenger(
+      final messenger = PackageAssetMessenger(
         engine,
         packageName: 'devtools_app',
       );

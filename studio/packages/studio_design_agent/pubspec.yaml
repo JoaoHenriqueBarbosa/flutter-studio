@@ -12,6 +12,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  studio_package_assets:
   studio_protocol:
 
 dev_dependencies:

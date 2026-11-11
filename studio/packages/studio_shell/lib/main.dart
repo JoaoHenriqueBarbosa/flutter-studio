@@ -9,15 +9,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:studio_core/studio_core.dart';
+import 'package:studio_package_assets/studio_package_assets.dart';
 
 import 'src/inherited/inherited_dev_tools.dart';
-import 'src/inherited_assets/inherited_font_registry.dart';
 import 'src/l10n/studio_localizations.dart';
 import 'src/studio_packages_locator.dart';
-import 'src/studio_widgets_binding.dart';
 import 'src/workbench/studio_screen.dart';
 import 'src/workbench/workbench_controller.dart';
 import 'src/workbench/workbench_view.dart';
+
+/// Name of the inherited package, whose assets and fonts the shell resolves
+/// (ADR-0015).
+const _inheritedPackageName = 'devtools_app';
 
 /// Starts the shell on top of the inherited DevTools application.
 ///
@@ -35,7 +38,9 @@ void main(List<String> arguments) {
   late final InheritedDevTools devTools;
   late final WorkbenchController controller;
   runDevTools(
-    ensureBindingInitialized: StudioWidgetsBinding.ensureInitialized,
+    ensureBindingInitialized: () => PackageAssetBinding.ensureInitialized(
+      packageName: _inheritedPackageName,
+    ),
     screens: [
       DevToolsScreen<DevToolsScreenController>(
         StudioScreen(
@@ -49,9 +54,9 @@ void main(List<String> arguments) {
       ...defaultScreens(),
     ],
     onDevToolsInitialized: () async {
-      await InheritedFontRegistry(
+      await PackageFontRegistry(
         rootBundle,
-        packageName: inheritedPackageName,
+        packageName: _inheritedPackageName,
       ).registerAliases();
       devTools = InheritedDevTools(
         daemonManager: dtdManager,

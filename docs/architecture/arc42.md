@@ -1,6 +1,6 @@
 # Documentação de arquitetura
 
-Arquitetura do Studio no modelo arc42, com diagramas C4. Versão 0.11, rascunho para revisão.
+Arquitetura do Studio no modelo arc42, com diagramas C4. Versão 0.12, rascunho para revisão.
 
 ## 1. Introdução e objetivos
 
@@ -98,6 +98,7 @@ O shell é o único processo com interface e o único que grava arquivos. Os dem
 | Agente de design | `studio_design_agent` | Dart e Flutter, SDK do projeto, dentro do app alvo | Captura quadros e espelho de cena; aplica modo e configuração; injeta entrada; responde por canais de plataforma sem implementação |
 | Host nativo (F5) | `studio_design_host` | Rust, API de embedder | Executa o projeto host no engine, compartilha a superfície com o shell e entrega a entrada |
 | Contratos | `studio_protocol` | Dart puro | Tipos e esquemas de IF-04, IF-06 e IF-08; documento OpenRPC |
+| Assets de pacote | `studio_package_assets` | Dart e Flutter, compilado com o SDK do Studio e com o do projeto | Faz o código de um pacote achar seus assets e suas fontes quando roda como dependência: o `devtools_app` no shell, o projeto do usuário no host de design (ADR-0015, ADR-0016) |
 | Ferramentas | `studio_tool` | Dart, SDK fixado | Comando `st`: portão de qualidade, geração de tipos, rastreabilidade e referência de API; fica fora do produto entregue |
 
 ### 5.2 Nível 2: dentro do shell
@@ -295,7 +296,7 @@ Dívida técnica assumida nesta baseline:
 - Extensões do DevTools e o visualizador Perfetto ficam indisponíveis no build desktop.
 - O primeiro transporte de quadros copia os pixels pela memória principal: o quadro é pedido ao engine pela chamada privada `_flutter.screenshot` do VM Service, em PNG, a cada meio segundo e depois de cada reload, e o espelho de cena vem em JSON pela extensão `ext.studio.agent.scene`, numa segunda chamada, de modo que quadro e cena podem ser de instantes diferentes (FR-CNV-006).
 - O canvas seleciona por clique e contorna a seleção, mas o app não recebe entrada nem tem as animações pausadas (FR-CNV-004, FR-CNV-005), e a superfície é o app inteiro a partir do `main`, não uma tela isolada (FR-CNV-003).
-- O projeto host ainda não reexpõe os assets e as fontes declarados no `pubspec.yaml` do projeto do usuário: um app que os usa aparece no canvas sem eles (ADR-0008). O host também supõe um `main` sem parâmetros em `lib/main.dart`.
+- O projeto host supõe um `main` sem parâmetros em `lib/main.dart`. Os assets do projeto são achados no host por um teste de sistema; as fontes declaradas no `pubspec.yaml` passam pelo mesmo mecanismo, mas só têm teste de unidade.
 - A captura de quadro é suspensa durante o hot reload e o hot restart: o engine do `flutter_tester` deixa de responder ao VM Service quando recebe o pedido de quadro enquanto o código é trocado. Um teste de sistema repete o caso.
 - O painel de propriedades herdado edita pelo serviço `Studio`, mas ainda lê os argumentos direto do analysis server, pelo daemon, e não por `getProperties`. Os botões de refactor do próprio painel ficam ocultos, porque ele os executaria como comando do servidor, por fora do serviço; as mesmas operações estão na barra de estrutura do shell, que chama o serviço.
 - A seleção ainda não é única entre todas as vistas (FR-INS-003): o que se seleciona no inspetor herdado aparece na árvore de fonte e nas propriedades, mas o que se seleciona na árvore de fonte não move a seleção do inspetor herdado, cujos nós não trazem o local de criação.

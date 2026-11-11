@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:studio_shell/studio_shell.dart';
+import 'package:studio_package_assets/studio_package_assets.dart';
 
 void main() {
   // Verifies: NFR-FLEX-002

@@ -15,8 +15,8 @@ final class DesignHostProject {
   /// Creates the host of [_project].
   ///
   /// [_studioPackagesPath] is the directory that holds the sources of
-  /// `studio_design_agent` and of `studio_protocol`, which the host
-  /// compiles with the SDK of the project.
+  /// `studio_design_agent` and of the packages it depends on, which the
+  /// host compiles with the SDK of the project.
   const DesignHostProject(this._project, this._studioPackagesPath);
 
   static const _manifestFileName = 'pubspec.yaml';
@@ -90,6 +90,8 @@ dependencies:
     path: ${path.join(_studioPackagesPath, 'studio_design_agent')}
 
 dependency_overrides:
+  studio_package_assets:
+    path: ${path.join(_studioPackagesPath, 'studio_package_assets')}
   studio_protocol:
     path: ${path.join(_studioPackagesPath, 'studio_protocol')}
 
@@ -105,8 +107,11 @@ flutter:
 import 'package:${_project.name}/main.dart' as project;
 import 'package:studio_design_agent/studio_design_agent.dart';
 
-void main() {
-  const DesignAgent(['${Uri.directory(_project.rootPath)}']).start();
+Future<void> main() async {
+  await const DesignAgent(
+    projectName: '${_project.name}',
+    projectRootUris: ['${Uri.directory(_project.rootPath)}'],
+  ).start();
   project.main();
 }
 ''';

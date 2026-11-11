@@ -4,6 +4,12 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**As imagens do projeto aparecem no canvas. Há uma decisão esperando aprovação.** O conserto anunciado na entrada abaixo está feito: no canvas, o app acha as imagens e as fontes declaradas no `pubspec.yaml` do projeto. Um teste roda um app com uma imagem do projeto e outra que não existe, e confere que só a segunda falha.
+
+Para não manter duas cópias do mesmo mecanismo (o shell já fazia isso para as imagens do DevTools), criei um pacote pequeno, `studio_package_assets`, usado pelos dois lados. Isso acrescenta um pacote e duas ligações ao desenho que o padrão de código fixa, o que pela regra só vale com decisão registrada. Escrevi a ADR-0016 como proposta, e o código já segue o que ela diz, como aconteceu com a ADR-0015.
+
+Depende do dono do produto: aprovar ou recusar a ADR-0016. Se for recusada, o caminho de volta é devolver as classes ao shell e copiar o mecanismo no agente.
+
 **Clicar no canvas seleciona o widget.** Com o app rodando no canvas, um clique sobre um texto, um botão ou qualquer widget escrito no projeto seleciona esse widget: ele ganha um contorno no canvas, fica marcado na Estrutura, e as Propriedades e a barra de estrutura passam a valer para ele. A partir daí o ciclo completo acontece numa janela só: clicar no que se vê, mudar no painel, ver mudar.
 
 Para isso entraram duas peças previstas no projeto: o agente de design, um trecho de código do Studio que roda dentro do app e informa onde está cada widget do projeto na tela; e o projeto host, gerado em `.dart_tool/studio/host/` do projeto aberto, que liga o agente ao app sem acrescentar nada ao `pubspec.yaml` nem aos fontes do usuário. Um teste com o SDK real confere que as posições informadas pelo agente são as mesmas da árvore de fonte.

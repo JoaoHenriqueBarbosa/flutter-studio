@@ -56,6 +56,9 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `studio_core`: `SceneGeometry`, que responde pela cena do quadro em tela qual widget do projeto está sob um ponto e quais elementos um local de criação gera.
 - `studio_shell`: no `CanvasPane`, um clique seleciona o widget do projeto sob o ponteiro e a seleção ganha contorno sobre o quadro (FR-INS-003, FR-CNV-006); `StudioPackagesLocator` acha os fontes do agente de design, pela variável `STUDIO_PACKAGES_PATH` ou subindo a partir do executável, e o `WorkbenchController` os repassa à sessão, que então executa pelo projeto host. 41 testes no pacote.
 - `docs/architecture/arc42.md` 0.11, conforme a linha 0.20 da tabela do guia.
+- Pacote `studio/packages/studio_package_assets` 0.1.0 (ADR-0016, proposta): `PackageAssetBinding`, `PackageAssetMessenger`, `PackageFontRegistry` e `MessageChannelAssetBundle`, vindos do `studio_shell` e desligados do nome do pacote herdado. 9 testes.
+- `studio_design_agent`: `DesignAgent.start` instala o `PackageAssetBinding` do projeto e registra as fontes dele antes do `main` do projeto; o projeto host gerado espera por isso. Teste de sistema no `studio_core`: o host de design carrega um asset do projeto e acusa o que o projeto não tem (FR-HST-001). 151 testes no `studio_core`.
+- ADR-0016 e `docs/decisions/README.md` 0.5; `docs/engineering/coding-standard.md` 0.6 e `docs/architecture/arc42.md` 0.12, conforme a linha 0.21 da tabela do guia.
 
 ### Corrigido
 
@@ -63,6 +66,7 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 
 ### Alterado
 
+- `studio_shell`: `StudioWidgetsBinding`, `InheritedAssetMessenger`, `InheritedFontRegistry` e `MessageChannelAssetBundle` saem do pacote; o shell usa os de `studio_package_assets`. 33 testes no pacote.
 - `studio_core`: `AppRun.start` recebe o SDK e o diretório do projeto a executar; `FrameTransport.capture` devolve `CapturedFrame`.
 - `WorkbenchController.runApp` recebe o `RunTarget`.
 - `studio_core`: `ProjectSession.startApp`, `AppRun.start` e `DapClient.launch` recebem o alvo de execução no lugar do identificador de dispositivo.

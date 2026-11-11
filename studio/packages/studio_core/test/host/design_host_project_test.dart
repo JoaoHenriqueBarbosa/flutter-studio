@@ -48,7 +48,10 @@ void main() {
           read(path.join('lib', 'main.dart')),
           allOf(
             contains("import 'package:sample_app/main.dart' as project;"),
-            contains("DesignAgent(['${Uri.directory(project.rootPath)}'])"),
+            contains("projectName: 'sample_app',"),
+            contains(
+              "projectRootUris: ['${Uri.directory(project.rootPath)}'],",
+            ),
             contains('project.main();'),
           ),
         );
