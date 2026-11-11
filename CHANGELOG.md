@@ -40,6 +40,8 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - Contrato 0.3.0 do serviço `Studio`: `getSourceTree` e o tipo `SourceNode` (FR-INS-002). 23 testes em `studio_protocol`.
 - `studio_core`: árvore de fonte a partir do Flutter Outline. `LspClient` pede `flutterOutline` na inicialização e expõe `outlines`, com `OutlineNode` e `FileOutline`; `SourceTreeBuilder` monta `SourceNode` com a posição no nome da classe, depois de `const` ou `new`, que é o local de criação que o framework registra (ADR-0005); `SourceTrees` guarda a árvore de cada arquivo aberto e `treeOf` espera o outline da versão atual; `WidgetReader.sourceTree`; `TextDocument.offsetAt` e `positionAt`. 129 testes, um deles de sistema, que confere a posição do `Column` na árvore de fonte contra a usada em execução.
 - `docs/requirements/srs.md` 0.4 e `docs/interfaces/icd.md` 0.5, conforme a linha 0.14 da tabela do guia.
+- `studio_shell`: `SourceTreePane` e `SourceTreeController`, o painel Estrutura com a árvore de fonte do arquivo da seleção, ou de `lib/main.dart` enquanto nada está selecionado (FR-INS-002); clicar num nó seleciona pelo serviço `Studio`. A bancada passa a três colunas: Estrutura, inspetor herdado e Propriedades. Textos `structureTitle` e `structurePlaceholder`. 35 testes no pacote.
+- `docs/architecture/arc42.md` 0.9, conforme a linha 0.15 da tabela do guia.
 
 ### Alterado
 

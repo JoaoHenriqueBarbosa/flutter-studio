@@ -14,6 +14,8 @@ export 'src/workbench/open_project_prompt.dart';
 export 'src/workbench/output_pane.dart';
 export 'src/workbench/project_workbench.dart';
 export 'src/workbench/run_toolbar.dart';
+export 'src/workbench/source_tree_controller.dart';
+export 'src/workbench/source_tree_pane.dart';
 export 'src/workbench/structure_controller.dart';
 export 'src/workbench/structure_toolbar.dart';
 export 'src/workbench/studio_screen.dart';

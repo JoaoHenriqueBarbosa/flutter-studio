@@ -86,6 +86,12 @@ class StudioLocalizationsPt extends StudioLocalizations {
       'Execute o app para ver a árvore de widgets.';
 
   @override
+  String get structureTitle => 'Estrutura';
+
+  @override
+  String get structurePlaceholder => 'Nenhum widget é criado neste arquivo.';
+
+  @override
   String get propertiesTitle => 'Propriedades';
 
   @override

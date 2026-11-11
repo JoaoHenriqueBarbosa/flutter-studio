@@ -224,6 +224,18 @@ abstract class StudioLocalizations {
   /// **'Run the app to see its widget tree.'**
   String get widgetTreePlaceholder;
 
+  /// Title of the pane with the tree of widgets derived from the source of a file.
+  ///
+  /// In en, this message translates to:
+  /// **'Structure'**
+  String get structureTitle;
+
+  /// Text shown in place of the source tree when the file creates no widget or the tree is not known yet.
+  ///
+  /// In en, this message translates to:
+  /// **'No widget is created in this file.'**
+  String get structurePlaceholder;
+
   /// Title of the pane that edits the arguments of the selected widget.
   ///
   /// In en, this message translates to:

@@ -21,6 +21,8 @@
   "swapWithChildAction": "Trocar com o filho",
   "startingApp": "Iniciando o app…",
   "widgetTreePlaceholder": "Execute o app para ver a árvore de widgets.",
+  "structureTitle": "Estrutura",
+  "structurePlaceholder": "Nenhum widget é criado neste arquivo.",
   "propertiesTitle": "Propriedades",
   "outputTitle": "Saída"
 }

@@ -4,6 +4,15 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**Dá para editar sem executar o app.** O Studio ganhou o painel Estrutura, à esquerda: a árvore de widgets tirada do código do arquivo, que existe com o app parado e mostra também o que não está na tela. Clicar num widget ali carrega as propriedades dele e acende a barra de estrutura; as edições gravam no arquivo e a árvore se refaz. Conferi em display virtual, sem iniciar o app: selecionar o `Column`, envolver com `SizedBox`, ver a árvore mudar, desfazer.
+
+A posição de cada widget na árvore de fonte é a mesma que o framework registra quando o app roda, o que é a base da ligação entre as duas árvores (ADR-0005); um teste com o SDK real confere isso para o `Column` do exemplo.
+
+Duas coisas que ficaram a meio caminho:
+
+- A seleção vai do inspetor do app para a Estrutura, mas não volta: selecionar na Estrutura não move a seleção no inspetor herdado. Está na dívida técnica.
+- A premissa ASM-03 se mostrou falsa: o analysis server não diz a que parâmetro do pai cada filho pertence (`child`, `body`, `appBar`). A árvore mostra os filhos sem o nome do slot. Como o SRS previa, os slots ficam para o motor de edição, no F3.
+
 **Dá para mexer na estrutura sem abrir o código.** Com um widget selecionado, o painel Propriedades ganhou uma barra: "Envolver com" (Center, Container, Padding, SizedBox, Column, Row e os builders; Expanded e Flexible quando o pai é uma linha ou coluna), mover para cima e para baixo entre os irmãos, trocar com o pai ou com o filho, e remover o widget mantendo os filhos. Cada botão só acende quando a operação vale para o widget selecionado. Tudo passa pelo serviço `Studio`, entra no desfazer e recarrega o app. Isso cobre a primeira metade do critério de saída do F1 ("alterar uma propriedade e envolver um widget sem abrir o código"); falta fazê-lo em dispositivo físico.
 
 Quem faz a edição é o analysis server, com as mesmas ações que os outros editores oferecem. A lista de widgets para envolver é a que ele conhece; envolver com um widget qualquer depende do motor de edição, do F3.

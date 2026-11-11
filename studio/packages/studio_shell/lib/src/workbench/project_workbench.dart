@@ -9,6 +9,7 @@ import '../l10n/studio_localizations.dart';
 import 'history_buttons.dart';
 import 'output_pane.dart';
 import 'run_toolbar.dart';
+import 'source_tree_pane.dart';
 import 'structure_toolbar.dart';
 import 'workbench_controller.dart';
 
@@ -28,9 +29,9 @@ final class ProjectWorkbench extends StatelessWidget {
   /// takes the rest.
   static const _editingFraction = 0.75;
 
-  /// Share of the width taken by the widget tree; the properties take the
-  /// rest.
-  static const _treeFraction = 0.65;
+  /// Shares of the width taken by the source tree, by the running widget
+  /// tree and by the properties.
+  static const _columnFractions = [0.2, 0.47, 0.33];
 
   /// Controller that runs the app.
   final WorkbenchController controller;
@@ -74,8 +75,12 @@ final class ProjectWorkbench extends StatelessWidget {
             children: [
               SplitPane(
                 axis: Axis.horizontal,
-                initialFractions: const [_treeFraction, 1 - _treeFraction],
-                children: [_widgetTree(), _properties()],
+                initialFractions: _columnFractions,
+                children: [
+                  SourceTreePane(session: session, texts: texts),
+                  _widgetTree(),
+                  _properties(),
+                ],
               ),
               OutputPane(title: texts.outputTitle, output: controller.output),
             ],
