@@ -4,6 +4,24 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**Definido o primeiro entregável: a primeira edição visual.** Num projeto Flutter de exemplo rodando em Linux, seleciona-se um widget no inspetor, muda-se um valor no painel de propriedades, o Studio grava só aquele argumento no arquivo e o app recarregado mostra a mudança, sem abrir o código. O dono do produto aprovou o caminho abaixo, que corta na vertical o F0 e o mínimo do F1 (FR-PRP-001, FR-PRP-003, FR-DOC-002 e parte de FR-INS-003). O trabalho começa quando ele der o sinal.
+
+| # | Marco | O que entra | Como se confere |
+| --- | --- | --- | --- |
+| 0 | Shell abre em Linux | Feito | Janela do `studio_shell` com o DevTools herdado |
+| 1 | Abrir projeto | Escolher o diretório, localizar o SDK e checar a janela de versões (FR-PRJ-001 a 003) | O shell mostra o projeto e a versão do SDK; nada muda no diretório fora de `.dart_tool/` |
+| 2 | Ferramentas do SDK no ar | Supervisor de processos; daemon; analysis server como cliente LSP; pareamento dos dois (FR-PRJ-004, IR-001) | Os diagnósticos do projeto chegam ao shell; o analysis server volta depois de morto |
+| 3 | `DocumentStore` | Documentos abertos no servidor, aplicação de `WorkspaceEdit`, gravação atômica (FR-DOC-001, NFR-REL-003) | Um `editArgument` disparado por teste muda no disco só os bytes do argumento |
+| 4 | App rodando e inspetor ligado | Cliente DAP: iniciar, recarregar, encerrar, saída do app (FR-RUN-001 e 003); inspetor herdado conectado à sessão (FR-INS-001) | O app de exemplo abre pelo Studio e a árvore dele aparece no inspetor |
+| 5 | Seleção alimenta as propriedades | Serviço `Editor` no daemon; seleção do inspetor vira posição ativa; painel de propriedades herdado dentro do shell (FR-PRP-001) | Selecionar um widget lista os parâmetros do construtor dele |
+| 6 | A edição | Valor alterado no painel, `editArgument`, gravação pelo `DocumentStore`, hot reload (FR-PRP-003, FR-DOC-002) | Demonstração ao vivo e um teste de sistema que faz o mesmo sem interface e compara o diff |
+
+O marco 5 é o de maior incerteza: o painel de propriedades herdado já fala com o serviço `Editor` e com o analysis server pelo daemon, mas foi feito para rodar embutido num IDE.
+
+Fica de fora até o entregável: desfazer e refazer, árvore de fonte, recarga de arquivo alterado por fora e "envolver widget" (o restante do F1); Windows e macOS, de modo que o F0 não fecha com este entregável; os experimentos das premissas que o caminho não responde de passagem; e o portão completo, que segue reprovando enquanto a licença do DCM estiver pendente.
+
+Desvio aprovado, temporário: no marco 6 o painel herdado chama o analysis server direto pelo daemon, sem passar pelo serviço `Studio`, o que a FR-API-002 proíbe. O requisito não mudou. O serviço `Studio` entra na frente logo depois do entregável, ainda dentro do F1; fazer na ordem da regra exigiria gerar o contrato OpenRPC antes da primeira edição.
+
 **O portão de qualidade começou a existir.** O comando `st verify` roda e já confere formato e análise do código Dart do Studio; os dois passos de Rust saem como "não se aplica", porque ainda não há código Rust. Os outros nove passos aparecem como "não executado" e reprovam o portão, de propósito: o portão só aprova quando os treze passos rodarem, então hoje ele reprova toda mudança. Isso é o estado real, não um defeito.
 
 Falta para o portão aprovar: instalar e fixar as versões do cspell e do PMD; decidir a licença do DCM, que segue pendente e trava os passos QG-03 e parte do QG-06; e escrever os passos próprios (estrutura, geração, marcadores, documentação, rastreabilidade e dispensas).

@@ -30,5 +30,6 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `CLAUDE.md`: os dois workspaces e o SDK de cada um.
 - ADR-0003 a ADR-0013: estado de "proposta" para "aceita", nos arquivos e no índice (registro de decisões 0.3). A seção 9 de `docs/architecture/arc42.md` deixa de repetir os estados e remete ao índice.
 - ADR-0015: estado de "proposta" para "aceita" (registro de decisões 0.4); `docs/engineering/coding-standard.md` 0.3 tira a ressalva da linha do Decorator na seção 6.3.
+- `JOURNAL.md`: caminho de seis marcos até a primeira edição visual, com o desvio temporário de FR-API-002 aprovado pelo dono do produto.
 - Histórico do `main` reescrito pelo rebase: os quatro commits anteriores ganharam hashes novos, sem mudança de conteúdo.
 - `docs/guide.md`: linha 0.3 na tabela de mudanças e os dois registros citados na seção de controle de mudanças.
