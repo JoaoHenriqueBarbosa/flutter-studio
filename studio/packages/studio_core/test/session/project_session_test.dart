@@ -247,6 +247,48 @@ void main() {
       expect(session.canvas.frame.value, isNotNull);
     }, timeout: const Timeout(Duration(minutes: 3)));
 
+    // Verifies: FR-CNV-001, NFR-REL-001
+    test(
+      'keeps reloading while the canvas captures frames without pause',
+      () async {
+        await session.close();
+        session = ProjectSession(
+          session.project,
+          canvas: CanvasController(interval: const Duration(milliseconds: 5)),
+        );
+        await session.start();
+        await session.startApp(target: const RunTarget.designHost());
+        while (session.canvas.frame.value == null) {
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+        }
+        const editCount = 8;
+        var version = 1;
+
+        for (var edit = 0; edit < editCount; edit++) {
+          final reloaded = session.appRun.value?.output.firstWhere(
+            (text) => text.contains('Reloaded'),
+          );
+          await session.service.setProperty(
+            target: WidgetRef(
+              uri: '${Uri.file(mainPath)}',
+              position: const Position(line: 11, character: 14),
+              documentVersion: version++,
+            ),
+            name: 'mainAxisAlignment',
+            value: Expression(
+              source: edit.isEven
+                  ? 'MainAxisAlignment.end'
+                  : 'MainAxisAlignment.center',
+            ),
+          );
+          await reloaded;
+        }
+
+        expect(session.canvas.isLive.value, isTrue);
+      },
+      timeout: const Timeout(Duration(minutes: 2)),
+    );
+
     // Verifies: FR-DOC-003, FR-API-004
     test('follows a file that another program saves', () async {
       await session.start();

@@ -68,15 +68,18 @@ final class WorkbenchController extends DisposableController
     }
   }
 
-  /// Builds and starts the app on this machine, and connects the inherited
+  /// Builds and starts the app on [target], and connects the inherited
   /// panels to it. Does nothing when no project is open or a run exists.
-  Future<void> runApp(DevToolsRouterDelegate router) async {
+  Future<void> runApp(
+    DevToolsRouterDelegate router, {
+    required RunTarget target,
+  }) async {
     final session = _session;
     if (session == null || _runStatus.value != AppRunStatus.stopped) return;
     _runStatus.value = AppRunStatus.starting;
     _output.value = '';
     try {
-      final run = await session.startApp(target: RunTarget.desktop());
+      final run = await session.startApp(target: target);
       // The stream closes when the run ends, which ends the subscription.
       unawaited(run.output.forEach(_appendOutput));
       unawaited(run.ended.then((_) => _handleRunEnded(router)));
@@ -99,7 +102,7 @@ final class WorkbenchController extends DisposableController
   /// Restarts the running app with the code on disk.
   Future<void> restartApp() async {
     try {
-      await _session?.appRun.value?.hotRestart();
+      await _session?.restartApp();
     } on DapRequestFailed catch (failure) {
       _appendOutput('$failure\n');
     }

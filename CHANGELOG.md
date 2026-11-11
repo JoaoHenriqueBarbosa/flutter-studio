@@ -46,9 +46,17 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `docs/engineering/coding-standard.md` 0.5, conforme a linha 0.16 da tabela do guia.
 - `docs/requirements/srs.md` 0.5: resultado dos experimentos de ASM-01 e ASM-02 no apêndice A.
 - `studio_core`: primeiro degrau do canvas (ADR-0009), ainda sem o agente de design. `RunTarget`, com `designHost` (o dispositivo `flutter-tester` do SDK, com `--show-test-device`), `desktop` e `device`; `FrameTransport` e `ScreenshotFrameTransport`, que pede o quadro ao engine por `_flutter.screenshot` no VM Service; `CanvasController`, que busca um quadro a cada 500 ms e depois de cada hot reload e guarda o último quando o app termina (FR-CNV-001, FR-CNV-008, FR-HST-002). `ProjectSession.startApp` recebe o `RunTarget` e liga o canvas ao app. Dependência nova: `vm_service`. 141 testes, um deles de sistema e sem janela: o app roda no host de design, o quadro chega, uma edição pelo serviço muda o quadro.
+- `studio_shell`: `CanvasPane`, a aba Canvas com o último quadro do app, esmaecido e com aviso quando o app termina (FR-CNV-001, FR-CNV-008); a coluna central passa a ter as abas Canvas e Inspetor. O botão Run executa no host de design (`RunTarget.designHost`), sem janela nem compilação nativa, e um segundo botão executa em janela do desktop. Cinco textos novos nos dois ARB. 37 testes no pacote.
+- `studio_core`: `CanvasController.pauseWhile` e `ProjectSession.restartApp`; a captura fica suspensa durante hot reload e hot restart. 143 testes; o de sistema novo faz oito edições seguidas com captura a cada 5 ms.
+- `docs/architecture/arc42.md` 0.10, conforme a linha 0.18 da tabela do guia.
+
+### Corrigido
+
+- O app no host de design parava de responder quando um quadro era pedido durante o hot reload; o canvas congelava e os reloads seguintes não aconteciam. Visto na interface, reproduzido por teste e resolvido com a suspensão da captura.
 
 ### Alterado
 
+- `WorkbenchController.runApp` recebe o `RunTarget`.
 - `studio_core`: `ProjectSession.startApp`, `AppRun.start` e `DapClient.launch` recebem o alvo de execução no lugar do identificador de dispositivo.
 - `studio_core`: `ArgumentReader` passa a `WidgetReader`, com `arguments` e `assists`.
 - `ProjectWorkbench` recebe a `ProjectSession` no lugar do `FlutterProject`.

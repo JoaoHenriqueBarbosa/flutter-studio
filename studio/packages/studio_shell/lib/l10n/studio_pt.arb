@@ -9,6 +9,7 @@
   "sdkOutsideWindow": "O projeto usa o Flutter {found}. O Studio trabalha com as versões {window}.",
   "projectSummary": "{name} · Flutter {version}",
   "runAction": "Executar",
+  "runInWindowAction": "Executar em janela",
   "stopAction": "Parar",
   "hotRestartAction": "Reiniciar",
   "undoAction": "Desfazer",
@@ -23,6 +24,10 @@
   "widgetTreePlaceholder": "Execute o app para ver a árvore de widgets.",
   "structureTitle": "Estrutura",
   "structurePlaceholder": "Nenhum widget é criado neste arquivo.",
+  "canvasTitle": "Canvas",
+  "inspectorTitle": "Inspetor",
+  "canvasPlaceholder": "Execute o app para vê-lo aqui.",
+  "canvasStale": "O app não está em execução. Este é o último quadro.",
   "propertiesTitle": "Propriedades",
   "outputTitle": "Saída"
 }

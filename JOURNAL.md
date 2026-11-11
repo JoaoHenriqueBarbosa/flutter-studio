@@ -4,6 +4,16 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**O app agora aparece dentro do Studio.** Run passou a executar o projeto no host de design do SDK, sem abrir outra janela e sem compilar nada nativo: o app sobe em poucos segundos e a imagem dele aparece na aba Canvas, no centro da bancada. Trocar uma propriedade ou envolver um widget atualiza o canvas logo depois do reload (cerca de um quarto de segundo no exemplo). Parar o app deixa o último quadro, esmaecido e com aviso. Quem quiser a janela de verdade tem um segundo botão, "Executar em janela".
+
+É o primeiro degrau do canvas, e convém não confundir com o canvas do F2:
+
+- Só exibe. Não dá para clicar num widget no canvas para selecioná-lo, não há contorno da seleção e o app não recebe mouse nem teclado ali. A seleção continua pela Estrutura ou pelo Inspetor.
+- Mostra o app inteiro a partir do `main`, não uma tela isolada.
+- A imagem vem de uma chamada interna do engine, em PNG, duas vezes por segundo. O transporte previsto, pelo agente de design, é outro.
+
+Um defeito apareceu só na interface e vale o registro: com o canvas pedindo quadros o tempo todo, o primeiro hot reload travava o app do host para sempre. Um teste passou a repetir o caso (oito edições seguidas com captura quase contínua) e a captura agora espera o reload terminar.
+
 **Duas premissas testadas; a do host de design veio boa.** O binário de teste do SDK (`flutter_tester`) roda o app de exemplo inteiro, sem compilar nada nativo e em poucos segundos, com hot reload, e entrega a imagem da tela com o texto e os ícones certos. Era o maior risco do canvas (ASM-01, RSK-03). Ainda falta conferir fonte própria do projeto, entrada de mouse e teclado e os outros sistemas, então a premissa fica como parcialmente confirmada. A outra (ASM-02) confirmou o que o plano supunha: o analysis server só edita argumentos de construtores de widget, e objetos compostos como `ThemeData` e `TextStyle` dependem do motor próprio.
 
 **Dá para editar sem executar o app.** O Studio ganhou o painel Estrutura, à esquerda: a árvore de widgets tirada do código do arquivo, que existe com o app parado e mostra também o que não está na tela. Clicar num widget ali carrega as propriedades dele e acende a barra de estrutura; as edições gravam no arquivo e a árvore se refaz. Conferi em display virtual, sem iniciar o app: selecionar o `Column`, envolver com `SizedBox`, ver a árvore mudar, desfazer.

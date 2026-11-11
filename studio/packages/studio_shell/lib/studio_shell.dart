@@ -9,6 +9,7 @@ export 'src/inherited_assets/message_channel_asset_bundle.dart';
 export 'src/l10n/studio_localizations.dart';
 export 'src/studio_widgets_binding.dart';
 export 'src/workbench/app_run_status.dart';
+export 'src/workbench/canvas_pane.dart';
 export 'src/workbench/history_buttons.dart';
 export 'src/workbench/open_project_prompt.dart';
 export 'src/workbench/output_pane.dart';

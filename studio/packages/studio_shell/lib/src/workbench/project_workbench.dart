@@ -6,6 +6,7 @@ import 'package:studio_core/studio_core.dart';
 import '../inherited/inherited_dev_tools.dart';
 import '../inherited/studio_editor_client.dart';
 import '../l10n/studio_localizations.dart';
+import 'canvas_pane.dart';
 import 'history_buttons.dart';
 import 'output_pane.dart';
 import 'run_toolbar.dart';
@@ -78,7 +79,7 @@ final class ProjectWorkbench extends StatelessWidget {
                 initialFractions: _columnFractions,
                 children: [
                   SourceTreePane(session: session, texts: texts),
-                  _widgetTree(),
+                  _appViews(),
                   _properties(),
                 ],
               ),
@@ -90,12 +91,38 @@ final class ProjectWorkbench extends StatelessWidget {
     );
   }
 
+  /// The two views of the running app: its frames and its widget tree.
+  Widget _appViews() => DefaultTabController(
+    length: 2,
+    child: RoundedOutlinedBorder(
+      clip: true,
+      child: Column(
+        children: [
+          TabBar(
+            isScrollable: true,
+            tabs: [
+              Tab(height: defaultButtonHeight, text: texts.canvasTitle),
+              Tab(height: defaultButtonHeight, text: texts.inspectorTitle),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                CanvasPane(canvas: session.canvas, texts: texts),
+                _widgetTree(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
   Widget _widgetTree() => ValueListenableBuilder(
     valueListenable: devTools.inspector,
     builder: (context, inspector, _) => inspector == null
-        ? RoundedOutlinedBorder(
-            child: Center(child: Text(texts.widgetTreePlaceholder)),
-          )
+        ? Center(child: Text(texts.widgetTreePlaceholder))
         : InspectorScreenBody(controller: inspector),
   );
 

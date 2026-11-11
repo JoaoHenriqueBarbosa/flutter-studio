@@ -1,6 +1,6 @@
 # Documentação de arquitetura
 
-Arquitetura do Studio no modelo arc42, com diagramas C4. Versão 0.9, rascunho para revisão.
+Arquitetura do Studio no modelo arc42, com diagramas C4. Versão 0.10, rascunho para revisão.
 
 ## 1. Introdução e objetivos
 
@@ -293,7 +293,8 @@ Dívida técnica assumida nesta baseline:
 
 - As telas herdadas do DevTools ficam em inglês.
 - Extensões do DevTools e o visualizador Perfetto ficam indisponíveis no build desktop.
-- O primeiro transporte de quadros copia os pixels pela memória principal.
+- O primeiro transporte de quadros copia os pixels pela memória principal. Enquanto o agente de design não existe, o quadro é pedido ao engine pela chamada privada `_flutter.screenshot` do VM Service, em PNG, a cada meio segundo e depois de cada reload. Nesse degrau o canvas só exibe: não há seleção por clique, sobreposições nem entrada (FR-CNV-004 a FR-CNV-006), e a superfície é o app inteiro, não uma tela isolada (FR-CNV-003, FR-HST-001).
+- A captura de quadro é suspensa durante o hot reload e o hot restart: o engine do `flutter_tester` deixa de responder ao VM Service quando recebe o pedido de quadro enquanto o código é trocado. Um teste de sistema repete o caso.
 - O painel de propriedades herdado edita pelo serviço `Studio`, mas ainda lê os argumentos direto do analysis server, pelo daemon, e não por `getProperties`. Os botões de refactor do próprio painel ficam ocultos, porque ele os executaria como comando do servidor, por fora do serviço; as mesmas operações estão na barra de estrutura do shell, que chama o serviço.
 - A seleção ainda não é única entre todas as vistas (FR-INS-003): o que se seleciona no inspetor herdado aparece na árvore de fonte e nas propriedades, mas o que se seleciona na árvore de fonte não move a seleção do inspetor herdado, cujos nós não trazem o local de criação.
 - Um cliente do daemon ainda pode pedir `editArgument` direto ao serviço `Lsp` do analysis server. A edição resultante passa pelo `DocumentStore` e entra no desfazer, mas não passa pelas verificações do serviço `Studio`.

@@ -44,8 +44,19 @@ final class RunToolbar extends StatelessWidget {
                 DevToolsButton(
                   icon: Icons.play_arrow,
                   label: texts.runAction,
-                  onPressed: () =>
-                      controller.runApp(DevToolsRouterDelegate.of(context)),
+                  onPressed: () => controller.runApp(
+                    DevToolsRouterDelegate.of(context),
+                    target: const RunTarget.designHost(),
+                  ),
+                ),
+                const SizedBox(width: denseSpacing),
+                DevToolsButton(
+                  icon: Icons.desktop_windows_outlined,
+                  tooltip: texts.runInWindowAction,
+                  onPressed: () => controller.runApp(
+                    DevToolsRouterDelegate.of(context),
+                    target: RunTarget.desktop(),
+                  ),
                 ),
               ],
               AppRunStatus.starting => [

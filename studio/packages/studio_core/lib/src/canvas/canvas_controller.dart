@@ -25,8 +25,12 @@ final class CanvasController {
 
   Timer? _timer;
 
-  /// Whether a capture is on its way. A tick that finds one is skipped.
-  var _isCapturing = false;
+  /// The capture that is on its way, or `null`. A tick that finds one is
+  /// skipped.
+  Future<void>? _capture;
+
+  /// How many callers of [pauseWhile] are holding the captures back.
+  var _pauseCount = 0;
 
   /// The last frame received, or `null` before the first one. It stays
   /// after the app ends, when [isLive] tells that it is out of date.
@@ -57,21 +61,33 @@ final class CanvasController {
   }
 
   /// Asks the transport for a frame now and publishes it when its image is
-  /// not the one of the last frame.
+  /// not the one of the last frame. Does nothing while a capture is on its
+  /// way or the captures are held back by [pauseWhile].
   Future<void> refresh() async {
     final transport = _transport;
-    if (transport == null || _isCapturing) return;
-    _isCapturing = true;
+    if (transport == null || _capture != null || _pauseCount > 0) return;
+    final capture = _capture = _captureFrom(transport);
     try {
-      final pngBytes = await transport.capture();
-      final last = _frame.value;
-      if (pngBytes != null &&
-          identical(transport, _transport) &&
-          !listEquals(pngBytes, last?.pngBytes)) {
-        _frame.value = Frame(id: (last?.id ?? 0) + 1, pngBytes: pngBytes);
-      }
+      await capture;
     } finally {
-      _isCapturing = false;
+      _capture = null;
+    }
+  }
+
+  /// Runs [action] with no capture in progress, and completes with its
+  /// result.
+  ///
+  /// The capture on its way ends first, and none starts until [action]
+  /// completes. A hot reload has to run this way: the engine of the design
+  /// host stops answering when it is asked for a frame while the code of
+  /// the app is being replaced.
+  Future<T> pauseWhile<T>(Future<T> Function() action) async {
+    _pauseCount++;
+    try {
+      await _capture;
+      return await action();
+    } finally {
+      _pauseCount--;
     }
   }
 
@@ -80,5 +96,15 @@ final class CanvasController {
     await detach();
     _frame.dispose();
     _isLive.dispose();
+  }
+
+  Future<void> _captureFrom(FrameTransport transport) async {
+    final pngBytes = await transport.capture();
+    final last = _frame.value;
+    if (pngBytes != null &&
+        identical(transport, _transport) &&
+        !listEquals(pngBytes, last?.pngBytes)) {
+      _frame.value = Frame(id: (last?.id ?? 0) + 1, pngBytes: pngBytes);
+    }
   }
 }

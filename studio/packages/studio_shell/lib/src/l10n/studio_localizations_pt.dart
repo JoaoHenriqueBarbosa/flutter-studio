@@ -49,6 +49,9 @@ class StudioLocalizationsPt extends StudioLocalizations {
   String get runAction => 'Executar';
 
   @override
+  String get runInWindowAction => 'Executar em janela';
+
+  @override
   String get stopAction => 'Parar';
 
   @override
@@ -90,6 +93,19 @@ class StudioLocalizationsPt extends StudioLocalizations {
 
   @override
   String get structurePlaceholder => 'Nenhum widget é criado neste arquivo.';
+
+  @override
+  String get canvasTitle => 'Canvas';
+
+  @override
+  String get inspectorTitle => 'Inspetor';
+
+  @override
+  String get canvasPlaceholder => 'Execute o app para vê-lo aqui.';
+
+  @override
+  String get canvasStale =>
+      'O app não está em execução. Este é o último quadro.';
 
   @override
   String get propertiesTitle => 'Propriedades';

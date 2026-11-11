@@ -152,6 +152,12 @@ abstract class StudioLocalizations {
   /// **'Run'**
   String get runAction;
 
+  /// Label of the button that builds the app for the desktop and opens it in its own window.
+  ///
+  /// In en, this message translates to:
+  /// **'Run in a window'**
+  String get runInWindowAction;
+
   /// Label of the button that ends the app.
   ///
   /// In en, this message translates to:
@@ -235,6 +241,30 @@ abstract class StudioLocalizations {
   /// In en, this message translates to:
   /// **'No widget is created in this file.'**
   String get structurePlaceholder;
+
+  /// Title of the tab that shows the frames of the running app.
+  ///
+  /// In en, this message translates to:
+  /// **'Canvas'**
+  String get canvasTitle;
+
+  /// Title of the tab with the widget tree of the running app.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspector'**
+  String get inspectorTitle;
+
+  /// Text shown in the canvas before the app has drawn anything.
+  ///
+  /// In en, this message translates to:
+  /// **'Run the app to see it here.'**
+  String get canvasPlaceholder;
+
+  /// Notice over the canvas when the frame on screen is of an app that ended.
+  ///
+  /// In en, this message translates to:
+  /// **'The app is not running. This is its last frame.'**
+  String get canvasStale;
 
   /// Title of the pane that edits the arguments of the selected widget.
   ///

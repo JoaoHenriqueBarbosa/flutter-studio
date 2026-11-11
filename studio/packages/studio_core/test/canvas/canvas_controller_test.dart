@@ -79,5 +79,21 @@ void main() {
       expect(transport.isClosed, isTrue);
       expect(canvas.frame.value?.pngBytes, [9]);
     });
+
+    // Verifies: FR-CNV-001, NFR-REL-001
+    test('captures nothing while an action holds the canvas back', () async {
+      await canvas.attach(transport);
+      final capturesBefore = transport.captureCount;
+
+      final result = await canvas.pauseWhile(() async {
+        await Future<void>.delayed(interval * 4);
+        await canvas.refresh();
+        return transport.captureCount;
+      });
+
+      expect(result, capturesBefore);
+      await canvas.refresh();
+      expect(transport.captureCount, capturesBefore + 1);
+    });
   });
 }

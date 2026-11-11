@@ -29,7 +29,12 @@ import 'tooling_daemon_child.dart';
 /// `Studio` service and the run of the app (FR-PRJ-004).
 final class ProjectSession {
   /// Creates the session of [project]. Nothing is started until [start].
-  ProjectSession(this.project) : documents = DocumentStore(project.rootPath);
+  ///
+  /// The frames of the app go to [canvas], or to a canvas of the session
+  /// when none is given.
+  ProjectSession(this.project, {CanvasController? canvas})
+    : documents = DocumentStore(project.rootPath),
+      canvas = canvas ?? CanvasController();
 
   /// The project of the session.
   final FlutterProject project;
@@ -54,7 +59,7 @@ final class ProjectSession {
   late final _watcher = ProjectFileWatcher(project.rootPath, documents);
 
   /// The frames of the running app (FR-CNV-001).
-  final canvas = CanvasController();
+  final CanvasController canvas;
 
   /// The source trees of the files open in the analysis server
   /// (FR-INS-002).
@@ -140,6 +145,17 @@ final class ProjectSession {
     return run;
   }
 
+  /// Restarts the running app with the code on disk, losing its state.
+  /// Does nothing when the app is not running.
+  ///
+  /// Throws [DapRequestFailed] when the debug adapter refuses.
+  Future<void> restartApp() async {
+    final run = _appRun.value;
+    if (run == null) return;
+    await canvas.pauseWhile(run.hotRestart);
+    await canvas.refresh();
+  }
+
   /// Ends the run of the app, if there is one.
   Future<void> stopApp() async {
     final run = _appRun.value;
@@ -211,7 +227,7 @@ final class ProjectSession {
 
   Future<void> _reload(AppRun run) async {
     try {
-      await run.hotReload();
+      await canvas.pauseWhile(run.hotReload);
       await canvas.refresh();
     } on DapRequestFailed {
       // The run ended between the edit and the reload. The edit is on disk,
