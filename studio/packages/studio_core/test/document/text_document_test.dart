@@ -61,7 +61,7 @@ void main() {
         () => document.applying([
           _replace((line: 5, character: 0), (line: 5, character: 1), 'x'),
         ]),
-        throwsRangeError,
+        throwsA(isA<InvalidEdit>()),
       );
     });
 
@@ -73,7 +73,7 @@ void main() {
           _replace((line: 0, character: 0), (line: 0, character: 4), 'x'),
           _replace((line: 0, character: 2), (line: 0, character: 5), 'y'),
         ]),
-        throwsArgumentError,
+        throwsA(isA<InvalidEdit>()),
       );
     });
   });

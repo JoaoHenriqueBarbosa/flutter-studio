@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
-import 'edit_outside_project.dart';
+import 'edit_failure.dart';
 import 'text_document.dart';
 import 'workspace_edit.dart';
 
@@ -45,7 +45,7 @@ final class DocumentStore {
   /// The new text of all files is computed before anything is written, so
   /// an invalid edit changes no file. Completes when all files are on disk.
   /// Throws [EditOutsideProject] when [edit] names a file outside the
-  /// project, and the errors of [TextDocument.applying] for invalid ranges.
+  /// project, and [InvalidEdit] for invalid ranges.
   Future<void> apply(WorkspaceEdit edit) async {
     final updated = <String, TextDocument>{};
     for (final fileEdit in edit.fileEdits) {

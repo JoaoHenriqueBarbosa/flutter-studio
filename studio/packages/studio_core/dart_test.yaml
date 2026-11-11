@@ -1,0 +1,4 @@
+tags:
+  # Tests that build and open the sample app in a window of the desktop.
+  desktop:
+    timeout: 5m

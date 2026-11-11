@@ -1,11 +1,15 @@
 /// Core of Studio, without widgets.
 library;
 
+export 'src/dap/dap_client.dart';
+export 'src/dap/dap_request_failed.dart';
 export 'src/document/document_store.dart';
-export 'src/document/edit_outside_project.dart';
+export 'src/document/edit_failure.dart';
 export 'src/document/text_document.dart';
 export 'src/document/text_edit.dart';
 export 'src/document/workspace_edit.dart';
+export 'src/dtd/dtd_connection.dart';
+export 'src/lsp/lsp_client.dart';
 export 'src/project/flutter_project.dart';
 export 'src/project/project_loader.dart';
 export 'src/project/project_open_failure.dart';
@@ -13,5 +17,12 @@ export 'src/sdk/flutter_sdk.dart';
 export 'src/sdk/sdk_locator.dart';
 export 'src/sdk/sdk_version.dart';
 export 'src/sdk/sdk_version_window.dart';
+export 'src/session/analysis_server_child.dart';
+export 'src/session/app_run.dart';
+export 'src/session/project_session.dart';
+export 'src/session/tooling_daemon_child.dart';
 export 'src/toolchain/base_protocol_channel.dart';
 export 'src/toolchain/base_protocol_decoder.dart';
+export 'src/toolchain/toolchain_child.dart';
+export 'src/toolchain/toolchain_state.dart';
+export 'src/toolchain/toolchain_supervisor.dart';

@@ -1,3 +1,4 @@
+import 'edit_failure.dart';
 import 'text_edit.dart';
 
 /// The text of one file at one version.
@@ -18,9 +19,8 @@ final class TextDocument {
 
   /// Returns the document that results from applying [edits] to this one.
   ///
-  /// The ranges of [edits] refer to this text. Throws a [RangeError] when a
-  /// range points outside the text, and an [ArgumentError] when two ranges
-  /// overlap.
+  /// The ranges of [edits] refer to this text. Throws [InvalidEdit] when a
+  /// range points outside the text or when two ranges overlap.
   TextDocument applying(List<TextEdit> edits) {
     final lineStarts = _lineStarts();
     final replacements = [
@@ -36,7 +36,7 @@ final class TextDocument {
     for (final replacement in replacements) {
       if (replacement.start > replacement.end ||
           replacement.end > previousStart) {
-        throw ArgumentError.value(edits, 'edits', 'Ranges overlap.');
+        throw const InvalidEdit('Two ranges overlap.');
       }
       result = result.replaceRange(
         replacement.start,
@@ -68,9 +68,11 @@ final class TextDocument {
   }
 
   int _offsetOf(DocumentPosition position, List<int> lineStarts) {
-    RangeError.checkValidIndex(position.line, lineStarts, 'line');
-    final offset = lineStarts[position.line] + position.character;
-    RangeError.checkValueInInterval(offset, 0, text.length, 'character');
+    final lineStart = lineStarts.elementAtOrNull(position.line);
+    final offset = (lineStart ?? text.length) + position.character;
+    if (lineStart == null || position.character < 0 || offset > text.length) {
+      throw InvalidEdit('Position $position is outside the text.');
+    }
     return offset;
   }
 }

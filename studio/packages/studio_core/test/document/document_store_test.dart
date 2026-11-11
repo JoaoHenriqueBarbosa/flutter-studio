@@ -89,7 +89,7 @@ void main() {
         ),
       ]);
 
-      await expectLater(store.apply(edit), throwsRangeError);
+      await expectLater(store.apply(edit), throwsA(isA<InvalidEdit>()));
 
       expect(File(filePath).readAsStringSync(), 'alignment: .center,\n');
       expect(File(otherPath).readAsStringSync(), 'x\n');
