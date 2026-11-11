@@ -1,5 +1,6 @@
 import 'package:devtools_app/devtools_app.dart';
 import 'package:devtools_app_shared/ui.dart';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:studio_core/studio_core.dart';
 
@@ -48,6 +49,26 @@ final class ProjectWorkbench extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The keys of undo and redo act on the code of the project wherever the
+    // focus is in the workbench. A text field that has the focus keeps them
+    // for its own text.
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.keyZ, control: true):
+            controller.undo,
+        const SingleActivator(
+          LogicalKeyboardKey.keyZ,
+          control: true,
+          shift: true,
+        ): controller.redo,
+        const SingleActivator(LogicalKeyboardKey.keyY, control: true):
+            controller.redo,
+      },
+      child: Focus(autofocus: true, child: _panes()),
+    );
+  }
+
+  Widget _panes() {
     return Column(
       children: [
         Row(

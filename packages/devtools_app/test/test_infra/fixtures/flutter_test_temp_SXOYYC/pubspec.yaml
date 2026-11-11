@@ -1,0 +1,27 @@
+# Copyright 2025 The Flutter Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file or at https://developers.google.com/open-source/licenses/bsd.
+name: inspector_app
+description: App for running Inspector integration tests.
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: ^3.2.0
+  flutter: '>=3.0.0'
+
+dependencies:
+  # ignore: dependencies, required for Flutter SDK.
+  flutter:
+    sdk: flutter
+  custom_widgets:
+    path: ../custom_widgets
+  material_ui: ^1.4.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

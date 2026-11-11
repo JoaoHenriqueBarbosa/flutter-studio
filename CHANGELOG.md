@@ -59,6 +59,7 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - Pacote `studio/packages/studio_package_assets` 0.1.0 (ADR-0016, proposta): `PackageAssetBinding`, `PackageAssetMessenger`, `PackageFontRegistry` e `MessageChannelAssetBundle`, vindos do `studio_shell` e desligados do nome do pacote herdado. 9 testes.
 - `studio_design_agent`: `DesignAgent.start` instala o `PackageAssetBinding` do projeto e registra as fontes dele antes do `main` do projeto; o projeto host gerado espera por isso. Teste de sistema no `studio_core`: o host de design carrega um asset do projeto e acusa o que o projeto não tem (FR-HST-001). 151 testes no `studio_core`.
 - ADR-0016 e `docs/decisions/README.md` 0.5; `docs/engineering/coding-standard.md` 0.6 e `docs/architecture/arc42.md` 0.12, conforme a linha 0.21 da tabela do guia.
+- `studio_shell`: Ctrl+Z desfaz e Ctrl+Shift+Z ou Ctrl+Y refazem a última edição do projeto, com o foco em qualquer ponto da bancada que não seja um campo de texto (FR-DOC-005, NFR-INTR-004). 34 testes no pacote.
 
 ### Corrigido
 
