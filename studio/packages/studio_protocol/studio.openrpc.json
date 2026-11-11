@@ -2,7 +2,7 @@
   "openrpc": "1.4.0",
   "info": {
     "title": "Studio",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Operations of Studio: reading, selecting and editing the widgets of the open project."
   },
   "x-binding": {
@@ -30,8 +30,86 @@
           "result": {
             "name": "versionInfo",
             "value": {
-              "version": "0.2.0"
+              "version": "0.3.0"
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "getSourceTree",
+      "summary": "Returns the widgets that the source of a file creates.",
+      "description": "The result has the widgets that no other widget contains, in source order, each with the widgets created inside its arguments. Branches that are not rendered are included.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "uri",
+          "description": "The file URI of a Dart file of the project.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "sourceTree",
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SourceNode"
+          }
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/UnsupportedTarget"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
+      ],
+      "examples": [
+        {
+          "name": "mainTree",
+          "params": [
+            {
+              "name": "uri",
+              "value": "file:///work/sample_app/lib/main.dart"
+            }
+          ],
+          "result": {
+            "name": "sourceTree",
+            "value": [
+              {
+                "ref": {
+                  "uri": "file:///work/sample_app/lib/main.dart",
+                  "position": {
+                    "line": 9,
+                    "character": 17
+                  },
+                  "documentVersion": 1
+                },
+                "className": "MaterialApp",
+                "owner": "SampleApp.build",
+                "children": [
+                  {
+                    "ref": {
+                      "uri": "file:///work/sample_app/lib/main.dart",
+                      "position": {
+                        "line": 10,
+                        "character": 12
+                      },
+                      "documentVersion": 1
+                    },
+                    "className": "Scaffold",
+                    "children": []
+                  }
+                ]
+              }
+            ]
           }
         }
       ]
@@ -1171,6 +1249,36 @@
           "parent",
           "child"
         ]
+      },
+      "SourceNode": {
+        "description": "A widget in the tree derived from the source of a file.",
+        "type": "object",
+        "required": [
+          "ref",
+          "className",
+          "children"
+        ],
+        "properties": {
+          "ref": {
+            "description": "The creation location of the widget.",
+            "$ref": "#/components/schemas/WidgetRef"
+          },
+          "className": {
+            "description": "Class of the widget.",
+            "type": "string"
+          },
+          "owner": {
+            "description": "Qualified name of the declaration that creates the widget, present only in a widget that no other widget contains.",
+            "type": "string"
+          },
+          "children": {
+            "description": "The widgets created inside the arguments of this one, in source order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourceNode"
+            }
+          }
+        }
       }
     },
     "errors": {

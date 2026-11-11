@@ -9,7 +9,9 @@ import '../document/text_document.dart';
 import '../document/text_edit.dart';
 import '../document/workspace_edit.dart';
 import 'editable_argument.dart';
+import 'file_outline.dart';
 import 'lsp_request_failed.dart';
+import 'outline_node.dart';
 import 'server_assist.dart';
 import 'widget_assist.dart';
 
@@ -34,6 +36,7 @@ final class LspClient {
     _peer
       ..registerMethod(_applyEditMethod, _handleApplyEdit)
       ..registerMethod(_diagnosticsMethod, _handleDiagnostics)
+      ..registerMethod(_outlineMethod, _handleOutline)
       ..registerFallback(_ignore);
     unawaited(_peer.listen());
   }
@@ -42,14 +45,22 @@ final class LspClient {
 
   static const _diagnosticsMethod = 'textDocument/publishDiagnostics';
 
+  static const _outlineMethod = 'dart/textDocument/publishFlutterOutline';
+
   final Peer _peer;
 
   final ApplyEdit _applyEdit;
 
   final _diagnostics = StreamController<FileDiagnostics>.broadcast();
 
+  final _outlines = StreamController<FileOutline>.broadcast();
+
   /// Diagnostics of each file, as the server publishes them.
   Stream<FileDiagnostics> get diagnostics => _diagnostics.stream;
+
+  /// The Flutter Outline of each open file, each time the server analyzes
+  /// the file.
+  Stream<FileOutline> get outlines => _outlines.stream;
 
   /// Completes when the connection with the server ends.
   Future<void> get done => _peer.done;
@@ -62,6 +73,7 @@ final class LspClient {
     await _peer.sendRequest('initialize', {
       'processId': pid,
       'rootUri': rootUri,
+      'initializationOptions': {'flutterOutline': true},
       'workspaceFolders': [
         {'uri': rootUri, 'name': rootPath},
       ],
@@ -174,6 +186,7 @@ final class LspClient {
   /// Ends the session and closes the channel.
   Future<void> close() async {
     await _diagnostics.close();
+    await _outlines.close();
     await _peer.close();
   }
 
@@ -261,6 +274,42 @@ final class LspClient {
         ],
       ));
     }
+  }
+
+  void _handleOutline(Parameters parameters) {
+    final Object? report = parameters.value;
+    if (report case {'uri': final String uri, 'outline': final Object? root}) {
+      final outline = _outlineFrom(root);
+      if (outline != null) {
+        _outlines.add((filePath: Uri.parse(uri).toFilePath(), root: outline));
+      }
+    }
+  }
+
+  OutlineNode? _outlineFrom(Object? node) {
+    if (node case {
+      'range': {'start': final Object? start, 'end': final Object? end},
+    }) {
+      final startPosition = _positionFrom(start);
+      final endPosition = _positionFrom(end);
+      if (startPosition == null || endPosition == null) return null;
+      return OutlineNode(
+        range: (start: startPosition, end: endPosition),
+        className: switch (node['className']) {
+          final String className => className,
+          _ => null,
+        },
+        elementName: switch (node['dartElement']) {
+          {'name': final String name} => name,
+          _ => null,
+        },
+        children: [
+          if (node['children'] case final List<Object?> children)
+            for (final child in children) ?_outlineFrom(child),
+        ],
+      );
+    }
+    return null;
   }
 
   /// Answers `null` to every request and notification this client has no

@@ -15,6 +15,12 @@ final class _ExampleApi implements StudioApi {
   Future<VersionInfo> getVersion() async => VersionInfo.fromJson(_result);
 
   @override
+  Future<List<SourceNode>> getSourceTree({required String uri}) async => [
+    for (final item in asJson<List<Object?>>(_result))
+      SourceNode.fromJson(item),
+  ];
+
+  @override
   Future<WidgetRef?> getSelection() async =>
       _result == null ? null : WidgetRef.fromJson(_result);
 

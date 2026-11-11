@@ -5,6 +5,7 @@ import 'edit_result.dart';
 import 'expression.dart';
 import 'move_direction.dart';
 import 'property.dart';
+import 'source_node.dart';
 import 'structure_options.dart';
 import 'swap_partner.dart';
 import 'version_info.dart';
@@ -19,6 +20,17 @@ import 'widget_spec.dart';
 abstract interface class StudioApi {
   /// Returns the version of this contract.
   Future<VersionInfo> getVersion();
+
+  /// Returns the widgets that the source of a file creates.
+  ///
+  /// The result has the widgets that no other widget contains, in source order,
+  /// each with the widgets created inside its arguments. Branches that are not
+  /// rendered are included.
+  ///
+  /// The parameter [uri]: the file URI of a Dart file of the project.
+  ///
+  /// Errors: `NotInProject`, `UnsupportedTarget`, `ToolchainUnavailable`.
+  Future<List<SourceNode>> getSourceTree({required String uri});
 
   /// Returns the selected widget, or null when nothing is selected.
   Future<WidgetRef?> getSelection();

@@ -14,6 +14,7 @@ export 'src/generated/property.dart';
 export 'src/generated/range.dart';
 export 'src/generated/reload_kind.dart';
 export 'src/generated/selection_changed.dart';
+export 'src/generated/source_node.dart';
 export 'src/generated/structure_options.dart';
 export 'src/generated/studio_api.dart';
 export 'src/generated/studio_client.dart';

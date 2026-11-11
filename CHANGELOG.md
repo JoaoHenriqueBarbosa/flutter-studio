@@ -37,6 +37,9 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `docs/interfaces/icd.md` 0.4, conforme a linha 0.12 da tabela do guia.
 - `studio_shell`: `StructureToolbar` e `StructureController`, a barra do painel Propriedades com envolver, mover entre irmãos, trocar com pai ou filho e remover mantendo os filhos, habilitados conforme `getStructureOptions` da seleção (FR-STR-001); `WorkbenchController.edit` e o tipo `ServiceEdit`; seis textos novos nos dois ARB. 29 testes no pacote.
 - `docs/architecture/arc42.md` 0.8, conforme a linha 0.13 da tabela do guia.
+- Contrato 0.3.0 do serviço `Studio`: `getSourceTree` e o tipo `SourceNode` (FR-INS-002). 23 testes em `studio_protocol`.
+- `studio_core`: árvore de fonte a partir do Flutter Outline. `LspClient` pede `flutterOutline` na inicialização e expõe `outlines`, com `OutlineNode` e `FileOutline`; `SourceTreeBuilder` monta `SourceNode` com a posição no nome da classe, depois de `const` ou `new`, que é o local de criação que o framework registra (ADR-0005); `SourceTrees` guarda a árvore de cada arquivo aberto e `treeOf` espera o outline da versão atual; `WidgetReader.sourceTree`; `TextDocument.offsetAt` e `positionAt`. 129 testes, um deles de sistema, que confere a posição do `Column` na árvore de fonte contra a usada em execução.
+- `docs/requirements/srs.md` 0.4 e `docs/interfaces/icd.md` 0.5, conforme a linha 0.14 da tabela do guia.
 
 ### Alterado
 

@@ -15,6 +15,8 @@ import '../lsp/editable_argument.dart';
 import '../lsp/widget_assist.dart';
 import '../selection/selection_controller.dart';
 import '../selection/widget_location.dart';
+import '../structure/source_node.dart' as structure;
+import '../structure/source_tree.dart';
 
 /// The `Studio` service: the single entry for every operation (ADR-0012).
 ///
@@ -44,6 +46,15 @@ final class StudioService implements StudioApi {
   @override
   Future<VersionInfo> getVersion() async =>
       const VersionInfo(version: StudioContract.version);
+
+  @override
+  Future<List<SourceNode>> getSourceTree({required String uri}) =>
+      _guarded(() async {
+        final filePath = _filePathOf(uri);
+        if (!_documents.contains(filePath)) throw EditOutsideProject(filePath);
+        final tree = await _reader.sourceTree(filePath);
+        return [for (final root in tree.roots) _nodeOf(root, tree)];
+      });
 
   @override
   Future<WidgetRef?> getSelection() async =>
@@ -202,11 +213,7 @@ final class StudioService implements StudioApi {
   /// Returns where [reference] points, after checking that its document is
   /// in the project and at the version of the reference.
   SourceLocation _locationOf(WidgetRef reference) {
-    final uri = Uri.tryParse(reference.uri);
-    if (uri == null || !uri.isScheme('file')) {
-      throw StudioFault(StudioErrorCode.notInProject, data: reference.uri);
-    }
-    final filePath = uri.toFilePath();
+    final filePath = _filePathOf(reference.uri);
     _documents.documentAt(filePath, version: reference.documentVersion);
     return (
       filePath: filePath,
@@ -216,6 +223,26 @@ final class StudioService implements StudioApi {
       ),
     );
   }
+
+  /// Returns the path of the file that [uri] names.
+  String _filePathOf(String uri) {
+    final parsed = Uri.tryParse(uri);
+    if (parsed == null || !parsed.isScheme('file')) {
+      throw StudioFault(StudioErrorCode.notInProject, data: uri);
+    }
+    return parsed.toFilePath();
+  }
+
+  SourceNode _nodeOf(structure.SourceNode node, SourceTree tree) => SourceNode(
+    ref: _referenceOf((
+      filePath: tree.filePath,
+      position: node.position,
+      documentVersion: tree.documentVersion,
+    )),
+    className: node.className,
+    owner: node.owner,
+    children: [for (final child in node.children) _nodeOf(child, tree)],
+  );
 
   WidgetRef _referenceOf(WidgetLocation location) => WidgetRef(
     uri: '${Uri.file(location.filePath)}',

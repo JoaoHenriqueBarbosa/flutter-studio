@@ -31,6 +31,11 @@ final class StudioDispatcher {
       case StudioMethod.getVersion:
         final result = await _api.getVersion();
         return result.toJson();
+      case StudioMethod.getSourceTree:
+        final result = await _api.getSourceTree(
+          uri: asJson<String>(params['uri']),
+        );
+        return [for (final item in result) item.toJson()];
       case StudioMethod.getSelection:
         final result = await _api.getSelection();
         return switch (result) {

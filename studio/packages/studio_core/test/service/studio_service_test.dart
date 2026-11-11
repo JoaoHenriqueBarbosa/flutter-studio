@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
-import 'package:studio_core/studio_core.dart' hide TextEdit;
+import 'package:studio_core/studio_core.dart' hide SourceNode, TextEdit;
 import 'package:studio_protocol/studio_protocol.dart';
 
 import '../support/fake_analysis_server.dart';
@@ -17,6 +17,7 @@ void main() {
     late FakeAnalysisServer server;
     late EditPipeline pipeline;
     late StudioService service;
+    late SourceTrees trees;
     var isServerRunning = true;
 
     WidgetRef reference({int documentVersion = 1, String? uri}) => WidgetRef(
@@ -44,7 +45,8 @@ void main() {
       );
       sync.attach(server.client);
       LspClient? currentServer() => isServerRunning ? server.client : null;
-      final reader = WidgetReader(sync, currentServer);
+      trees = SourceTrees(store, sync)..attach(server.client);
+      final reader = WidgetReader(sync, trees, currentServer);
       pipeline = EditPipeline(
         store,
         reader,
@@ -104,6 +106,7 @@ void main() {
     });
 
     tearDown(() async {
+      await trees.dispose();
       await selection.dispose();
       await sync.dispose();
       await server.close();
@@ -212,6 +215,40 @@ void main() {
 
       expect((await service.redo()).applied, isTrue);
       expect((await service.redo()).applied, isFalse);
+    });
+
+    // Verifies: FR-API-001, FR-INS-002
+    test('returns the source tree with a reference in each node', () async {
+      final tree = service.getSourceTree(uri: '${Uri.file(filePath)}');
+      await server.settled;
+      server.publishOutline(filePath, {
+        'range': {
+          'start': {'line': 0, 'character': 0},
+          'end': {'line': 1, 'character': 0},
+        },
+        'children': [
+          {
+            'range': {
+              'start': {'line': 0, 'character': 0},
+              'end': {'line': 0, 'character': 23},
+            },
+            'className': 'Text',
+            'children': <Object?>[],
+          },
+        ],
+      });
+
+      expect(await tree, [
+        SourceNode(ref: reference(), className: 'Text', children: const []),
+      ]);
+    });
+
+    // Verifies: NFR-SEC-003
+    test('refuses the source tree of a file outside the project', () async {
+      await expectLater(
+        service.getSourceTree(uri: 'file:///etc/hosts'),
+        throwsFault(StudioErrorCode.notInProject, 'file:///etc/hosts'),
+      );
     });
 
     // Verifies: FR-API-001, FR-STR-001

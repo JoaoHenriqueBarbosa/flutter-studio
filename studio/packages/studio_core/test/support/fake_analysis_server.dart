@@ -51,6 +51,13 @@ final class FakeAnalysisServer {
   /// Message of the error that `editArgument` answers, or `null` to succeed.
   String? editError;
 
+  /// Publishes [outline] as the Flutter Outline of the file at [filePath].
+  void publishOutline(String filePath, Map<String, Object?> outline) =>
+      _peer.sendNotification('dart/textDocument/publishFlutterOutline', {
+        'uri': '${Uri.file(filePath)}',
+        'outline': outline,
+      });
+
   /// Completes when the server has handled everything sent so far.
   Future<void> get settled => client.editableArguments((
     filePath: '/settled',

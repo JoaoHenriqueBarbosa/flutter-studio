@@ -1,6 +1,6 @@
 # Especificação de interfaces
 
-Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.4, rascunho para revisão.
+Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.5, rascunho para revisão.
 
 ## 1. Inventário de interfaces
 
@@ -30,7 +30,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 
 ### 2.1 Regras
 
-- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.2.0.
+- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.3.0.
 - Todo `WidgetRef` enviado a um método de edição DEVE trazer `documentVersion`. Se não for a versão atual do documento, o serviço DEVE responder `StaleDocument` sem alterar nada.
 - Um método de edição DEVE ser atômico: ou todos os arquivos da edição são gravados, ou nenhum.
 - O serviço NÃO DEVE aceitar URI fora das raízes do projeto.
@@ -48,7 +48,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `WidgetSpec` | `libraryUri: string`, `className: string`, `constructorName?: string` (F3), `arguments?: map<string, Expression>` (F3) | Widget a criar |
 | `StructureOptions` | `wrappers: WidgetSpec[]`, `canRemove`, `canMoveUp`, `canMoveDown`, `canSwapWithParent`, `canSwapWithChild` | Edições de estrutura que um widget admite |
 | `Property` | `name`, `type`, `expression?`, `defaultValue?`, `runtimeValue?` (F2), `isSet`, `isEditable`, `isEvent` (F3), `options?: string[]`, `documentation?` | Parâmetro do construtor de um widget. `type` é o gênero do valor como o analysis server o nomeia (`string`, `int`, `double`, `bool`, `enum` ou outro); `options` traz os valores aceitos por um enum |
-| `SourceNode` | `ref: WidgetRef`, `className`, `slot?: SlotRef`, `children: SourceNode[]`, `emptySlots: SlotRef[]` | Nó da árvore de fonte |
+| `SourceNode` | `ref: WidgetRef`, `className`, `owner?: string`, `slot?: SlotRef` (F3), `children: SourceNode[]`, `emptySlots: SlotRef[]` (F3) | Nó da árvore de fonte. `owner` é o nome qualificado da declaração que cria o widget, como `MyHomePage.build`, e só vem nos widgets que nenhum outro contém. Os slots dependem do motor de edição (ASM-03) |
 | `RuntimeNode` | `id`, `className`, `ref?: WidgetRef`, `bounds?`, `children: RuntimeNode[]` | Nó da árvore em execução |
 | `Surface` | `id`, `kind` (`preview`, `widget` ou `app`), `name`, `ref?: WidgetRef` | Alvo que o canvas pode abrir |
 | `SurfaceConfig` | `width`, `height`, `devicePixelRatio`, `brightness`, `platform`, `textScale`, `locale` | Configuração de exibição de uma superfície |
@@ -60,7 +60,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | Método | Parâmetros | Resultado | Inc. |
 | --- | --- | --- | --- |
 | `getVersion` | nenhum | `{version: string}` | F1 |
-| `getSourceTree` | `uri` | `SourceNode` | F1 |
+| `getSourceTree` | `uri` | `SourceNode[]`: os widgets do arquivo que nenhum outro contém, na ordem do fonte | F1 |
 | `getRuntimeTree` | `sessionId` | `RuntimeNode` | F1 |
 | `getSelection` | nenhum | `WidgetRef` ou nulo | F1 |
 | `select` | `target: WidgetRef` | `WidgetRef` efetivamente selecionado | F1 |
@@ -85,9 +85,9 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `createEventHandler` | `target`, `event: string` | `EditResult` e a localização do método criado | F3 |
 | `listPalette` | `query?: string` | `WidgetSpec[]`, com documentação | F3 |
 
-O contrato 0.2.0 traz `getVersion`, `getSelection`, `select`, `getProperties`, `setProperty`, `getStructureOptions`, `wrapWidget`, `removeWidget`, `reorderWidget`, `swapWidget`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem.
+O contrato 0.3.0 traz `getVersion`, `getSourceTree`, `getSelection`, `select`, `getProperties`, `setProperty`, `getStructureOptions`, `wrapWidget`, `removeWidget`, `reorderWidget`, `swapWidget`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem.
 
-Limites da versão 0.2.0, que realiza os dois primeiros níveis da ADR-0006:
+Limites da versão 0.3.0, que realiza os dois primeiros níveis da ADR-0006:
 
 - `setProperty` aceita como `value` um literal do gênero do parâmetro (ou `null` escrito como expressão) e responde `UnsupportedTarget` para outra expressão e para `value` nulo, que pede a remoção do argumento (FR-PRP-007, FR-PRP-008).
 - `wrapWidget` aceita os widgets que `getStructureOptions` lista em `wrappers`, que são os que o analysis server sabe envolver. Outro widget responde `UnsupportedTarget` até o motor de edição existir.

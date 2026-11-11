@@ -77,4 +77,23 @@ void main() {
       );
     });
   });
+
+  group('TextDocument positions', () {
+    const document = TextDocument('ab\ncd\n', version: 1);
+
+    // Verifies: FR-INS-002
+    test('converts between an offset and a position', () {
+      expect(document.offsetAt((line: 1, character: 1)), 4);
+      expect(document.positionAt(4), (line: 1, character: 1));
+    });
+
+    // Verifies: FR-DOC-006
+    test('finds the smallest edit that leads to another text', () {
+      expect(document.editTo('ab\ncXd\n'), (
+        range: (start: (line: 1, character: 1), end: (line: 1, character: 1)),
+        newText: 'X',
+      ));
+      expect(document.replacing('x').version, 2);
+    });
+  });
 }

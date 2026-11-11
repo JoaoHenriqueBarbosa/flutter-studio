@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- Contract 0.3.0: `getSourceTree` and the type `SourceNode`.
+
 ## 0.2.0
 
 - Contract 0.2.0: `getStructureOptions`, `wrapWidget`, `removeWidget`,

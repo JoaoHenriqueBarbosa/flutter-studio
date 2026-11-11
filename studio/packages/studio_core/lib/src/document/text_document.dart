@@ -50,6 +50,14 @@ final class TextDocument {
     return TextDocument(result, version: version + 1);
   }
 
+  /// Returns the offset in [text] of [position].
+  ///
+  /// Throws [InvalidEdit] when [position] is outside the text.
+  int offsetAt(DocumentPosition position) => _offsetOf(position, _lineStarts());
+
+  /// Returns the position of the code unit at [offset] in [text].
+  DocumentPosition positionAt(int offset) => _positionOf(offset, _lineStarts());
+
   /// Returns the next version of this document, with [newText] as content.
   TextDocument replacing(String newText) =>
       TextDocument(newText, version: version + 1);

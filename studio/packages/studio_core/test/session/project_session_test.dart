@@ -185,6 +185,31 @@ void main() {
       expect(File(mainPath).readAsStringSync(), sampleAppSource);
     }, timeout: const Timeout(Duration(minutes: 2)));
 
+    // Verifies: FR-INS-002, IR-004
+    test('derives the tree of widgets from the source of a file', () async {
+      await session.start();
+
+      final roots = await session.service.getSourceTree(
+        uri: '${Uri.file(mainPath)}',
+      );
+
+      expect(roots.first.className, 'SampleApp');
+      expect(roots.first.owner, 'main');
+      final app = roots.last;
+      expect(app.className, 'MaterialApp');
+      expect(app.owner, 'SampleApp.build');
+      expect(app.ref.position, const Position(line: 9, character: 17));
+      final column = app.children.single.children.single;
+      expect(column.className, 'Column');
+      // The same location that the framework records at run time.
+      expect(column.ref.position, const Position(line: 11, character: 14));
+      expect(column.children.single.className, 'Text');
+      expect(
+        await session.service.getProperties(target: column.ref),
+        isNotEmpty,
+      );
+    }, timeout: const Timeout(Duration(minutes: 2)));
+
     // Verifies: FR-DOC-003, FR-API-004
     test('follows a file that another program saves', () async {
       await session.start();

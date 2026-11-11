@@ -36,7 +36,7 @@ void main() {
       LspClient? currentServer() => isServerRunning ? server.client : null;
       pipeline = EditPipeline(
         store,
-        WidgetReader(sync, currentServer),
+        WidgetReader(sync, SourceTrees(store, sync), currentServer),
         server: currentServer,
         requestReload: () {
           if (isAppRunning) reloadCount++;

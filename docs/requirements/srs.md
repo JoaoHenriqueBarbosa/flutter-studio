@@ -1,6 +1,6 @@
 # Especificação de requisitos de software
 
-Requisitos do Studio na estrutura da ISO/IEC/IEEE 29148:2018. Versão 0.3, rascunho para revisão.
+Requisitos do Studio na estrutura da ISO/IEC/IEEE 29148:2018. Versão 0.4, rascunho para revisão.
 
 ## 1. Introdução
 
@@ -307,7 +307,7 @@ Situação de cada premissa. Uma premissa só é dada por respondida quando o ex
 | --- | --- | --- |
 | ASM-01 | Aberta | |
 | ASM-02 | Aberta | |
-| ASM-03 | Aberta | |
+| ASM-03 | Respondida: falsa no caminho usado | 11/11/2026, Flutter 3.47.9, Linux x64: o Flutter Outline publicado pelo analysis server por LSP (`dart/textDocument/publishFlutterOutline`) traz, de cada widget, a classe, o intervalo e os atributos, e não traz o parâmetro do pai a que o filho pertence. No arquivo de exemplo do `flutter create`, `AppBar`, `Center` e `FloatingActionButton` chegam como filhos de `Scaffold` sem `parentAssociationLabel`. Vale a consequência prevista: os slots serão calculados pelo motor de edição, em F3. |
 | ASM-04 | Aberta | |
 | ASM-05 | Aberta | |
 | ASM-06 | Aberta; o caso análogo em Linux está confirmado | 11/11/2026, Linux x64: no commit `9b8d6457` do upstream, `devtools_app` compila e executa com um runner gerado por `flutter create --platforms=linux`, sem alterar arquivo herdado. Falta o experimento em Windows. |

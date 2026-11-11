@@ -5,20 +5,25 @@ import '../lsp/editable_argument.dart';
 import '../lsp/lsp_client.dart';
 import '../lsp/lsp_request_failed.dart';
 import '../lsp/server_assist.dart';
+import '../structure/source_tree.dart';
+import '../structure/source_trees.dart';
 
 /// Reads from the analysis server what it knows about the widget created
 /// at a location.
 final class WidgetReader {
-  /// Creates a reader that opens documents through [_sync].
+  /// Creates a reader that opens documents through [_sync] and takes the
+  /// source trees from [_trees].
   ///
   /// [_server] returns the current client of the analysis server, or `null`
   /// while the server is not running.
-  const WidgetReader(this._sync, this._server);
+  const WidgetReader(this._sync, this._trees, this._server);
 
   /// Name of the analysis server in a [ToolUnavailable].
   static const serverName = 'analysis-server';
 
   final DocumentSync _sync;
+
+  final SourceTrees _trees;
 
   final LspClient? Function() _server;
 
@@ -41,6 +46,12 @@ final class WidgetReader {
   /// Throws [ToolUnavailable] while the server is down.
   Future<List<ServerAssist>> assists(SourceLocation target) =>
       _ask(target, (server) => server.assists(target));
+
+  /// Completes with the widgets that the source of the file at [filePath]
+  /// creates.
+  ///
+  /// Throws [ToolUnavailable] while the server is down.
+  Future<SourceTree> sourceTree(String filePath) => _trees.treeOf(filePath);
 
   /// Opens the document of [target] in the server, so that the server reads
   /// the same text and version as the store, and then runs [request].

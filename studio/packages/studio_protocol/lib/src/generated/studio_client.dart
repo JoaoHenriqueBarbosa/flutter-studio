@@ -6,6 +6,7 @@ import 'edit_result.dart';
 import 'expression.dart';
 import 'move_direction.dart';
 import 'property.dart';
+import 'source_node.dart';
 import 'structure_options.dart';
 import 'studio_api.dart';
 import 'studio_method.dart';
@@ -32,6 +33,15 @@ final class StudioClient implements StudioApi {
   Future<VersionInfo> getVersion() async {
     final result = await _call(StudioMethod.getVersion, {});
     return VersionInfo.fromJson(result);
+  }
+
+  @override
+  Future<List<SourceNode>> getSourceTree({required String uri}) async {
+    final result = await _call(StudioMethod.getSourceTree, {'uri': uri});
+    return [
+      for (final item in asJson<List<Object?>>(result))
+        SourceNode.fromJson(item),
+    ];
   }
 
   @override

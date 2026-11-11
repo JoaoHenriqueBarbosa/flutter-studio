@@ -239,5 +239,50 @@ void main() {
         ),
       );
     });
+
+    // Verifies: FR-INS-002
+    test('asks for the Flutter Outline and reads what is published', () async {
+      Object? options;
+      server.registerMethod('initialize', (Parameters parameters) {
+        options = parameters['initializationOptions'].value;
+        return <String, Object?>{};
+      });
+      unawaited(server.listen());
+      await client.initialize('/work/sample_app');
+      final outline = client.outlines.first;
+
+      server.sendNotification('dart/textDocument/publishFlutterOutline', {
+        'uri': 'file:///work/sample_app/lib/main.dart',
+        'outline': {
+          'kind': 'DART_ELEMENT',
+          'range': {
+            'start': {'line': 0, 'character': 0},
+            'end': {'line': 9, 'character': 0},
+          },
+          'dartElement': {'name': 'build'},
+          'children': [
+            {
+              'kind': 'NEW_INSTANCE',
+              'className': 'Column',
+              'range': {
+                'start': {'line': 2, 'character': 4},
+                'end': {'line': 4, 'character': 5},
+              },
+            },
+            {'kind': 'NEW_INSTANCE', 'className': 'Broken'},
+          ],
+        },
+      });
+
+      final received = await outline;
+      expect(options, {'flutterOutline': true});
+      expect(received.filePath, '/work/sample_app/lib/main.dart');
+      expect(received.root.elementName, 'build');
+      expect(received.root.children.single.className, 'Column');
+      expect(received.root.children.single.range.start, (
+        line: 2,
+        character: 4,
+      ));
+    });
   });
 }

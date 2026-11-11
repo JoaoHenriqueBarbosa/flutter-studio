@@ -33,8 +33,11 @@ void main() {
       project.deleteSync(recursive: true);
     });
 
-    WidgetReader reader() =>
-        WidgetReader(sync, () => isServerRunning ? server.client : null);
+    WidgetReader reader() => WidgetReader(
+      sync,
+      SourceTrees(store, sync),
+      () => isServerRunning ? server.client : null,
+    );
 
     // Verifies: FR-PRP-001
     test('opens the document and reads the arguments', () async {

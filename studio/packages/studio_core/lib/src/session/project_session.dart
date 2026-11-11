@@ -15,6 +15,7 @@ import '../lsp/lsp_client.dart';
 import '../project/flutter_project.dart';
 import '../selection/selection_controller.dart';
 import '../service/studio_service.dart';
+import '../structure/source_trees.dart';
 import '../toolchain/toolchain_supervisor.dart';
 import 'analysis_server_child.dart';
 import 'app_run.dart';
@@ -48,7 +49,11 @@ final class ProjectSession {
 
   late final _watcher = ProjectFileWatcher(project.rootPath, documents);
 
-  late final _reader = WidgetReader(_sync, () => _server);
+  /// The source trees of the files open in the analysis server
+  /// (FR-INS-002).
+  late final sourceTrees = SourceTrees(documents, _sync);
+
+  late final _reader = WidgetReader(_sync, sourceTrees, () => _server);
 
   late final _pipeline = EditPipeline(
     documents,
@@ -138,6 +143,7 @@ final class ProjectSession {
     await _changes?.cancel();
     await _externalChanges?.cancel();
     await _watcher.dispose();
+    await sourceTrees.dispose();
     await _sync.dispose();
     await _server?.close();
     await _daemon?.close();
@@ -159,6 +165,7 @@ final class ProjectSession {
   Future<void> _handleServerConnected(LspClient client) async {
     _server = client;
     _sync.attach(client);
+    sourceTrees.attach(client);
     // The subscription ends with the client, which closes its stream.
     unawaited(client.diagnostics.forEach(_diagnostics.add));
     final daemon = _daemon;

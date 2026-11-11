@@ -8,6 +8,9 @@ enum StudioMethod {
   /// Returns the version of this contract.
   getVersion,
 
+  /// Returns the widgets that the source of a file creates.
+  getSourceTree,
+
   /// Returns the selected widget, or null when nothing is selected.
   getSelection,
 
