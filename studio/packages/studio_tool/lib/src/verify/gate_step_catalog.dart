@@ -1,6 +1,8 @@
 import '../docs/documentation_step.dart';
 import '../generate/generated_code_step.dart';
+import '../markers/marker_step.dart';
 import '../trace/trace_step.dart';
+import '../waivers/waiver_step.dart';
 import 'gate_step.dart';
 import 'process_runner.dart';
 import 'process_step.dart';
@@ -50,8 +52,10 @@ final class GateStepCatalog {
       ],
     ),
     GeneratedCodeStep(_runner),
+    MarkerStep(_runner),
     DocumentationStep(_runner),
     const TraceStep(),
+    const WaiverStep(DateTime.now),
     ProcessStep(
       _runner,
       id: 'QG-04',

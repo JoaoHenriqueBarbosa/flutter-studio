@@ -4,7 +4,13 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
-**A referência de API passou a ser gerada, e o portão confere.** `st docs` gera a referência de cada pacote e a do serviço `Studio` (esta a partir do contrato, com exemplos). É o passo QG-11 do portão; a primeira rodada achou quatro avisos, já corrigidos. Seis dos treze passos existem agora. Os que faltam: QG-08, QG-10 e QG-13, que são verificações próprias a escrever, e QG-03, QG-06 e QG-07, que dependem de ferramentas de fora (DCM, PMD, cspell).
+**Mais dois passos do portão: marcadores e dispensas.** O portão agora procura no código próprio o que não pode chegar ao ramo principal (pendência sem dono e issue, `print`, teste pulado, caminho não implementado) e confere, nos commits do Studio, que nenhum atribui o trabalho a ferramenta. Confere também que toda supressão de diagnóstico cita uma dispensa registrada; hoje não há supressão nem dispensa. O código passou limpo nos dois.
+
+O passo dos marcadores não aprova ainda, de propósito: ele deveria conferir o cabeçalho de licença de cada arquivo, e o texto do cabeçalho depende da licença do produto, que é decisão sua. Quando o arquivo `studio/license-header.txt` existir, o passo passa a exigir o cabeçalho.
+
+Estado do portão: nove dos treze passos existem. Cinco aprovam (formato, análise, código gerado, referência de API e dispensas), os dois de Rust não se aplicam, o dos marcadores espera o cabeçalho de licença, e o de rastreabilidade reprova por dois requisitos sem teste (FR-PRP-011 e NFR-MNT-004). Faltam o QG-08, de estrutura, e os três que dependem de ferramenta de fora (DCM, PMD e cspell).
+
+**A referência de API passou a ser gerada, e o portão confere.** `st docs` gera a referência de cada pacote e a do serviço `Studio` (esta a partir do contrato, com exemplos). É o passo QG-11 do portão; a primeira rodada achou quatro avisos, já corrigidos. Faltavam então QG-08, QG-10 e QG-13, que são verificações próprias, e QG-03, QG-06 e QG-07, que dependem de ferramentas de fora (DCM, PMD e cspell).
 
 **Extrair widget, converter para StatefulWidget e a árvore do app na API.** A barra de estrutura ganhou "Extrair para um widget novo": pede o nome da classe e move o widget selecionado, com tudo o que há dentro, para uma classe nova no mesmo arquivo; o que ele usava de fora vira parâmetro. Converter um `StatelessWidget` em `StatefulWidget` existe na API e ainda não tem botão, porque a interface ainda não tem onde selecionar uma classe. A API também passou a devolver a árvore do app em execução, com o local de criação de cada widget do projeto.
 

@@ -6,3 +6,4 @@
 - `st generate` and the step QG-09.
 - `st trace` and the step QG-12.
 - `st docs` and the step QG-11.
+- Steps QG-10 and QG-13.

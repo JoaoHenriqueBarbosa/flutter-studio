@@ -1,3 +1,6 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// Source: lib/l10n/*.arb. Generator: flutter gen-l10n.
+
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 

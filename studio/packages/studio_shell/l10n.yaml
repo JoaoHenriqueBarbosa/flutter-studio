@@ -4,3 +4,4 @@ output-dir: lib/src/l10n
 output-localization-file: studio_localizations.dart
 output-class: StudioLocalizations
 nullable-getter: false
+header: "// GENERATED CODE - DO NOT MODIFY BY HAND\n// Source: lib/l10n/*.arb. Generator: flutter gen-l10n."
