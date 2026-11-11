@@ -1,0 +1,12 @@
+name: studio_protocol
+description: Contract of the Studio service, with the types generated from it.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dev_dependencies:
+  test: ^1.25.8

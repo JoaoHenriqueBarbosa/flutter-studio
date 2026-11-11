@@ -1,0 +1,546 @@
+{
+  "openrpc": "1.4.0",
+  "info": {
+    "title": "Studio",
+    "version": "0.1.0",
+    "description": "Operations of Studio: reading, selecting and editing the widgets of the open project."
+  },
+  "x-binding": {
+    "serviceName": "Studio",
+    "streamName": "Studio",
+    "resultType": "StudioResult",
+    "resultKey": "result"
+  },
+  "methods": [
+    {
+      "name": "getVersion",
+      "summary": "Returns the version of this contract.",
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "versionInfo",
+        "schema": { "$ref": "#/components/schemas/VersionInfo" }
+      },
+      "examples": [
+        {
+          "name": "version",
+          "params": [],
+          "result": { "name": "versionInfo", "value": { "version": "0.1.0" } }
+        }
+      ]
+    },
+    {
+      "name": "getSelection",
+      "summary": "Returns the selected widget, or null when nothing is selected.",
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "selection",
+        "schema": {
+          "oneOf": [
+            { "$ref": "#/components/schemas/WidgetRef" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "examples": [
+        {
+          "name": "nothingSelected",
+          "params": [],
+          "result": { "name": "selection", "value": null }
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "summary": "Selects a widget in every view and returns the widget that ended up selected.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "target",
+          "description": "The widget to select.",
+          "required": true,
+          "schema": { "$ref": "#/components/schemas/WidgetRef" }
+        }
+      ],
+      "result": {
+        "name": "selection",
+        "schema": { "$ref": "#/components/schemas/WidgetRef" }
+      },
+      "errors": [
+        { "$ref": "#/components/errors/StaleDocument" },
+        { "$ref": "#/components/errors/NotInProject" }
+      ],
+      "examples": [
+        {
+          "name": "selectColumn",
+          "params": [
+            {
+              "name": "target",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": { "line": 11, "character": 14 },
+                "documentVersion": 1
+              }
+            }
+          ],
+          "result": {
+            "name": "selection",
+            "value": {
+              "uri": "file:///work/sample_app/lib/main.dart",
+              "position": { "line": 11, "character": 14 },
+              "documentVersion": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "getProperties",
+      "summary": "Lists the parameters of the constructor that creates a widget.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "target",
+          "description": "The widget whose constructor is read.",
+          "required": true,
+          "schema": { "$ref": "#/components/schemas/WidgetRef" }
+        }
+      ],
+      "result": {
+        "name": "properties",
+        "schema": {
+          "type": "array",
+          "items": { "$ref": "#/components/schemas/Property" }
+        }
+      },
+      "errors": [
+        { "$ref": "#/components/errors/StaleDocument" },
+        { "$ref": "#/components/errors/NotInProject" },
+        { "$ref": "#/components/errors/ToolchainUnavailable" }
+      ],
+      "examples": [
+        {
+          "name": "columnProperties",
+          "params": [
+            {
+              "name": "target",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": { "line": 11, "character": 14 },
+                "documentVersion": 1
+              }
+            }
+          ],
+          "result": {
+            "name": "properties",
+            "value": [
+              {
+                "name": "mainAxisAlignment",
+                "type": "enum",
+                "expression": { "source": "MainAxisAlignment.center" },
+                "defaultValue": { "source": "MainAxisAlignment.start" },
+                "isSet": true,
+                "isEditable": true,
+                "options": [
+                  "MainAxisAlignment.start",
+                  "MainAxisAlignment.end",
+                  "MainAxisAlignment.center"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "setProperty",
+      "summary": "Changes one argument of the constructor that creates a widget.",
+      "description": "The files are on disk when the call completes. The reload of the running app is requested but not awaited.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "target",
+          "description": "The widget whose argument changes.",
+          "required": true,
+          "schema": { "$ref": "#/components/schemas/WidgetRef" }
+        },
+        {
+          "name": "name",
+          "description": "Name of the constructor parameter.",
+          "required": true,
+          "schema": { "type": "string" }
+        },
+        {
+          "name": "value",
+          "description": "The new expression of the argument, or null to remove the argument.",
+          "required": true,
+          "schema": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/Expression" },
+              { "type": "null" }
+            ]
+          }
+        }
+      ],
+      "result": {
+        "name": "editResult",
+        "schema": { "$ref": "#/components/schemas/EditResult" }
+      },
+      "errors": [
+        { "$ref": "#/components/errors/StaleDocument" },
+        { "$ref": "#/components/errors/NotInProject" },
+        { "$ref": "#/components/errors/UnsupportedTarget" },
+        { "$ref": "#/components/errors/ToolchainUnavailable" }
+      ],
+      "examples": [
+        {
+          "name": "alignColumnToEnd",
+          "params": [
+            {
+              "name": "target",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": { "line": 11, "character": 14 },
+                "documentVersion": 1
+              }
+            },
+            { "name": "name", "value": "mainAxisAlignment" },
+            { "name": "value", "value": { "source": "MainAxisAlignment.end" } }
+          ],
+          "result": {
+            "name": "editResult",
+            "value": {
+              "applied": true,
+              "changes": [
+                {
+                  "uri": "file:///work/sample_app/lib/main.dart",
+                  "edits": [
+                    {
+                      "range": {
+                        "start": { "line": 12, "character": 29 },
+                        "end": { "line": 12, "character": 53 }
+                      },
+                      "newText": "MainAxisAlignment.end"
+                    }
+                  ]
+                }
+              ],
+              "documentVersions": {
+                "file:///work/sample_app/lib/main.dart": 2
+              },
+              "reload": "hotReload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "undo",
+      "summary": "Undoes the last edit and restores the exact previous bytes of its files.",
+      "description": "When there is nothing to undo, the result has applied set to false and no change.",
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "editResult",
+        "schema": { "$ref": "#/components/schemas/EditResult" }
+      },
+      "examples": [
+        {
+          "name": "nothingToUndo",
+          "params": [],
+          "result": {
+            "name": "editResult",
+            "value": {
+              "applied": false,
+              "changes": [],
+              "documentVersions": {},
+              "reload": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "redo",
+      "summary": "Applies again the edit that the last undo removed.",
+      "description": "When there is nothing to redo, the result has applied set to false and no change.",
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "editResult",
+        "schema": { "$ref": "#/components/schemas/EditResult" }
+      },
+      "examples": [
+        {
+          "name": "nothingToRedo",
+          "params": [],
+          "result": {
+            "name": "editResult",
+            "value": {
+              "applied": false,
+              "changes": [],
+              "documentVersions": {},
+              "reload": "none"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "x-events": [
+    {
+      "name": "selectionChanged",
+      "description": "The selection changed, from any view or client.",
+      "schema": { "$ref": "#/components/schemas/SelectionChanged" }
+    },
+    {
+      "name": "documentChanged",
+      "description": "A document of the project changed and the change is on disk.",
+      "schema": { "$ref": "#/components/schemas/DocumentChanged" }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "VersionInfo": {
+        "description": "The version of the contract of the Studio service.",
+        "type": "object",
+        "required": ["version"],
+        "properties": {
+          "version": {
+            "description": "Semantic version of the contract.",
+            "type": "string"
+          }
+        }
+      },
+      "Position": {
+        "description": "A position in a document, as the Language Server Protocol counts it.",
+        "type": "object",
+        "required": ["line", "character"],
+        "properties": {
+          "line": {
+            "description": "Line of the position, starting at zero.",
+            "type": "integer"
+          },
+          "character": {
+            "description": "Offset in UTF-16 code units from the start of the line, starting at zero.",
+            "type": "integer"
+          }
+        }
+      },
+      "Range": {
+        "description": "The text between two positions of a document.",
+        "type": "object",
+        "required": ["start", "end"],
+        "properties": {
+          "start": {
+            "description": "First position of the range.",
+            "$ref": "#/components/schemas/Position"
+          },
+          "end": {
+            "description": "Position after the last one of the range.",
+            "$ref": "#/components/schemas/Position"
+          }
+        }
+      },
+      "WidgetRef": {
+        "description": "The creation location of a widget, in one version of the document.",
+        "type": "object",
+        "required": ["uri", "position", "documentVersion"],
+        "properties": {
+          "uri": {
+            "description": "The file URI of the document that creates the widget.",
+            "type": "string"
+          },
+          "position": {
+            "description": "Position of the constructor call that creates the widget.",
+            "$ref": "#/components/schemas/Position"
+          },
+          "documentVersion": {
+            "description": "Version of the document in which the position is valid.",
+            "type": "integer"
+          }
+        }
+      },
+      "Expression": {
+        "description": "A Dart expression, as source text.",
+        "type": "object",
+        "required": ["source"],
+        "properties": {
+          "source": {
+            "description": "The source text of the expression.",
+            "type": "string"
+          }
+        }
+      },
+      "Property": {
+        "description": "One parameter of the constructor that creates a widget.",
+        "type": "object",
+        "required": ["name", "type", "isSet", "isEditable"],
+        "properties": {
+          "name": {
+            "description": "Name of the parameter.",
+            "type": "string"
+          },
+          "type": {
+            "description": "Kind of value, as the analysis server names it: string, int, double, bool, enum, or another name for a value that is not editable as a literal.",
+            "type": "string"
+          },
+          "expression": {
+            "description": "The argument in the code, absent when no argument is given.",
+            "$ref": "#/components/schemas/Expression"
+          },
+          "defaultValue": {
+            "description": "The default value of the parameter, absent when it has none.",
+            "$ref": "#/components/schemas/Expression"
+          },
+          "isSet": {
+            "description": "Whether the code gives an argument for the parameter.",
+            "type": "boolean"
+          },
+          "isEditable": {
+            "description": "Whether setProperty accepts the parameter.",
+            "type": "boolean"
+          },
+          "options": {
+            "description": "The values that an enum parameter accepts, absent for the other kinds.",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "documentation": {
+            "description": "Documentation of the parameter, absent when it has none.",
+            "type": "string"
+          }
+        }
+      },
+      "TextEdit": {
+        "description": "Replacement of the text of a range.",
+        "type": "object",
+        "required": ["range", "newText"],
+        "properties": {
+          "range": {
+            "description": "The replaced text, in the document before the edit.",
+            "$ref": "#/components/schemas/Range"
+          },
+          "newText": {
+            "description": "The text that takes the place of the range.",
+            "type": "string"
+          }
+        }
+      },
+      "TextDocumentEdit": {
+        "description": "The edits made to one document.",
+        "type": "object",
+        "required": ["uri", "edits"],
+        "properties": {
+          "uri": {
+            "description": "The file URI of the document.",
+            "type": "string"
+          },
+          "edits": {
+            "description": "The edits, with ranges that refer to the document before any of them.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TextEdit" }
+          }
+        }
+      },
+      "ReloadKind": {
+        "description": "How the running app was asked to pick up an edit.",
+        "type": "string",
+        "enum": ["hotReload", "hotRestart", "none"]
+      },
+      "EditResult": {
+        "description": "The result of an edit operation.",
+        "type": "object",
+        "required": ["applied", "changes", "documentVersions", "reload"],
+        "properties": {
+          "applied": {
+            "description": "Whether any file changed.",
+            "type": "boolean"
+          },
+          "changes": {
+            "description": "The edits made, one entry for each changed document.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TextDocumentEdit" }
+          },
+          "documentVersions": {
+            "description": "Version of each changed document after the edit, by file URI.",
+            "type": "object",
+            "additionalProperties": { "type": "integer" }
+          },
+          "reload": {
+            "description": "The reload that was requested from the running app.",
+            "$ref": "#/components/schemas/ReloadKind"
+          }
+        }
+      },
+      "ChangeOrigin": {
+        "description": "Who changed a document.",
+        "type": "string",
+        "enum": ["studio", "external"]
+      },
+      "SelectionChanged": {
+        "description": "Data of the selectionChanged event.",
+        "type": "object",
+        "required": [],
+        "properties": {
+          "selection": {
+            "description": "The selected widget, absent when nothing is selected.",
+            "$ref": "#/components/schemas/WidgetRef"
+          }
+        }
+      },
+      "DocumentChanged": {
+        "description": "Data of the documentChanged event.",
+        "type": "object",
+        "required": ["uri", "documentVersion", "origin"],
+        "properties": {
+          "uri": {
+            "description": "The file URI of the document.",
+            "type": "string"
+          },
+          "documentVersion": {
+            "description": "Version of the document after the change.",
+            "type": "integer"
+          },
+          "origin": {
+            "description": "Who made the change.",
+            "$ref": "#/components/schemas/ChangeOrigin"
+          }
+        }
+      }
+    },
+    "errors": {
+      "StaleDocument": {
+        "code": -32001,
+        "message": "StaleDocument",
+        "data": "The current version of the document."
+      },
+      "NotInProject": {
+        "code": -32002,
+        "message": "NotInProject",
+        "data": "The URI that is outside the roots of the project."
+      },
+      "EditRejected": {
+        "code": -32003,
+        "message": "EditRejected",
+        "data": "The diagnostics that the edit would add."
+      },
+      "NoSession": {
+        "code": -32004,
+        "message": "NoSession",
+        "data": "The session identifier that was not found."
+      },
+      "UnsupportedTarget": {
+        "code": -32005,
+        "message": "UnsupportedTarget",
+        "data": "The reason why the target does not accept the operation."
+      },
+      "ToolchainUnavailable": {
+        "code": -32006,
+        "message": "ToolchainUnavailable",
+        "data": "The name of the process that is not running."
+      }
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import '../generate/generated_code_step.dart';
 import 'gate_step.dart';
 import 'process_runner.dart';
 import 'process_step.dart';
@@ -46,6 +47,7 @@ final class GateStepCatalog {
         ToolInvocation('dart', ['analyze', '--fatal-infos']),
       ],
     ),
+    GeneratedCodeStep(_runner),
     ProcessStep(
       _runner,
       id: 'QG-04',

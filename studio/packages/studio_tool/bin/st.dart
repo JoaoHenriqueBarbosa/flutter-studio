@@ -8,13 +8,15 @@ const _usageExitCode = 64;
 
 /// Runs the `st` command with [arguments].
 Future<void> main(List<String> arguments) async {
-  const catalog = GateStepCatalog(SystemProcessRunner());
+  const processRunner = SystemProcessRunner();
+  const catalog = GateStepCatalog(processRunner);
   final gate = QualityGate(
     catalog.steps,
     requiredStepIds: catalog.requiredStepIds,
   );
   final runner = CommandRunner<int>('st', 'Development tool of Studio.')
-    ..addCommand(VerifyCommand(gate, stdout));
+    ..addCommand(VerifyCommand(gate, stdout))
+    ..addCommand(GenerateCommand(processRunner, stdout));
   try {
     exitCode = await runner.run(arguments) ?? exitCode;
   } on UsageException catch (exception) {

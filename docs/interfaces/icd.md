@@ -1,6 +1,6 @@
 # Especificação de interfaces
 
-Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.1, rascunho para revisão.
+Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.2, rascunho para revisão.
 
 ## 1. Inventário de interfaces
 
@@ -26,7 +26,7 @@ Regras comuns:
 
 ## 2. Serviço `Studio`
 
-O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `Studio.<method>` pela conexão que já tem com o daemon. Esta seção é a referência legível. A forma normativa é o documento OpenRPC `studio.openrpc.json`, servido por `rpc.discover` (FR-API-003).
+O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `Studio.<method>` pela conexão que já tem com o daemon. Esta seção é a referência legível. A forma normativa é o documento OpenRPC `studio.openrpc.json`, na raiz do pacote `studio_protocol`, servido por `rpc.discover` (FR-API-003). O documento OpenRPC traz os métodos, os campos e os eventos dos incrementos já construídos; esta seção traz o contrato inteiro, com o incremento de cada parte.
 
 ### 2.1 Regras
 
@@ -35,6 +35,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 - Um método de edição DEVE ser atômico: ou todos os arquivos da edição são gravados, ou nenhum.
 - O serviço NÃO DEVE aceitar URI fora das raízes do projeto.
 - O serviço DEVE processar as edições uma por vez, na ordem de chegada.
+- No daemon, o resultado de um método viaja no envelope `{type: "StudioResult", result: <valor>}`, como no serviço `Lsp` do SDK, porque o daemon só transporta resultado que seja objeto com o campo `type`. Os nomes do serviço, do fluxo e do envelope ficam na chave `x-binding` do documento OpenRPC.
 
 ### 2.2 Tipos
 
@@ -45,11 +46,12 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `SlotRef` | `name: string`, `index?: int` | Slot de um widget; `index` posiciona dentro de uma lista |
 | `Expression` | `source: string` | Expressão Dart em texto |
 | `WidgetSpec` | `libraryUri: string`, `className: string`, `constructorName?: string`, `arguments?: map<string, Expression>` | Widget a criar |
-| `Property` | `name`, `type`, `expression?`, `defaultValue?`, `runtimeValue?`, `isSet`, `isEditable`, `isEvent`, `documentation?` | Parâmetro do construtor de um widget |
+| `Property` | `name`, `type`, `expression?`, `defaultValue?`, `runtimeValue?` (F2), `isSet`, `isEditable`, `isEvent` (F3), `options?: string[]`, `documentation?` | Parâmetro do construtor de um widget. `type` é o gênero do valor como o analysis server o nomeia (`string`, `int`, `double`, `bool`, `enum` ou outro); `options` traz os valores aceitos por um enum |
 | `SourceNode` | `ref: WidgetRef`, `className`, `slot?: SlotRef`, `children: SourceNode[]`, `emptySlots: SlotRef[]` | Nó da árvore de fonte |
 | `RuntimeNode` | `id`, `className`, `ref?: WidgetRef`, `bounds?`, `children: RuntimeNode[]` | Nó da árvore em execução |
 | `Surface` | `id`, `kind` (`preview`, `widget` ou `app`), `name`, `ref?: WidgetRef` | Alvo que o canvas pode abrir |
 | `SurfaceConfig` | `width`, `height`, `devicePixelRatio`, `brightness`, `platform`, `textScale`, `locale` | Configuração de exibição de uma superfície |
+| `TextDocumentEdit` | `uri: string`, `edits: TextEdit[]`, cada um com `range` e `newText` | Edições feitas em um documento, com intervalos que se referem ao texto anterior |
 | `EditResult` | `applied: bool`, `changes: TextDocumentEdit[]`, `documentVersions: map<string, int>`, `reload` (`hotReload`, `hotRestart` ou `none`) | Resultado de uma edição |
 
 ### 2.3 Métodos
@@ -62,18 +64,27 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `getSelection` | nenhum | `WidgetRef` ou nulo | F1 |
 | `select` | `target: WidgetRef` | `WidgetRef` efetivamente selecionado | F1 |
 | `getProperties` | `target: WidgetRef` | `Property[]` | F1 |
-| `setProperty` | `target`, `name`, `value: Expression`, ou nulo para remover o argumento | `EditResult` | F1 |
-| `wrapWidget` | `target`, `wrapper: WidgetSpec` | `EditResult` | F1 |
-| `removeWidget` | `target`, `keepChildren: bool` | `EditResult` | F1 |
-| `undo`, `redo` | nenhum | `EditResult` | F1 |
+| `setProperty` | `target`, `name`, `value: Expression`, ou nulo para remover o argumento | `TextDocumentEdit` | `uri: string`, `edits: TextEdit[]`, cada um com `range` e `newText` | Edições feitas em um documento, com intervalos que se referem ao texto anterior |
+| `EditResult` | F1 |
+| `wrapWidget` | `target`, `wrapper: WidgetSpec` | `TextDocumentEdit` | `uri: string`, `edits: TextEdit[]`, cada um com `range` e `newText` | Edições feitas em um documento, com intervalos que se referem ao texto anterior |
+| `EditResult` | F1 |
+| `removeWidget` | `target`, `keepChildren: bool` | `TextDocumentEdit` | `uri: string`, `edits: TextEdit[]`, cada um com `range` e `newText` | Edições feitas em um documento, com intervalos que se referem ao texto anterior |
+| `EditResult` | F1 |
+| `undo`, `redo` | nenhum | `TextDocumentEdit` | `uri: string`, `edits: TextEdit[]`, cada um com `range` e `newText` | Edições feitas em um documento, com intervalos que se referem ao texto anterior |
+| `EditResult` | F1 |
 | `listSurfaces` | nenhum | `Surface[]` | F2 |
 | `openSurface` | `surfaceId`, `config?: SurfaceConfig` | `{sessionId: string}` | F2 |
 | `captureFrame` | `sessionId`, `target?: WidgetRef` | `{png, width, height, frameId}`, com `png` em base64 | F2 |
-| `insertWidget` | `parent: WidgetRef`, `slot: SlotRef`, `widget: WidgetSpec` | `EditResult` | F3 |
-| `moveWidget` | `target`, `parent: WidgetRef`, `slot: SlotRef` | `EditResult` | F3 |
-| `duplicateWidget` | `target` | `EditResult` | F3 |
+| `insertWidget` | `parent: WidgetRef`, `slot: SlotRef`, `widget: WidgetSpec` | `TextDocumentEdit` | `uri: string`, `edits: TextEdit[]`, cada um com `range` e `newText` | Edições feitas em um documento, com intervalos que se referem ao texto anterior |
+| `EditResult` | F3 |
+| `moveWidget` | `target`, `parent: WidgetRef`, `slot: SlotRef` | `TextDocumentEdit` | `uri: string`, `edits: TextEdit[]`, cada um com `range` e `newText` | Edições feitas em um documento, com intervalos que se referem ao texto anterior |
+| `EditResult` | F3 |
+| `duplicateWidget` | `target` | `TextDocumentEdit` | `uri: string`, `edits: TextEdit[]`, cada um com `range` e `newText` | Edições feitas em um documento, com intervalos que se referem ao texto anterior |
+| `EditResult` | F3 |
 | `createEventHandler` | `target`, `event: string` | `EditResult` e a localização do método criado | F3 |
 | `listPalette` | `query?: string` | `WidgetSpec[]`, com documentação | F3 |
+
+O contrato 0.1.0 traz `getVersion`, `getSelection`, `select`, `getProperties`, `setProperty`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem.
 
 ### 2.4 Eventos
 
@@ -81,7 +92,7 @@ Publicados no fluxo `Studio` do daemon.
 
 | Evento | Dados | Quando |
 | --- | --- | --- |
-| `selectionChanged` | `WidgetRef` ou nulo | A seleção muda, por qualquer vista ou cliente |
+| `selectionChanged` | `{selection?: WidgetRef}`, sem o campo quando nada está selecionado | A seleção muda, por qualquer vista ou cliente |
 | `documentChanged` | `uri`, `documentVersion`, `origin` (`studio` ou `external`) | Um documento do projeto muda |
 | `frameProduced` | `sessionId`, `frameId` | Um quadro novo está disponível |
 | `sessionStateChanged` | `sessionId`, `state` (`starting`, `running`, `stale` ou `ended`) | O estado de uma sessão muda |

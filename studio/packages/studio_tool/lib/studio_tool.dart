@@ -1,6 +1,21 @@
 /// Development tool of Studio.
 library;
 
+export 'src/generate/constants_emitter.dart';
+export 'src/generate/contract_document.dart';
+export 'src/generate/contract_error.dart';
+export 'src/generate/contract_event.dart';
+export 'src/generate/contract_field.dart';
+export 'src/generate/contract_generator.dart';
+export 'src/generate/contract_method.dart';
+export 'src/generate/contract_schema.dart';
+export 'src/generate/dart_source.dart';
+export 'src/generate/generate_command.dart';
+export 'src/generate/generated_code_step.dart';
+export 'src/generate/protocol_package.dart';
+export 'src/generate/schema_emitter.dart';
+export 'src/generate/schema_type.dart';
+export 'src/generate/service_emitter.dart';
 export 'src/verify/gate_step.dart';
 export 'src/verify/gate_step_catalog.dart';
 export 'src/verify/process_runner.dart';

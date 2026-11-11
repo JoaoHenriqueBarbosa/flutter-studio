@@ -6,6 +6,7 @@ environment:
 
 workspace:
   - packages/studio_core
+  - packages/studio_protocol
   - packages/studio_shell
   - packages/studio_tool
 

@@ -12,3 +12,11 @@ Run it from the `studio/` directory:
 ```sh
 dart run studio_tool:st verify
 ```
+
+`st generate` writes the Dart code of `studio_protocol` from
+`studio.openrpc.json` (ADR-0013). With `--check` it writes nothing and fails
+when a generated file is stale, which is step QG-09 of the gate.
+
+```sh
+dart run studio_tool:st generate
+```
