@@ -4,6 +4,8 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**Duas premissas testadas; a do host de design veio boa.** O binário de teste do SDK (`flutter_tester`) roda o app de exemplo inteiro, sem compilar nada nativo e em poucos segundos, com hot reload, e entrega a imagem da tela com o texto e os ícones certos. Era o maior risco do canvas (ASM-01, RSK-03). Ainda falta conferir fonte própria do projeto, entrada de mouse e teclado e os outros sistemas, então a premissa fica como parcialmente confirmada. A outra (ASM-02) confirmou o que o plano supunha: o analysis server só edita argumentos de construtores de widget, e objetos compostos como `ThemeData` e `TextStyle` dependem do motor próprio.
+
 **Dá para editar sem executar o app.** O Studio ganhou o painel Estrutura, à esquerda: a árvore de widgets tirada do código do arquivo, que existe com o app parado e mostra também o que não está na tela. Clicar num widget ali carrega as propriedades dele e acende a barra de estrutura; as edições gravam no arquivo e a árvore se refaz. Conferi em display virtual, sem iniciar o app: selecionar o `Column`, envolver com `SizedBox`, ver a árvore mudar, desfazer.
 
 A posição de cada widget na árvore de fonte é a mesma que o framework registra quando o app roda, o que é a base da ligação entre as duas árvores (ADR-0005); um teste com o SDK real confere isso para o `Column` do exemplo.

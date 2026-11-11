@@ -107,5 +107,6 @@ Fontes técnicas verificadas para esta baseline:
 | 0.14 | 11/11/2026 | Árvore de fonte (FR-INS-002). Interfaces 0.5: contrato 0.3.0, com `getSourceTree` devolvendo as raízes do arquivo e o campo `owner` em `SourceNode`. SRS 0.4: ASM-03 respondida, falsa no caminho usado. |
 | 0.15 | 11/11/2026 | Painel Estrutura no shell, com a árvore de fonte (FR-INS-002). Arquitetura 0.9: a seleção em um só sentido entre a árvore de fonte e o inspetor herdado entra na dívida técnica (FR-INS-003). |
 | 0.16 | 11/11/2026 | Passo QG-12 do portão e comando `st trace`. Padrão de código 0.5: a seção 5.2 ganha a fonte única do incremento em construção, `studio/current-increment.txt`. |
+| 0.17 | 11/11/2026 | SRS 0.5: ASM-02 respondida, verdadeira; ASM-01 parcialmente confirmada em Linux, com o `flutter_tester` iniciando, renderizando e entregando quadro. |
 
 Esta tabela registra as mudanças de conteúdo da baseline. O detalhe técnico de cada mudança fica em `CHANGELOG.md`, e o relato para quem aprova, em `JOURNAL.md`, os dois na raiz do repositório.

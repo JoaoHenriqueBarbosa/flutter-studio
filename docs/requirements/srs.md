@@ -1,6 +1,6 @@
 # Especificação de requisitos de software
 
-Requisitos do Studio na estrutura da ISO/IEC/IEEE 29148:2018. Versão 0.4, rascunho para revisão.
+Requisitos do Studio na estrutura da ISO/IEC/IEEE 29148:2018. Versão 0.5, rascunho para revisão.
 
 ## 1. Introdução
 
@@ -305,8 +305,8 @@ Situação de cada premissa. Uma premissa só é dada por respondida quando o ex
 
 | ID | Situação | Evidência |
 | --- | --- | --- |
-| ASM-01 | Aberta | |
-| ASM-02 | Aberta | |
+| ASM-01 | Parcial: confirmada em Linux para iniciar, renderizar e capturar | 11/11/2026, Flutter 3.47.9, Linux x64: `flutter run -d flutter-tester --show-test-device` inicia o app de exemplo do `flutter create` em segundos, sem compilação nativa, com hot reload e VM Service; `ext.flutter.inspector.isWidgetCreationTracked` responde verdadeiro; a chamada `_flutter.screenshot` do VM Service devolve um PNG de 2400 por 1800 pixels (800 por 600 lógicos, densidade 3), com o texto legível e o ícone da fonte Material Icons, que é fonte de asset. O dispositivo só aparece com a opção oculta `--show-test-device`. Falta conferir: fonte declarada no `pubspec.yaml` do projeto, injeção de entrada, taxa de quadros para uso interativo, Windows e macOS. |
+| ASM-02 | Respondida: verdadeira | 11/11/2026, Flutter 3.47.9: com o cursor em `ThemeData(`, dentro de `ColorScheme.fromSeed(...)` e num argumento `style` de `Text`, `dart/textDocument/editableArguments` devolve os argumentos do construtor de widget que envolve a posição (`MaterialApp`, `Text`), nunca os do construtor que não é de widget; fora de qualquer widget devolve nulo. Objetos compostos continuam dependendo do motor próprio (FR-PRP-004). |
 | ASM-03 | Respondida: falsa no caminho usado | 11/11/2026, Flutter 3.47.9, Linux x64: o Flutter Outline publicado pelo analysis server por LSP (`dart/textDocument/publishFlutterOutline`) traz, de cada widget, a classe, o intervalo e os atributos, e não traz o parâmetro do pai a que o filho pertence. No arquivo de exemplo do `flutter create`, `AppBar`, `Center` e `FloatingActionButton` chegam como filhos de `Scaffold` sem `parentAssociationLabel`. Vale a consequência prevista: os slots serão calculados pelo motor de edição, em F3. |
 | ASM-04 | Aberta | |
 | ASM-05 | Aberta | |

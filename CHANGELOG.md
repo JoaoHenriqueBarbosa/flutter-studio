@@ -44,6 +44,7 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `docs/architecture/arc42.md` 0.9, conforme a linha 0.15 da tabela do guia.
 - `studio_tool`: comando `st trace`, com `--check`, e o passo QG-12 do portão (`TraceStep`). Em `lib/src/trace/`: `IdentifierCatalog` lê dos documentos os identificadores definidos e, do SRS, o incremento e o método de cada requisito; `TestTrace` lê os comentários `// Verifies:`; `TraceReport` aponta identificador inexistente e requisito com método T, até o incremento de `studio/current-increment.txt` (hoje `F1`), sem teste. 64 testes no pacote. O passo reprova hoje por doze requisitos sem teste: FR-INS-001, FR-INS-004, FR-INS-007, FR-PRP-007, FR-PRP-008, FR-PRP-011, FR-STR-007, NFR-REL-001, NFR-MNT-004, NFR-MNT-007, NFR-COMP-001 e NFR-COMP-002.
 - `docs/engineering/coding-standard.md` 0.5, conforme a linha 0.16 da tabela do guia.
+- `docs/requirements/srs.md` 0.5: resultado dos experimentos de ASM-01 e ASM-02 no apêndice A.
 
 ### Alterado
 
