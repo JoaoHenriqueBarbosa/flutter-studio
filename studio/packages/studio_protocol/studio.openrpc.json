@@ -2,7 +2,7 @@
   "openrpc": "1.4.0",
   "info": {
     "title": "Studio",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Operations of Studio: reading, selecting and editing the widgets of the open project."
   },
   "x-binding": {
@@ -19,13 +19,20 @@
       "params": [],
       "result": {
         "name": "versionInfo",
-        "schema": { "$ref": "#/components/schemas/VersionInfo" }
+        "schema": {
+          "$ref": "#/components/schemas/VersionInfo"
+        }
       },
       "examples": [
         {
           "name": "version",
           "params": [],
-          "result": { "name": "versionInfo", "value": { "version": "0.1.0" } }
+          "result": {
+            "name": "versionInfo",
+            "value": {
+              "version": "0.2.0"
+            }
+          }
         }
       ]
     },
@@ -38,8 +45,12 @@
         "name": "selection",
         "schema": {
           "oneOf": [
-            { "$ref": "#/components/schemas/WidgetRef" },
-            { "type": "null" }
+            {
+              "$ref": "#/components/schemas/WidgetRef"
+            },
+            {
+              "type": "null"
+            }
           ]
         }
       },
@@ -47,7 +58,10 @@
         {
           "name": "nothingSelected",
           "params": [],
-          "result": { "name": "selection", "value": null }
+          "result": {
+            "name": "selection",
+            "value": null
+          }
         }
       ]
     },
@@ -60,16 +74,24 @@
           "name": "target",
           "description": "The widget to select.",
           "required": true,
-          "schema": { "$ref": "#/components/schemas/WidgetRef" }
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
         }
       ],
       "result": {
         "name": "selection",
-        "schema": { "$ref": "#/components/schemas/WidgetRef" }
+        "schema": {
+          "$ref": "#/components/schemas/WidgetRef"
+        }
       },
       "errors": [
-        { "$ref": "#/components/errors/StaleDocument" },
-        { "$ref": "#/components/errors/NotInProject" }
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        }
       ],
       "examples": [
         {
@@ -79,7 +101,10 @@
               "name": "target",
               "value": {
                 "uri": "file:///work/sample_app/lib/main.dart",
-                "position": { "line": 11, "character": 14 },
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
                 "documentVersion": 1
               }
             }
@@ -88,7 +113,10 @@
             "name": "selection",
             "value": {
               "uri": "file:///work/sample_app/lib/main.dart",
-              "position": { "line": 11, "character": 14 },
+              "position": {
+                "line": 11,
+                "character": 14
+              },
               "documentVersion": 1
             }
           }
@@ -104,20 +132,30 @@
           "name": "target",
           "description": "The widget whose constructor is read.",
           "required": true,
-          "schema": { "$ref": "#/components/schemas/WidgetRef" }
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
         }
       ],
       "result": {
         "name": "properties",
         "schema": {
           "type": "array",
-          "items": { "$ref": "#/components/schemas/Property" }
+          "items": {
+            "$ref": "#/components/schemas/Property"
+          }
         }
       },
       "errors": [
-        { "$ref": "#/components/errors/StaleDocument" },
-        { "$ref": "#/components/errors/NotInProject" },
-        { "$ref": "#/components/errors/ToolchainUnavailable" }
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
       ],
       "examples": [
         {
@@ -127,7 +165,10 @@
               "name": "target",
               "value": {
                 "uri": "file:///work/sample_app/lib/main.dart",
-                "position": { "line": 11, "character": 14 },
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
                 "documentVersion": 1
               }
             }
@@ -138,8 +179,12 @@
               {
                 "name": "mainAxisAlignment",
                 "type": "enum",
-                "expression": { "source": "MainAxisAlignment.center" },
-                "defaultValue": { "source": "MainAxisAlignment.start" },
+                "expression": {
+                  "source": "MainAxisAlignment.center"
+                },
+                "defaultValue": {
+                  "source": "MainAxisAlignment.start"
+                },
                 "isSet": true,
                 "isEditable": true,
                 "options": [
@@ -163,13 +208,17 @@
           "name": "target",
           "description": "The widget whose argument changes.",
           "required": true,
-          "schema": { "$ref": "#/components/schemas/WidgetRef" }
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
         },
         {
           "name": "name",
           "description": "Name of the constructor parameter.",
           "required": true,
-          "schema": { "type": "string" }
+          "schema": {
+            "type": "string"
+          }
         },
         {
           "name": "value",
@@ -177,21 +226,35 @@
           "required": true,
           "schema": {
             "oneOf": [
-              { "$ref": "#/components/schemas/Expression" },
-              { "type": "null" }
+              {
+                "$ref": "#/components/schemas/Expression"
+              },
+              {
+                "type": "null"
+              }
             ]
           }
         }
       ],
       "result": {
         "name": "editResult",
-        "schema": { "$ref": "#/components/schemas/EditResult" }
+        "schema": {
+          "$ref": "#/components/schemas/EditResult"
+        }
       },
       "errors": [
-        { "$ref": "#/components/errors/StaleDocument" },
-        { "$ref": "#/components/errors/NotInProject" },
-        { "$ref": "#/components/errors/UnsupportedTarget" },
-        { "$ref": "#/components/errors/ToolchainUnavailable" }
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/UnsupportedTarget"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
       ],
       "examples": [
         {
@@ -201,12 +264,23 @@
               "name": "target",
               "value": {
                 "uri": "file:///work/sample_app/lib/main.dart",
-                "position": { "line": 11, "character": 14 },
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
                 "documentVersion": 1
               }
             },
-            { "name": "name", "value": "mainAxisAlignment" },
-            { "name": "value", "value": { "source": "MainAxisAlignment.end" } }
+            {
+              "name": "name",
+              "value": "mainAxisAlignment"
+            },
+            {
+              "name": "value",
+              "value": {
+                "source": "MainAxisAlignment.end"
+              }
+            }
           ],
           "result": {
             "name": "editResult",
@@ -218,10 +292,467 @@
                   "edits": [
                     {
                       "range": {
-                        "start": { "line": 12, "character": 29 },
-                        "end": { "line": 12, "character": 53 }
+                        "start": {
+                          "line": 12,
+                          "character": 29
+                        },
+                        "end": {
+                          "line": 12,
+                          "character": 53
+                        }
                       },
                       "newText": "MainAxisAlignment.end"
+                    }
+                  ]
+                }
+              ],
+              "documentVersions": {
+                "file:///work/sample_app/lib/main.dart": 2
+              },
+              "reload": "hotReload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "getStructureOptions",
+      "summary": "Tells which structural edits a widget accepts.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "target",
+          "description": "The widget that would be edited.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
+        }
+      ],
+      "result": {
+        "name": "structureOptions",
+        "schema": {
+          "$ref": "#/components/schemas/StructureOptions"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
+      ],
+      "examples": [
+        {
+          "name": "columnOptions",
+          "params": [
+            {
+              "name": "target",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
+                "documentVersion": 1
+              }
+            }
+          ],
+          "result": {
+            "name": "structureOptions",
+            "value": {
+              "wrappers": [
+                {
+                  "libraryUri": "package:flutter/widgets.dart",
+                  "className": "Center"
+                }
+              ],
+              "canRemove": false,
+              "canMoveUp": false,
+              "canMoveDown": false,
+              "canSwapWithParent": true,
+              "canSwapWithChild": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "wrapWidget",
+      "summary": "Wraps a widget with a new widget, which takes it as child.",
+      "description": "The wrapper has to be one of the wrappers that getStructureOptions lists for the widget.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "target",
+          "description": "The widget to wrap.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
+        },
+        {
+          "name": "wrapper",
+          "description": "The widget to create around the target.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/WidgetSpec"
+          }
+        }
+      ],
+      "result": {
+        "name": "editResult",
+        "schema": {
+          "$ref": "#/components/schemas/EditResult"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/UnsupportedTarget"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
+      ],
+      "examples": [
+        {
+          "name": "wrapColumnWithCenter",
+          "params": [
+            {
+              "name": "target",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
+                "documentVersion": 1
+              }
+            },
+            {
+              "name": "wrapper",
+              "value": {
+                "libraryUri": "package:flutter/widgets.dart",
+                "className": "Center"
+              }
+            }
+          ],
+          "result": {
+            "name": "editResult",
+            "value": {
+              "applied": true,
+              "changes": [
+                {
+                  "uri": "file:///work/sample_app/lib/main.dart",
+                  "edits": [
+                    {
+                      "range": {
+                        "start": {
+                          "line": 11,
+                          "character": 14
+                        },
+                        "end": {
+                          "line": 14,
+                          "character": 9
+                        }
+                      },
+                      "newText": "Center(child: Column())"
+                    }
+                  ]
+                }
+              ],
+              "documentVersions": {
+                "file:///work/sample_app/lib/main.dart": 2
+              },
+              "reload": "hotReload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "removeWidget",
+      "summary": "Removes a widget from the code.",
+      "description": "With keepChildren set to true the children of the widget take its place. Removing the children as well is not supported in this version.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "target",
+          "description": "The widget to remove.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
+        },
+        {
+          "name": "keepChildren",
+          "description": "Whether the children of the widget stay in the code.",
+          "required": true,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "result": {
+        "name": "editResult",
+        "schema": {
+          "$ref": "#/components/schemas/EditResult"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/UnsupportedTarget"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
+      ],
+      "examples": [
+        {
+          "name": "removeCenter",
+          "params": [
+            {
+              "name": "target",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
+                "documentVersion": 1
+              }
+            },
+            {
+              "name": "keepChildren",
+              "value": true
+            }
+          ],
+          "result": {
+            "name": "editResult",
+            "value": {
+              "applied": true,
+              "changes": [
+                {
+                  "uri": "file:///work/sample_app/lib/main.dart",
+                  "edits": [
+                    {
+                      "range": {
+                        "start": {
+                          "line": 11,
+                          "character": 14
+                        },
+                        "end": {
+                          "line": 14,
+                          "character": 9
+                        }
+                      },
+                      "newText": "Center(child: Column())"
+                    }
+                  ]
+                }
+              ],
+              "documentVersions": {
+                "file:///work/sample_app/lib/main.dart": 2
+              },
+              "reload": "hotReload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "reorderWidget",
+      "summary": "Moves a widget one place among its siblings.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "target",
+          "description": "The widget to move.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
+        },
+        {
+          "name": "direction",
+          "description": "Where the widget goes in the list of its siblings.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/MoveDirection"
+          }
+        }
+      ],
+      "result": {
+        "name": "editResult",
+        "schema": {
+          "$ref": "#/components/schemas/EditResult"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/UnsupportedTarget"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
+      ],
+      "examples": [
+        {
+          "name": "moveTextUp",
+          "params": [
+            {
+              "name": "target",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
+                "documentVersion": 1
+              }
+            },
+            {
+              "name": "direction",
+              "value": "up"
+            }
+          ],
+          "result": {
+            "name": "editResult",
+            "value": {
+              "applied": true,
+              "changes": [
+                {
+                  "uri": "file:///work/sample_app/lib/main.dart",
+                  "edits": [
+                    {
+                      "range": {
+                        "start": {
+                          "line": 11,
+                          "character": 14
+                        },
+                        "end": {
+                          "line": 14,
+                          "character": 9
+                        }
+                      },
+                      "newText": "Center(child: Column())"
+                    }
+                  ]
+                }
+              ],
+              "documentVersions": {
+                "file:///work/sample_app/lib/main.dart": 2
+              },
+              "reload": "hotReload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "swapWidget",
+      "summary": "Swaps a widget with its parent or with its child.",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "target",
+          "description": "The widget to swap.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/WidgetRef"
+          }
+        },
+        {
+          "name": "partner",
+          "description": "The widget that changes places with the target.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SwapPartner"
+          }
+        }
+      ],
+      "result": {
+        "name": "editResult",
+        "schema": {
+          "$ref": "#/components/schemas/EditResult"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/StaleDocument"
+        },
+        {
+          "$ref": "#/components/errors/NotInProject"
+        },
+        {
+          "$ref": "#/components/errors/UnsupportedTarget"
+        },
+        {
+          "$ref": "#/components/errors/ToolchainUnavailable"
+        }
+      ],
+      "examples": [
+        {
+          "name": "swapCenterWithParent",
+          "params": [
+            {
+              "name": "target",
+              "value": {
+                "uri": "file:///work/sample_app/lib/main.dart",
+                "position": {
+                  "line": 11,
+                  "character": 14
+                },
+                "documentVersion": 1
+              }
+            },
+            {
+              "name": "partner",
+              "value": "parent"
+            }
+          ],
+          "result": {
+            "name": "editResult",
+            "value": {
+              "applied": true,
+              "changes": [
+                {
+                  "uri": "file:///work/sample_app/lib/main.dart",
+                  "edits": [
+                    {
+                      "range": {
+                        "start": {
+                          "line": 11,
+                          "character": 14
+                        },
+                        "end": {
+                          "line": 14,
+                          "character": 9
+                        }
+                      },
+                      "newText": "Center(child: Column())"
                     }
                   ]
                 }
@@ -243,7 +774,9 @@
       "params": [],
       "result": {
         "name": "editResult",
-        "schema": { "$ref": "#/components/schemas/EditResult" }
+        "schema": {
+          "$ref": "#/components/schemas/EditResult"
+        }
       },
       "examples": [
         {
@@ -269,7 +802,9 @@
       "params": [],
       "result": {
         "name": "editResult",
-        "schema": { "$ref": "#/components/schemas/EditResult" }
+        "schema": {
+          "$ref": "#/components/schemas/EditResult"
+        }
       },
       "examples": [
         {
@@ -292,12 +827,16 @@
     {
       "name": "selectionChanged",
       "description": "The selection changed, from any view or client.",
-      "schema": { "$ref": "#/components/schemas/SelectionChanged" }
+      "schema": {
+        "$ref": "#/components/schemas/SelectionChanged"
+      }
     },
     {
       "name": "documentChanged",
       "description": "A document of the project changed and the change is on disk.",
-      "schema": { "$ref": "#/components/schemas/DocumentChanged" }
+      "schema": {
+        "$ref": "#/components/schemas/DocumentChanged"
+      }
     }
   ],
   "components": {
@@ -305,7 +844,9 @@
       "VersionInfo": {
         "description": "The version of the contract of the Studio service.",
         "type": "object",
-        "required": ["version"],
+        "required": [
+          "version"
+        ],
         "properties": {
           "version": {
             "description": "Semantic version of the contract.",
@@ -316,7 +857,10 @@
       "Position": {
         "description": "A position in a document, as the Language Server Protocol counts it.",
         "type": "object",
-        "required": ["line", "character"],
+        "required": [
+          "line",
+          "character"
+        ],
         "properties": {
           "line": {
             "description": "Line of the position, starting at zero.",
@@ -331,7 +875,10 @@
       "Range": {
         "description": "The text between two positions of a document.",
         "type": "object",
-        "required": ["start", "end"],
+        "required": [
+          "start",
+          "end"
+        ],
         "properties": {
           "start": {
             "description": "First position of the range.",
@@ -346,7 +893,11 @@
       "WidgetRef": {
         "description": "The creation location of a widget, in one version of the document.",
         "type": "object",
-        "required": ["uri", "position", "documentVersion"],
+        "required": [
+          "uri",
+          "position",
+          "documentVersion"
+        ],
         "properties": {
           "uri": {
             "description": "The file URI of the document that creates the widget.",
@@ -365,7 +916,9 @@
       "Expression": {
         "description": "A Dart expression, as source text.",
         "type": "object",
-        "required": ["source"],
+        "required": [
+          "source"
+        ],
         "properties": {
           "source": {
             "description": "The source text of the expression.",
@@ -376,7 +929,12 @@
       "Property": {
         "description": "One parameter of the constructor that creates a widget.",
         "type": "object",
-        "required": ["name", "type", "isSet", "isEditable"],
+        "required": [
+          "name",
+          "type",
+          "isSet",
+          "isEditable"
+        ],
         "properties": {
           "name": {
             "description": "Name of the parameter.",
@@ -405,7 +963,9 @@
           "options": {
             "description": "The values that an enum parameter accepts, absent for the other kinds.",
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "documentation": {
             "description": "Documentation of the parameter, absent when it has none.",
@@ -416,7 +976,10 @@
       "TextEdit": {
         "description": "Replacement of the text of a range.",
         "type": "object",
-        "required": ["range", "newText"],
+        "required": [
+          "range",
+          "newText"
+        ],
         "properties": {
           "range": {
             "description": "The replaced text, in the document before the edit.",
@@ -431,7 +994,10 @@
       "TextDocumentEdit": {
         "description": "The edits made to one document.",
         "type": "object",
-        "required": ["uri", "edits"],
+        "required": [
+          "uri",
+          "edits"
+        ],
         "properties": {
           "uri": {
             "description": "The file URI of the document.",
@@ -440,19 +1006,30 @@
           "edits": {
             "description": "The edits, with ranges that refer to the document before any of them.",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/TextEdit" }
+            "items": {
+              "$ref": "#/components/schemas/TextEdit"
+            }
           }
         }
       },
       "ReloadKind": {
         "description": "How the running app was asked to pick up an edit.",
         "type": "string",
-        "enum": ["hotReload", "hotRestart", "none"]
+        "enum": [
+          "hotReload",
+          "hotRestart",
+          "none"
+        ]
       },
       "EditResult": {
         "description": "The result of an edit operation.",
         "type": "object",
-        "required": ["applied", "changes", "documentVersions", "reload"],
+        "required": [
+          "applied",
+          "changes",
+          "documentVersions",
+          "reload"
+        ],
         "properties": {
           "applied": {
             "description": "Whether any file changed.",
@@ -461,12 +1038,16 @@
           "changes": {
             "description": "The edits made, one entry for each changed document.",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/TextDocumentEdit" }
+            "items": {
+              "$ref": "#/components/schemas/TextDocumentEdit"
+            }
           },
           "documentVersions": {
             "description": "Version of each changed document after the edit, by file URI.",
             "type": "object",
-            "additionalProperties": { "type": "integer" }
+            "additionalProperties": {
+              "type": "integer"
+            }
           },
           "reload": {
             "description": "The reload that was requested from the running app.",
@@ -477,7 +1058,10 @@
       "ChangeOrigin": {
         "description": "Who changed a document.",
         "type": "string",
-        "enum": ["studio", "external"]
+        "enum": [
+          "studio",
+          "external"
+        ]
       },
       "SelectionChanged": {
         "description": "Data of the selectionChanged event.",
@@ -493,7 +1077,11 @@
       "DocumentChanged": {
         "description": "Data of the documentChanged event.",
         "type": "object",
-        "required": ["uri", "documentVersion", "origin"],
+        "required": [
+          "uri",
+          "documentVersion",
+          "origin"
+        ],
         "properties": {
           "uri": {
             "description": "The file URI of the document.",
@@ -508,6 +1096,81 @@
             "$ref": "#/components/schemas/ChangeOrigin"
           }
         }
+      },
+      "WidgetSpec": {
+        "description": "A widget to create, named by its class.",
+        "type": "object",
+        "required": [
+          "libraryUri",
+          "className"
+        ],
+        "properties": {
+          "libraryUri": {
+            "description": "The URI of the library that exports the class.",
+            "type": "string"
+          },
+          "className": {
+            "description": "Name of the widget class.",
+            "type": "string"
+          }
+        }
+      },
+      "StructureOptions": {
+        "description": "The structural edits that a widget accepts.",
+        "type": "object",
+        "required": [
+          "wrappers",
+          "canRemove",
+          "canMoveUp",
+          "canMoveDown",
+          "canSwapWithParent",
+          "canSwapWithChild"
+        ],
+        "properties": {
+          "wrappers": {
+            "description": "The widgets that wrapWidget accepts as wrapper.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WidgetSpec"
+            }
+          },
+          "canRemove": {
+            "description": "Whether removeWidget accepts the widget, keeping its children.",
+            "type": "boolean"
+          },
+          "canMoveUp": {
+            "description": "Whether reorderWidget can move the widget up.",
+            "type": "boolean"
+          },
+          "canMoveDown": {
+            "description": "Whether reorderWidget can move the widget down.",
+            "type": "boolean"
+          },
+          "canSwapWithParent": {
+            "description": "Whether swapWidget can swap the widget with its parent.",
+            "type": "boolean"
+          },
+          "canSwapWithChild": {
+            "description": "Whether swapWidget can swap the widget with its child.",
+            "type": "boolean"
+          }
+        }
+      },
+      "MoveDirection": {
+        "description": "A direction in the list of the siblings of a widget.",
+        "type": "string",
+        "enum": [
+          "up",
+          "down"
+        ]
+      },
+      "SwapPartner": {
+        "description": "A neighbor of a widget in the tree.",
+        "type": "string",
+        "enum": [
+          "parent",
+          "child"
+        ]
       }
     },
     "errors": {

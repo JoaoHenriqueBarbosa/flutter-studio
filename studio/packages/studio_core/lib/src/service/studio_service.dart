@@ -8,10 +8,11 @@ import '../document/edit_failure.dart';
 import '../document/source_location.dart';
 import '../document/text_edit.dart' as document;
 import '../edit/argument_literal.dart';
-import '../edit/argument_reader.dart';
 import '../edit/edit_outcome.dart';
 import '../edit/edit_pipeline.dart';
+import '../edit/widget_reader.dart';
 import '../lsp/editable_argument.dart';
+import '../lsp/widget_assist.dart';
 import '../selection/selection_controller.dart';
 import '../selection/widget_location.dart';
 
@@ -35,7 +36,10 @@ final class StudioService implements StudioApi {
 
   final EditPipeline _pipeline;
 
-  final ArgumentReader _reader;
+  final WidgetReader _reader;
+
+  /// The library that exports every widget the analysis server wraps with.
+  static const _widgetsLibrary = 'package:flutter/widgets.dart';
 
   @override
   Future<VersionInfo> getVersion() async =>
@@ -56,7 +60,7 @@ final class StudioService implements StudioApi {
   @override
   Future<List<Property>> getProperties({required WidgetRef target}) =>
       _guarded(() async {
-        final arguments = await _reader.read(_locationOf(target));
+        final arguments = await _reader.arguments(_locationOf(target));
         return arguments.map(_propertyOf).toList();
       });
 
@@ -77,12 +81,88 @@ final class StudioService implements StudioApi {
   );
 
   @override
+  Future<StructureOptions> getStructureOptions({required WidgetRef target}) =>
+      _guarded(() async {
+        final assists = await _reader.assists(_locationOf(target));
+        final offered = {for (final each in assists) each.assist};
+        return StructureOptions(
+          wrappers: [
+            for (final assist in offered)
+              if (assist.wrapperClassName case final className?)
+                WidgetSpec(libraryUri: _widgetsLibrary, className: className),
+          ],
+          canRemove: offered.contains(WidgetAssist.remove),
+          canMoveUp: offered.contains(WidgetAssist.moveUp),
+          canMoveDown: offered.contains(WidgetAssist.moveDown),
+          canSwapWithParent: offered.contains(WidgetAssist.swapWithParent),
+          canSwapWithChild: offered.contains(WidgetAssist.swapWithChild),
+        );
+      });
+
+  @override
+  Future<EditResult> wrapWidget({
+    required WidgetRef target,
+    required WidgetSpec wrapper,
+  }) {
+    if (wrapper.libraryUri != _widgetsLibrary) {
+      throw const StudioFault(
+        StudioErrorCode.unsupportedTarget,
+        data: 'Only the wrappers of getStructureOptions are supported.',
+      );
+    }
+    return _assist(target, WidgetAssist.wrapWith(wrapper.className));
+  }
+
+  @override
+  Future<EditResult> removeWidget({
+    required WidgetRef target,
+    required bool keepChildren,
+  }) {
+    if (!keepChildren) {
+      throw const StudioFault(
+        StudioErrorCode.unsupportedTarget,
+        data: 'Removing a widget with its children is not built yet.',
+      );
+    }
+    return _assist(target, WidgetAssist.remove);
+  }
+
+  @override
+  Future<EditResult> reorderWidget({
+    required WidgetRef target,
+    required MoveDirection direction,
+  }) => _assist(target, switch (direction) {
+    MoveDirection.up => WidgetAssist.moveUp,
+    MoveDirection.down => WidgetAssist.moveDown,
+  });
+
+  @override
+  Future<EditResult> swapWidget({
+    required WidgetRef target,
+    required SwapPartner partner,
+  }) => _assist(target, switch (partner) {
+    SwapPartner.parent => WidgetAssist.swapWithParent,
+    SwapPartner.child => WidgetAssist.swapWithChild,
+  });
+
+  @override
   Future<EditResult> undo() =>
       _guarded(() async => _resultOf(await _pipeline.undo()));
 
   @override
   Future<EditResult> redo() =>
       _guarded(() async => _resultOf(await _pipeline.redo()));
+
+  /// Applies [assist] to [target] through the pipeline.
+  Future<EditResult> _assist(WidgetRef target, WidgetAssist assist) => _guarded(
+    () async => _resultOf(
+      await _pipeline.applyAssist(
+        _locationOf(target),
+        documentVersion: target.documentVersion,
+        assist: assist,
+      ),
+    ),
+  );
 
   /// Runs [operation] and reports its failure as the contract names it.
   Future<T> _guarded<T>(Future<T> Function() operation) async {

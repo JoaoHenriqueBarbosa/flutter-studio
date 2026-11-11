@@ -102,5 +102,6 @@ Fontes técnicas verificadas para esta baseline:
 | 0.9 | 11/11/2026 | Interfaces 0.2: local do documento OpenRPC, envelope do resultado no daemon, campo `options` em `Property`, tipo `TextDocumentEdit`, forma do evento `selectionChanged` e alcance do contrato 0.1.0 (IF-04, ADR-0013). |
 | 0.10 | 11/11/2026 | Serviço `Studio` registrado no daemon. Interfaces 0.3: alcance de `setProperty` no contrato 0.1.0. Arquitetura 0.6: sai da dívida técnica o item dos documentos não abertos no analysis server. |
 | 0.11 | 11/11/2026 | Encerrado o desvio temporário de FR-API-002: a interface edita pelo serviço `Studio`. Desfazer e refazer na interface (FR-DOC-005). Arquitetura 0.7: dívida técnica atualizada. Patch 4 em `PATCHES.md`. |
+| 0.12 | 11/11/2026 | Interfaces 0.4: contrato 0.2.0 do serviço `Studio`, com `getStructureOptions`, `reorderWidget` e `swapWidget` novos, `wrapWidget` e `removeWidget` realizados pelo segundo nível da ADR-0006, e o tipo `StructureOptions` (FR-STR-001). |
 
 Esta tabela registra as mudanças de conteúdo da baseline. O detalhe técnico de cada mudança fica em `CHANGELOG.md`, e o relato para quem aprova, em `JOURNAL.md`, os dois na raiz do repositório.

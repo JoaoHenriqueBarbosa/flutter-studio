@@ -152,6 +152,39 @@ void main() {
       timeout: const Timeout(Duration(minutes: 2)),
     );
 
+    // Verifies: FR-STR-001, FR-DOC-006, NFR-REL-004
+    test('wraps a widget with an assist of the server and undoes it', () async {
+      await session.start();
+      final column = WidgetRef(
+        uri: '${Uri.file(mainPath)}',
+        position: const Position(line: 11, character: 14),
+        documentVersion: 1,
+      );
+      const center = WidgetSpec(
+        libraryUri: 'package:flutter/widgets.dart',
+        className: 'Center',
+      );
+
+      final options = await session.service.getStructureOptions(target: column);
+      expect(options.wrappers, contains(center));
+      expect(options.canMoveUp, isFalse);
+
+      final result = await session.service.wrapWidget(
+        target: column,
+        wrapper: center,
+      );
+
+      expect(result.applied, isTrue);
+      expect(
+        File(mainPath).readAsStringSync(),
+        contains('body: Center(\n          child: Column('),
+      );
+
+      await session.service.undo();
+
+      expect(File(mainPath).readAsStringSync(), sampleAppSource);
+    }, timeout: const Timeout(Duration(minutes: 2)));
+
     // Verifies: FR-DOC-003, FR-API-004
     test('follows a file that another program saves', () async {
       await session.start();

@@ -4,7 +4,7 @@
 /// Constants of the contract of the `Studio` service.
 abstract final class StudioContract {
   /// Semantic version of the contract.
-  static const version = '0.1.0';
+  static const version = '0.2.0';
 
   /// The `serviceName` of the binding to the Dart Tooling Daemon.
   static const serviceName = 'Studio';

@@ -7,7 +7,7 @@ import 'package:studio_core/studio_core.dart';
 import '../support/fake_analysis_server.dart';
 
 void main() {
-  group('ArgumentReader', () {
+  group('WidgetReader', () {
     late Directory project;
     late DocumentStore store;
     late DocumentSync sync;
@@ -33,8 +33,8 @@ void main() {
       project.deleteSync(recursive: true);
     });
 
-    ArgumentReader reader() =>
-        ArgumentReader(sync, () => isServerRunning ? server.client : null);
+    WidgetReader reader() =>
+        WidgetReader(sync, () => isServerRunning ? server.client : null);
 
     // Verifies: FR-PRP-001
     test('opens the document and reads the arguments', () async {
@@ -44,7 +44,7 @@ void main() {
         ],
       };
 
-      final arguments = await reader().read(target);
+      final arguments = await reader().arguments(target);
 
       expect(arguments.single.name, 'spacing');
       expect(server.documentEvents.single.$1, 'textDocument/didOpen');
@@ -52,14 +52,37 @@ void main() {
 
     // Verifies: FR-PRP-001
     test('refuses a position that creates no widget', () async {
-      await expectLater(reader().read(target), throwsA(isA<UnsupportedEdit>()));
+      await expectLater(
+        reader().arguments(target),
+        throwsA(isA<UnsupportedEdit>()),
+      );
     });
 
     // Verifies: NFR-REL-002
     test('refuses to read while the analysis server is down', () async {
       isServerRunning = false;
 
-      await expectLater(reader().read(target), throwsA(isA<ToolUnavailable>()));
+      await expectLater(
+        reader().arguments(target),
+        throwsA(isA<ToolUnavailable>()),
+      );
+    });
+
+    // Verifies: FR-STR-001
+    test('reads the assists that carry an edit', () async {
+      server.codeActions = [
+        {
+          'kind': 'refactor.flutter.removeWidget',
+          'title': 'Remove this widget',
+          'edit': {'documentChanges': <Object?>[]},
+        },
+        {'kind': 'refactor.extract', 'title': 'Extract Widget'},
+      ];
+
+      final assists = await reader().assists(target);
+
+      expect(assists.single.assist, WidgetAssist.remove);
+      expect(assists.single.edit.fileEdits, isEmpty);
     });
   });
 }

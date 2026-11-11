@@ -1,6 +1,6 @@
 # Especificação de interfaces
 
-Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.3, rascunho para revisão.
+Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.4, rascunho para revisão.
 
 ## 1. Inventário de interfaces
 
@@ -30,7 +30,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 
 ### 2.1 Regras
 
-- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.1.0.
+- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.2.0.
 - Todo `WidgetRef` enviado a um método de edição DEVE trazer `documentVersion`. Se não for a versão atual do documento, o serviço DEVE responder `StaleDocument` sem alterar nada.
 - Um método de edição DEVE ser atômico: ou todos os arquivos da edição são gravados, ou nenhum.
 - O serviço NÃO DEVE aceitar URI fora das raízes do projeto.
@@ -45,7 +45,8 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `WidgetRef` | `uri: string`, `position: Position`, `documentVersion: int` | Local de criação de um widget, numa versão do documento |
 | `SlotRef` | `name: string`, `index?: int` | Slot de um widget; `index` posiciona dentro de uma lista |
 | `Expression` | `source: string` | Expressão Dart em texto |
-| `WidgetSpec` | `libraryUri: string`, `className: string`, `constructorName?: string`, `arguments?: map<string, Expression>` | Widget a criar |
+| `WidgetSpec` | `libraryUri: string`, `className: string`, `constructorName?: string` (F3), `arguments?: map<string, Expression>` (F3) | Widget a criar |
+| `StructureOptions` | `wrappers: WidgetSpec[]`, `canRemove`, `canMoveUp`, `canMoveDown`, `canSwapWithParent`, `canSwapWithChild` | Edições de estrutura que um widget admite |
 | `Property` | `name`, `type`, `expression?`, `defaultValue?`, `runtimeValue?` (F2), `isSet`, `isEditable`, `isEvent` (F3), `options?: string[]`, `documentation?` | Parâmetro do construtor de um widget. `type` é o gênero do valor como o analysis server o nomeia (`string`, `int`, `double`, `bool`, `enum` ou outro); `options` traz os valores aceitos por um enum |
 | `SourceNode` | `ref: WidgetRef`, `className`, `slot?: SlotRef`, `children: SourceNode[]`, `emptySlots: SlotRef[]` | Nó da árvore de fonte |
 | `RuntimeNode` | `id`, `className`, `ref?: WidgetRef`, `bounds?`, `children: RuntimeNode[]` | Nó da árvore em execução |
@@ -84,7 +85,13 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `createEventHandler` | `target`, `event: string` | `EditResult` e a localização do método criado | F3 |
 | `listPalette` | `query?: string` | `WidgetSpec[]`, com documentação | F3 |
 
-O contrato 0.1.0 traz `getVersion`, `getSelection`, `select`, `getProperties`, `setProperty`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem. Nessa versão `setProperty` cobre o primeiro nível da ADR-0006: aceita como `value` um literal do gênero do parâmetro (ou `null` escrito como expressão) e responde `UnsupportedTarget` para outra expressão e para `value` nulo, que pede a remoção do argumento (FR-PRP-007, FR-PRP-008).
+O contrato 0.2.0 traz `getVersion`, `getSelection`, `select`, `getProperties`, `setProperty`, `getStructureOptions`, `wrapWidget`, `removeWidget`, `reorderWidget`, `swapWidget`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem.
+
+Limites da versão 0.2.0, que realiza os dois primeiros níveis da ADR-0006:
+
+- `setProperty` aceita como `value` um literal do gênero do parâmetro (ou `null` escrito como expressão) e responde `UnsupportedTarget` para outra expressão e para `value` nulo, que pede a remoção do argumento (FR-PRP-007, FR-PRP-008).
+- `wrapWidget` aceita os widgets que `getStructureOptions` lista em `wrappers`, que são os que o analysis server sabe envolver. Outro widget responde `UnsupportedTarget` até o motor de edição existir.
+- `removeWidget` com `keepChildren` falso responde `UnsupportedTarget`: excluir a subárvore é FR-STR-005, de F3.
 
 ### 2.4 Eventos
 

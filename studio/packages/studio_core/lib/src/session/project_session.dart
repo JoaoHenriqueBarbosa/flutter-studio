@@ -8,8 +8,8 @@ import '../document/document_change.dart';
 import '../document/document_store.dart';
 import '../document/project_file_watcher.dart';
 import '../dtd/dtd_connection.dart';
-import '../edit/argument_reader.dart';
 import '../edit/edit_pipeline.dart';
+import '../edit/widget_reader.dart';
 import '../lsp/document_sync.dart';
 import '../lsp/lsp_client.dart';
 import '../project/flutter_project.dart';
@@ -48,7 +48,7 @@ final class ProjectSession {
 
   late final _watcher = ProjectFileWatcher(project.rootPath, documents);
 
-  late final _reader = ArgumentReader(_sync, () => _server);
+  late final _reader = WidgetReader(_sync, () => _server);
 
   late final _pipeline = EditPipeline(
     documents,

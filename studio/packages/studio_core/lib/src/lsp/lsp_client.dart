@@ -10,6 +10,8 @@ import '../document/text_edit.dart';
 import '../document/workspace_edit.dart';
 import 'editable_argument.dart';
 import 'lsp_request_failed.dart';
+import 'server_assist.dart';
+import 'widget_assist.dart';
 
 /// The diagnostics that the analysis server reports for one file. Each
 /// report replaces the previous one for the same file.
@@ -68,6 +70,17 @@ final class LspClient {
           'applyEdit': true,
           'workspaceEdit': {'documentChanges': true},
         },
+        // With literal support the server answers a code action with its
+        // edit, and not with a command to run later.
+        'textDocument': {
+          'codeAction': {
+            'codeActionLiteralSupport': {
+              'codeActionKind': {
+                'valueSet': [WidgetAssist.flutterPrefix],
+              },
+            },
+          },
+        },
       },
     });
     _peer.sendNotification('initialized', const <String, Object?>{});
@@ -121,6 +134,26 @@ final class LspClient {
     return null;
   }
 
+  /// Completes with the Flutter assists that the server offers at
+  /// [location], each with the edit that performs it.
+  ///
+  /// Throws [LspRequestFailed] when the server refuses the request.
+  Future<List<ServerAssist>> assists(SourceLocation location) async {
+    final position = _positionParameters(location)['position'];
+    final result = await _request('textDocument/codeAction', {
+      ..._positionParameters(location),
+      'range': {'start': position, 'end': position},
+      'context': {
+        'diagnostics': const <Object?>[],
+        'only': [WidgetAssist.flutterPrefix],
+      },
+    });
+    return [
+      if (result case final List<Object?> actions)
+        for (final action in actions) ?_assistFrom(action),
+    ];
+  }
+
   /// Asks the server to give the value [newValue] to the argument [name] of
   /// the constructor called at [location], in the document at
   /// [documentVersion].
@@ -171,6 +204,14 @@ final class LspClient {
       'character': location.position.character,
     },
   };
+
+  ServerAssist? _assistFrom(Object? action) {
+    final edit = _workspaceEditFrom(action);
+    if (action case {'kind': final String kind} when edit != null) {
+      return (assist: WidgetAssist(kind), edit: edit);
+    }
+    return null;
+  }
 
   EditableArgument? _argumentFrom(Object? argument) {
     if (argument case {'name': final String name, 'type': final String kind}) {

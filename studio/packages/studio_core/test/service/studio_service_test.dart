@@ -44,7 +44,7 @@ void main() {
       );
       sync.attach(server.client);
       LspClient? currentServer() => isServerRunning ? server.client : null;
-      final reader = ArgumentReader(sync, currentServer);
+      final reader = WidgetReader(sync, currentServer);
       pipeline = EditPipeline(
         store,
         reader,
@@ -212,6 +212,124 @@ void main() {
 
       expect((await service.redo()).applied, isTrue);
       expect((await service.redo()).applied, isFalse);
+    });
+
+    // Verifies: FR-API-001, FR-STR-001
+    test('tells which structural edits the widget accepts', () async {
+      server.codeActions = [
+        for (final kind in [
+          'refactor.flutter.wrap.generic',
+          'refactor.flutter.wrap.center',
+          'refactor.flutter.wrap.sizedBox',
+          'refactor.flutter.move.down',
+          'refactor.flutter.swap.withParent',
+        ])
+          {
+            'kind': kind,
+            'title': kind,
+            'edit': {'documentChanges': <Object?>[]},
+          },
+      ];
+
+      final options = await service.getStructureOptions(target: reference());
+
+      expect(
+        options,
+        const StructureOptions(
+          wrappers: [
+            WidgetSpec(
+              libraryUri: 'package:flutter/widgets.dart',
+              className: 'Center',
+            ),
+            WidgetSpec(
+              libraryUri: 'package:flutter/widgets.dart',
+              className: 'SizedBox',
+            ),
+          ],
+          canRemove: false,
+          canMoveUp: false,
+          canMoveDown: true,
+          canSwapWithParent: true,
+          canSwapWithChild: false,
+        ),
+      );
+    });
+
+    // Verifies: FR-API-001, FR-STR-001
+    test('applies each structural edit as the assist of its kind', () async {
+      Future<EditResult> Function() offering(
+        String kind,
+        Future<EditResult> Function() operation,
+      ) => () {
+        server.codeActions = [
+          {
+            'kind': kind,
+            'title': kind,
+            'edit': {'documentChanges': <Object?>[]},
+          },
+        ];
+        return operation();
+      };
+      final operations = [
+        offering(
+          'refactor.flutter.wrap.padding',
+          () => service.wrapWidget(
+            target: reference(),
+            wrapper: const WidgetSpec(
+              libraryUri: 'package:flutter/widgets.dart',
+              className: 'Padding',
+            ),
+          ),
+        ),
+        offering(
+          'refactor.flutter.removeWidget',
+          () => service.removeWidget(target: reference(), keepChildren: true),
+        ),
+        offering(
+          'refactor.flutter.move.up',
+          () => service.reorderWidget(
+            target: reference(),
+            direction: MoveDirection.up,
+          ),
+        ),
+        offering(
+          'refactor.flutter.swap.withChild',
+          () => service.swapWidget(
+            target: reference(),
+            partner: SwapPartner.child,
+          ),
+        ),
+      ];
+
+      for (final operation in operations) {
+        // An assist with an empty edit is accepted and changes nothing.
+        expect((await operation()).reload, ReloadKind.none);
+      }
+    });
+
+    // Verifies: FR-API-001, FR-STR-001
+    test('refuses a structural edit that the widget does not accept', () {
+      expect(
+        service.swapWidget(target: reference(), partner: SwapPartner.parent),
+        throwsFault(
+          StudioErrorCode.unsupportedTarget,
+          'The widget does not accept refactor.flutter.swap.withParent.',
+        ),
+      );
+      expect(
+        () => service.removeWidget(target: reference(), keepChildren: false),
+        throwsFault(StudioErrorCode.unsupportedTarget, isA<String>()),
+      );
+      expect(
+        () => service.wrapWidget(
+          target: reference(),
+          wrapper: const WidgetSpec(
+            libraryUri: 'package:other/other.dart',
+            className: 'Card',
+          ),
+        ),
+        throwsFault(StudioErrorCode.unsupportedTarget, isA<String>()),
+      );
     });
 
     // Verifies: FR-API-001

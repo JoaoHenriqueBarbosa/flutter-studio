@@ -3,9 +3,13 @@
 
 import 'edit_result.dart';
 import 'expression.dart';
+import 'move_direction.dart';
 import 'property.dart';
+import 'structure_options.dart';
+import 'swap_partner.dart';
 import 'version_info.dart';
 import 'widget_ref.dart';
+import 'widget_spec.dart';
 
 /// Operations of Studio: reading, selecting and editing the widgets of the open
 /// project.
@@ -52,6 +56,73 @@ abstract interface class StudioApi {
     required WidgetRef target,
     required String name,
     required Expression? value,
+  });
+
+  /// Tells which structural edits a widget accepts.
+  ///
+  /// The parameter [target]: the widget that would be edited.
+  ///
+  /// Errors: `StaleDocument`, `NotInProject`, `ToolchainUnavailable`.
+  Future<StructureOptions> getStructureOptions({required WidgetRef target});
+
+  /// Wraps a widget with a new widget, which takes it as child.
+  ///
+  /// The wrapper has to be one of the wrappers that getStructureOptions lists
+  /// for the widget.
+  ///
+  /// The parameter [target]: the widget to wrap.
+  ///
+  /// The parameter [wrapper]: the widget to create around the target.
+  ///
+  /// Errors: `StaleDocument`, `NotInProject`, `UnsupportedTarget`,
+  /// `ToolchainUnavailable`.
+  Future<EditResult> wrapWidget({
+    required WidgetRef target,
+    required WidgetSpec wrapper,
+  });
+
+  /// Removes a widget from the code.
+  ///
+  /// With keepChildren set to true the children of the widget take its place.
+  /// Removing the children as well is not supported in this version.
+  ///
+  /// The parameter [target]: the widget to remove.
+  ///
+  /// The parameter [keepChildren]: whether the children of the widget stay in
+  /// the code.
+  ///
+  /// Errors: `StaleDocument`, `NotInProject`, `UnsupportedTarget`,
+  /// `ToolchainUnavailable`.
+  Future<EditResult> removeWidget({
+    required WidgetRef target,
+    required bool keepChildren,
+  });
+
+  /// Moves a widget one place among its siblings.
+  ///
+  /// The parameter [target]: the widget to move.
+  ///
+  /// The parameter [direction]: where the widget goes in the list of its
+  /// siblings.
+  ///
+  /// Errors: `StaleDocument`, `NotInProject`, `UnsupportedTarget`,
+  /// `ToolchainUnavailable`.
+  Future<EditResult> reorderWidget({
+    required WidgetRef target,
+    required MoveDirection direction,
+  });
+
+  /// Swaps a widget with its parent or with its child.
+  ///
+  /// The parameter [target]: the widget to swap.
+  ///
+  /// The parameter [partner]: the widget that changes places with the target.
+  ///
+  /// Errors: `StaleDocument`, `NotInProject`, `UnsupportedTarget`,
+  /// `ToolchainUnavailable`.
+  Future<EditResult> swapWidget({
+    required WidgetRef target,
+    required SwapPartner partner,
   });
 
   /// Undoes the last edit and restores the exact previous bytes of its files.

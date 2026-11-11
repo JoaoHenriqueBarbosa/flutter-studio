@@ -32,9 +32,13 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `studio_shell`: `StudioEditorClient`, o cliente de editor do painel de propriedades herdado que envia toda edição a `StudioApi.setProperty` e não oferece refactor por fora do serviço (FR-API-002); `HistoryButtons`, com Desfazer e Refazer na barra, e `WorkbenchController.undo` e `redo` (FR-DOC-005); textos `undoAction` e `redoAction` nos dois ARB. 24 testes no pacote.
 - `STUDIO-PATCH(4)` em `property_editor_panel.dart` e `devtools_app.dart`: parâmetro opcional `editorClientBuilder` e exportação de `api_classes.dart`. Registrado em `PATCHES.md`. Os 61 testes herdados de `test/standalone_ui/ide_shared` e `test/shared/editor` passam com o SDK candidato.
 - `studio_core`: `ProjectFileWatcher` observa os arquivos Dart do projeto e relata os que outro processo alterou (FR-DOC-003); em Linux, um observador por diretório, porque o do sistema não desce a subdiretórios. `DocumentStore.refresh` relê o arquivo alterado por fora como versão nova do documento, com origem `external`, e esvazia o desfazer; `apply`, `undo`, `redo` e `documentAt` conferem o disco antes de agir, de modo que uma edição calculada sobre texto antigo é recusada com `StaleDocument` em vez de sobrescrever o que o outro programa gravou. A `ProjectSession` pede hot reload a cada alteração externa. 107 testes no pacote.
+- Contrato 0.2.0 do serviço `Studio` em `studio_protocol`: `getStructureOptions`, `wrapWidget`, `removeWidget`, `reorderWidget` e `swapWidget`, com os tipos `WidgetSpec`, `StructureOptions`, `MoveDirection` e `SwapPartner` (FR-STR-001). 22 testes no pacote.
+- `studio_core`: segundo nível de edição da ADR-0006. `LspClient.assists` pede as code actions `refactor.flutter` com a edição embutida; `WidgetAssist` (extension type) e `ServerAssist`; `EditPipeline.applyAssist`; `StudioService` realiza as cinco operações de estrutura. 116 testes, um deles de sistema: envolver o `Column` com `Center` pelo serviço e desfazer, com o arquivo de volta byte a byte.
+- `docs/interfaces/icd.md` 0.4, conforme a linha 0.12 da tabela do guia.
 
 ### Alterado
 
+- `studio_core`: `ArgumentReader` passa a `WidgetReader`, com `arguments` e `assists`.
 - `ProjectWorkbench` recebe a `ProjectSession` no lugar do `FlutterProject`.
 - `docs/architecture/arc42.md` 0.7, conforme a linha 0.11 da tabela do guia.
 - `studio_core`: `ProjectSession.selectLocation` sai; a seleção passa por `ProjectSession.selection`. O enum `ChangeOrigin` do núcleo dá lugar ao gerado em `studio_protocol`. O pedido de hot reload sai do ouvinte de arquivos e passa ao `EditPipeline`.

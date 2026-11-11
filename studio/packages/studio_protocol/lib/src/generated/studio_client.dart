@@ -4,11 +4,15 @@
 import '../json_conversion.dart';
 import 'edit_result.dart';
 import 'expression.dart';
+import 'move_direction.dart';
 import 'property.dart';
+import 'structure_options.dart';
 import 'studio_api.dart';
 import 'studio_method.dart';
+import 'swap_partner.dart';
 import 'version_info.dart';
 import 'widget_ref.dart';
+import 'widget_spec.dart';
 
 /// Sends one call of the `Studio` service and completes with its result,
 /// both in JSON form.
@@ -70,6 +74,64 @@ final class StudioClient implements StudioApi {
         null => null,
         final value => value.toJson(),
       },
+    });
+    return EditResult.fromJson(result);
+  }
+
+  @override
+  Future<StructureOptions> getStructureOptions({
+    required WidgetRef target,
+  }) async {
+    final result = await _call(StudioMethod.getStructureOptions, {
+      'target': target.toJson(),
+    });
+    return StructureOptions.fromJson(result);
+  }
+
+  @override
+  Future<EditResult> wrapWidget({
+    required WidgetRef target,
+    required WidgetSpec wrapper,
+  }) async {
+    final result = await _call(StudioMethod.wrapWidget, {
+      'target': target.toJson(),
+      'wrapper': wrapper.toJson(),
+    });
+    return EditResult.fromJson(result);
+  }
+
+  @override
+  Future<EditResult> removeWidget({
+    required WidgetRef target,
+    required bool keepChildren,
+  }) async {
+    final result = await _call(StudioMethod.removeWidget, {
+      'target': target.toJson(),
+      'keepChildren': keepChildren,
+    });
+    return EditResult.fromJson(result);
+  }
+
+  @override
+  Future<EditResult> reorderWidget({
+    required WidgetRef target,
+    required MoveDirection direction,
+  }) async {
+    final result = await _call(StudioMethod.reorderWidget, {
+      'target': target.toJson(),
+      'direction': direction.toJson(),
+    });
+    return EditResult.fromJson(result);
+  }
+
+  @override
+  Future<EditResult> swapWidget({
+    required WidgetRef target,
+    required SwapPartner partner,
+  }) async {
+    final result = await _call(StudioMethod.swapWidget, {
+      'target': target.toJson(),
+      'partner': partner.toJson(),
     });
     return EditResult.fromJson(result);
   }

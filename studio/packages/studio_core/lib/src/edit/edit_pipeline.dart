@@ -8,16 +8,17 @@ import '../document/source_location.dart';
 import '../document/workspace_edit.dart';
 import '../lsp/lsp_client.dart';
 import '../lsp/lsp_request_failed.dart';
+import '../lsp/widget_assist.dart';
 import 'argument_literal.dart';
-import 'argument_reader.dart';
 import 'edit_outcome.dart';
+import 'widget_reader.dart';
 
 /// The transaction of every edit: check the target, produce the edit,
 /// write the files, ask for the reload (ADR-0007).
 ///
 /// Pipes and Filters, with the stages run in a fixed order and one edit at
-/// a time, in arrival order. This version has the first level of ADR-0006,
-/// in which the analysis server produces the edit.
+/// a time, in arrival order. This version has the first two levels of
+/// ADR-0006, in which the analysis server produces the edit.
 final class EditPipeline {
   /// Creates the pipeline over [_documents], which reads the arguments of
   /// a target through [_reader].
@@ -36,7 +37,7 @@ final class EditPipeline {
 
   final DocumentStore _documents;
 
-  final ArgumentReader _reader;
+  final WidgetReader _reader;
 
   final LspClient? Function() _server;
 
@@ -82,6 +83,26 @@ final class EditPipeline {
       throw UnsupportedEdit(failure.message);
     }
     return _outcomeOf(_merge(_appliedByServer));
+  });
+
+  /// Applies to the widget created at [target] the assist [assist] of the
+  /// analysis server.
+  ///
+  /// [documentVersion] is the version of the document that the caller read.
+  /// Completes when the files are on disk. Throws an [EditFailure] and
+  /// changes nothing when the server does not offer the assist there.
+  Future<EditOutcome> applyAssist(
+    SourceLocation target, {
+    required int documentVersion,
+    required WidgetAssist assist,
+  }) => _enqueue(() async {
+    _documents.documentAt(target.filePath, version: documentVersion);
+    final offered = await _reader.assists(target);
+    final match = offered.where((each) => each.assist == assist).firstOrNull;
+    if (match == null) {
+      throw UnsupportedEdit('The widget does not accept ${assist.kind}.');
+    }
+    return _outcomeOf(await _documents.apply(match.edit));
   });
 
   /// Undoes the last edit. The outcome has no edit when there is none.
@@ -137,7 +158,7 @@ final class EditPipeline {
     String name,
     String source,
   ) async {
-    final arguments = await _reader.read(target);
+    final arguments = await _reader.arguments(target);
     final argument = arguments.where((each) => each.name == name).firstOrNull;
     if (argument == null || !argument.isEditable) {
       throw UnsupportedEdit('The argument $name is not editable.');

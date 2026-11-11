@@ -3,9 +3,12 @@
 
 import '../json_conversion.dart';
 import 'expression.dart';
+import 'move_direction.dart';
 import 'studio_api.dart';
 import 'studio_method.dart';
+import 'swap_partner.dart';
 import 'widget_ref.dart';
+import 'widget_spec.dart';
 
 /// Serves the calls of the `Studio` service: decodes the parameters, runs
 /// the method and encodes the result.
@@ -52,6 +55,35 @@ final class StudioDispatcher {
             null => null,
             final value => Expression.fromJson(value),
           },
+        );
+        return result.toJson();
+      case StudioMethod.getStructureOptions:
+        final result = await _api.getStructureOptions(
+          target: WidgetRef.fromJson(params['target']),
+        );
+        return result.toJson();
+      case StudioMethod.wrapWidget:
+        final result = await _api.wrapWidget(
+          target: WidgetRef.fromJson(params['target']),
+          wrapper: WidgetSpec.fromJson(params['wrapper']),
+        );
+        return result.toJson();
+      case StudioMethod.removeWidget:
+        final result = await _api.removeWidget(
+          target: WidgetRef.fromJson(params['target']),
+          keepChildren: asJson<bool>(params['keepChildren']),
+        );
+        return result.toJson();
+      case StudioMethod.reorderWidget:
+        final result = await _api.reorderWidget(
+          target: WidgetRef.fromJson(params['target']),
+          direction: MoveDirection.fromJson(params['direction']),
+        );
+        return result.toJson();
+      case StudioMethod.swapWidget:
+        final result = await _api.swapWidget(
+          target: WidgetRef.fromJson(params['target']),
+          partner: SwapPartner.fromJson(params['partner']),
         );
         return result.toJson();
       case StudioMethod.undo:

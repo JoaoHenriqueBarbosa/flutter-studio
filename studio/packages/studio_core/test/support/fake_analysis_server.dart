@@ -18,7 +18,11 @@ final class FakeAnalysisServer {
         'dart/textDocument/editableArguments',
         (Parameters _) => editableArguments,
       )
-      ..registerMethod('dart/textDocument/editArgument', _handleEditArgument);
+      ..registerMethod('dart/textDocument/editArgument', _handleEditArgument)
+      ..registerMethod(
+        'textDocument/codeAction',
+        (Parameters _) => codeActions,
+      );
     unawaited(_peer.listen());
     client = LspClient(controller.local, applyEdit: applyEdit);
   }
@@ -40,6 +44,9 @@ final class FakeAnalysisServer {
   /// Parameters of the `workspace/applyEdit` that the server sends when it
   /// receives an `editArgument`, or `null` to send none.
   Map<String, Object?>? editToApply;
+
+  /// Result of `textDocument/codeAction`.
+  Object? codeActions = const <Object?>[];
 
   /// Message of the error that `editArgument` answers, or `null` to succeed.
   String? editError;

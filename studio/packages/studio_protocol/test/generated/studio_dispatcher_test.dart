@@ -35,6 +35,35 @@ final class _ExampleApi implements StudioApi {
   }) async => EditResult.fromJson(_result);
 
   @override
+  Future<StructureOptions> getStructureOptions({
+    required WidgetRef target,
+  }) async => StructureOptions.fromJson(_result);
+
+  @override
+  Future<EditResult> wrapWidget({
+    required WidgetRef target,
+    required WidgetSpec wrapper,
+  }) async => EditResult.fromJson(_result);
+
+  @override
+  Future<EditResult> removeWidget({
+    required WidgetRef target,
+    required bool keepChildren,
+  }) async => EditResult.fromJson(_result);
+
+  @override
+  Future<EditResult> reorderWidget({
+    required WidgetRef target,
+    required MoveDirection direction,
+  }) async => EditResult.fromJson(_result);
+
+  @override
+  Future<EditResult> swapWidget({
+    required WidgetRef target,
+    required SwapPartner partner,
+  }) async => EditResult.fromJson(_result);
+
+  @override
   Future<EditResult> undo() async => EditResult.fromJson(_result);
 
   @override

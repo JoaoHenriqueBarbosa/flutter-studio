@@ -21,6 +21,21 @@ enum StudioMethod {
   /// Changes one argument of the constructor that creates a widget.
   setProperty,
 
+  /// Tells which structural edits a widget accepts.
+  getStructureOptions,
+
+  /// Wraps a widget with a new widget, which takes it as child.
+  wrapWidget,
+
+  /// Removes a widget from the code.
+  removeWidget,
+
+  /// Moves a widget one place among its siblings.
+  reorderWidget,
+
+  /// Swaps a widget with its parent or with its child.
+  swapWidget,
+
   /// Undoes the last edit and restores the exact previous bytes of its files.
   undo,
 

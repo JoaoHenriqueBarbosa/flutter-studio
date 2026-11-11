@@ -36,7 +36,7 @@ void main() {
       LspClient? currentServer() => isServerRunning ? server.client : null;
       pipeline = EditPipeline(
         store,
-        ArgumentReader(sync, currentServer),
+        WidgetReader(sync, currentServer),
         server: currentServer,
         requestReload: () {
           if (isAppRunning) reloadCount++;
@@ -193,6 +193,48 @@ void main() {
       isServerRunning = false;
 
       await expectLater(setAlignment(), throwsA(isA<ToolUnavailable>()));
+    });
+
+    // Verifies: FR-STR-001
+    test('applies an assist that the server offers', () async {
+      server.codeActions = [
+        {
+          'kind': 'refactor.flutter.wrap.center',
+          'title': 'Wrap with Center',
+          'edit': server.editToApply?['edit'],
+        },
+      ];
+
+      final outcome = await pipeline.applyAssist(
+        target,
+        documentVersion: 1,
+        assist: WidgetAssist.wrapWith('Center'),
+      );
+
+      expect(File(filePath).readAsStringSync(), 'Column(alignment: .end)\n');
+      expect(outcome.edit?.versions, {filePath: 2});
+      expect(outcome.isReloadRequested, isTrue);
+      expect(store.canUndo.value, isTrue);
+    });
+
+    // Verifies: FR-STR-001
+    test('refuses an assist that the server does not offer', () async {
+      await expectLater(
+        pipeline.applyAssist(
+          target,
+          documentVersion: 1,
+          assist: WidgetAssist.remove,
+        ),
+        throwsA(isA<UnsupportedEdit>()),
+      );
+      await expectLater(
+        pipeline.applyAssist(
+          target,
+          documentVersion: 4,
+          assist: WidgetAssist.remove,
+        ),
+        throwsA(isA<StaleDocument>()),
+      );
     });
 
     // Verifies: FR-DOC-005, FR-DOC-006
