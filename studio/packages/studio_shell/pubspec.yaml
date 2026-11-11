@@ -12,12 +12,20 @@ resolution: workspace
 dependencies:
   devtools_app:
   devtools_app_shared:
+  file_selector: ^1.0.0
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.0
+  material_ui: ^1.1.0
+  path: ^1.9.0
+  studio_core:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
 flutter:
+  generate: true
   uses-material-design: true

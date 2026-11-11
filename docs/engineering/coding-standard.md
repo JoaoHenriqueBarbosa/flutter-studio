@@ -1,6 +1,6 @@
 # Padrão de código
 
-Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.3, rascunho para revisão.
+Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.4, rascunho para revisão.
 
 ## 1. Propósito, alcance e precedência
 
@@ -95,7 +95,7 @@ Todo pacote Dart próprio tem a mesma forma.
 | `test/` | Espelho de `lib/src/`: `lib/src/edit/edit_pipeline.dart` é testado em `test/edit/edit_pipeline_test.dart` |
 | `README.md`, `CHANGELOG.md` | Página inicial da referência gerada; mudanças por versão |
 | `pubspec.yaml` | Dependências em ordem alfabética; nenhuma sem uso |
-| `analysis_options.yaml` | Inclui o arquivo comum (CS-QLT-002) e não declara regra. Em pacote com runner de plataforma, traz também as exclusões de diretório que a ferramenta do Flutter mantém (ADR-0014) |
+| `analysis_options.yaml` | Inclui o arquivo comum (CS-QLT-002) e não declara regra. Em pacote Flutter, traz também as exclusões de diretório que a ferramenta do Flutter escreve e mantém (ADR-0014) |
 
 O código Rust segue o layout padrão do Cargo, com os lints declarados na tabela `[workspace.lints]` do `Cargo.toml`.
 

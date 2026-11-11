@@ -10,5 +10,10 @@ shell bundle (ADR-0015).
 Build and run with the Flutter version pinned in `studio/flutter-version.txt`:
 
 ```sh
-flutter run -d linux
+flutter run -d linux --dart-entrypoint-args /path/to/a/flutter/project
 ```
+
+The Studio screen opens the project, runs its app and shows the widget tree of
+the inherited inspector beside the inherited property editor. A value changed
+in the property editor is written to the code of the project, and the app is
+reloaded.

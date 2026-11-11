@@ -1,0 +1,18 @@
+{
+  "@@locale": "pt",
+  "openProjectAction": "Abrir projeto",
+  "openProjectHint": "Escolha o diretório de um projeto Flutter para começar.",
+  "openingProject": "Abrindo {projectPath}…",
+  "notAFlutterProject": "{projectPath} não é um projeto Flutter.",
+  "sdkNotFound": "Nenhum SDK Flutter foi encontrado. Ponha o Flutter no PATH ou fixe uma versão no projeto.",
+  "sdkNotFoundAt": "Nenhum SDK Flutter foi encontrado em {sdkPath}.",
+  "sdkOutsideWindow": "O projeto usa o Flutter {found}. O Studio trabalha com as versões {window}.",
+  "projectSummary": "{name} · Flutter {version}",
+  "runAction": "Executar",
+  "stopAction": "Parar",
+  "hotRestartAction": "Reiniciar",
+  "startingApp": "Iniciando o app…",
+  "widgetTreePlaceholder": "Execute o app para ver a árvore de widgets.",
+  "propertiesTitle": "Propriedades",
+  "outputTitle": "Saída"
+}

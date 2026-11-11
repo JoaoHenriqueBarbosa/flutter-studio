@@ -113,3 +113,5 @@ export 'src/shared/ui/icons.dart';
 export 'src/shared/ui/search.dart';
 export 'src/shared/ui/side_panel.dart';
 export 'src/shared/utils/utils.dart';
+// STUDIO-PATCH(3): Exports the property editor so the shell can embed it.
+export 'src/standalone_ui/ide_shared/property_editor/property_editor_panel.dart';

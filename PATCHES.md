@@ -20,6 +20,7 @@ Cada patch altera arquivo herdado e é marcado no próprio arquivo com `STUDIO-P
 | --- | --- | --- | --- |
 | 1 | `CLAUDE.md` | O arquivo do upstream só manda ler o `AGENTS.md`. O do Studio o substitui para carregar o guia e o padrão de código em toda sessão, e mantém a remissão ao `AGENTS.md` para o código herdado. | Não se aplica: mudança específica do fork, não será proposta. |
 | 2 | `packages/devtools_app/lib/initialization.dart`, `packages/devtools_app/lib/src/shared/framework/app_error_handling.dart` | `runDevTools` e `setupErrorHandling` aceitam o parâmetro opcional `ensureBindingInitialized`, para o shell instalar o `StudioWidgetsBinding` dentro da zona de erros (ADR-0015). Sem o parâmetro, o comportamento é o do upstream. | Ainda não proposto. É um ponto de extensão genérico, candidato a devolução. |
+| 3 | `packages/devtools_app/lib/devtools_app.dart` | Exporta `property_editor_panel.dart`, para o shell embutir o painel de propriedades sem importar `src/` (CS-DRY-006, CS-DSN-002). | Ainda não proposto. |
 
 ## Testes herdados removidos
 

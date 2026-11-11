@@ -98,5 +98,6 @@ Fontes técnicas verificadas para esta baseline:
 | 0.5 | 11/11/2026 | ADR-0014, aceita: produto construído com o Flutter estável, em workspace próprio. ADR-0015, proposta: assets e fontes do código herdado resolvidos no binding do shell. Padrão de código 0.2: seções 2.2, 5.2 e 6.3. Arquitetura 0.4: RSK-11 e local dos pacotes `studio_*`. |
 | 0.6 | 11/11/2026 | ADR-0003 a ADR-0013 passam a aceitas: o dono do produto as aprovou ao publicar a baseline, e o estado não tinha sido atualizado. |
 | 0.7 | 11/11/2026 | ADR-0015 aceita; o padrão Decorator fica no catálogo do padrão de código (0.3) sem ressalva. |
+| 0.8 | 11/11/2026 | Primeiro entregável. Arquitetura 0.5: três itens de dívida técnica (desvio de FR-API-002, documentos não abertos no analysis server, daemon órfão). Padrão de código 0.4: a exclusão de diretórios no `analysis_options.yaml` vale para todo pacote Flutter. |
 
 Esta tabela registra as mudanças de conteúdo da baseline. O detalhe técnico de cada mudança fica em `CHANGELOG.md`, e o relato para quem aprova, em `JOURNAL.md`, os dois na raiz do repositório.

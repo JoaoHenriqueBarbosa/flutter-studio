@@ -4,11 +4,33 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**Primeiro entregável concluído: a primeira edição visual.** No Studio, em Linux: abre-se um projeto Flutter, clica-se em Run, o app sobe e a árvore de widgets aparece; seleciona-se o `Column` na árvore e o painel Propriedades lista os parâmetros do construtor; troca-se `mainAxisAlignment` de `.center` para `.end` na lista do painel. O arquivo `lib/main.dart` do projeto muda só nesse argumento, o app recarrega em cerca de um quarto de segundo e o texto desce para o pé da janela. Nenhuma linha de código foi aberta. Os seis marcos do caminho estão feitos.
+
+Como foi conferido: o fluxo foi executado duas vezes na interface, com captura das janelas antes e depois e o diff do arquivo; e dois testes de sistema fazem o mesmo sem interface, com o SDK real, um comparando o arquivo byte a byte e o outro esperando o hot reload do app em execução.
+
+O que o entregável não é:
+
+- Só roda em Linux, e só foi conferido nesta máquina.
+- Não tem desfazer. Uma edição errada se corrige editando de novo, ou pelo Git do projeto.
+- O painel de propriedades e a árvore são os do DevTools, em inglês. A casca do Studio em volta (barra, títulos, mensagens) está em português e inglês, conforme o idioma do sistema.
+- O desvio de FR-API-002 está em vigor: a edição não passa pelo serviço `Studio`, que ainda não existe.
+
+Achados que ficam registrados como dívida na arquitetura (seção 11):
+
+- O analysis server lê os arquivos do disco; o Studio ainda não mantém os documentos abertos nele.
+- O daemon de ferramentas do Dart não morre com o pai. O Studio o encerra ao fechar a janela e ao receber sinal de término; se o Studio for morto à força, o daemon fica rodando.
+
+Ruídos do código herdado vistos no log, sem efeito no fluxo: um aviso de "Concurrent modification" a cada seleção no inspetor; um erro "Future already completed" a cada hot reload; e uma asserção de `AppLifecycleListener` ao fechar a janela, só em modo debug. Nenhum vem de código do Studio. Vale investigar antes de propor os patches ao upstream.
+
+O código herdado ganhou o patch 3, que só exporta o painel de propriedades.
+
+Próximos passos naturais, dentro do F1: o serviço `Studio` com o contrato OpenRPC, encerrando o desvio; desfazer e refazer; a árvore de fonte.
+
 **Definido o primeiro entregável: a primeira edição visual.** Num projeto Flutter de exemplo rodando em Linux, seleciona-se um widget no inspetor, muda-se um valor no painel de propriedades, o Studio grava só aquele argumento no arquivo e o app recarregado mostra a mudança, sem abrir o código. O dono do produto aprovou o caminho abaixo, que corta na vertical o F0 e o mínimo do F1 (FR-PRP-001, FR-PRP-003, FR-DOC-002 e parte de FR-INS-003). O trabalho começa quando ele der o sinal.
 
 | # | Marco | O que entra | Como se confere |
 | --- | --- | --- | --- |
-| 0 | Shell abre em Linux | Feito | Janela do `studio_shell` com o DevTools herdado |
+| 0 | Shell abre em Linux | Feito (como os marcos 1 a 6, ver a entrada acima) | Janela do `studio_shell` com o DevTools herdado |
 | 1 | Abrir projeto | Escolher o diretório, localizar o SDK e checar a janela de versões (FR-PRJ-001 a 003) | O shell mostra o projeto e a versão do SDK; nada muda no diretório fora de `.dart_tool/` |
 | 2 | Ferramentas do SDK no ar | Supervisor de processos; daemon; analysis server como cliente LSP; pareamento dos dois (FR-PRJ-004, IR-001) | Os diagnósticos do projeto chegam ao shell; o analysis server volta depois de morto |
 | 3 | `DocumentStore` | Documentos abertos no servidor, aplicação de `WorkspaceEdit`, gravação atômica (FR-DOC-001, NFR-REL-003) | Um `editArgument` disparado por teste muda no disco só os bytes do argumento |

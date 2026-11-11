@@ -20,6 +20,9 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `STUDIO-PATCH(2)` em `packages/devtools_app/lib/initialization.dart` e `packages/devtools_app/lib/src/shared/framework/app_error_handling.dart`: parâmetro opcional `ensureBindingInitialized`. Registrado em `PATCHES.md`.
 - Pacote `studio/packages/studio_tool` 0.1.0, com o executável `st` e o comando `st verify` (NFR-MNT-005): `QualityGate`, `GateStep`, `ProcessStep`, `GateStepCatalog`, `ProcessRunner` e 16 testes. Passos construídos: QG-01, QG-02, QG-04 e QG-05. Passo exigido sem implementação, ou com ferramenta ausente, sai como `notRun` e reprova o portão. Uso: `dart run studio_tool:st verify`, a partir de `studio/`.
 - Pacote `studio/packages/studio_core` 0.1.0: `ProjectLoader`, `SdkLocator`, `SdkVersionWindow` (3.38, 3.41, 3.44 e 3.47) e as falhas `ProjectOpenFailure` (FR-PRJ-001 a 003); `DocumentStore` com `WorkspaceEdit`, `TextDocument` e gravação atômica (FR-DOC-001, NFR-REL-003, IR-005); `BaseProtocolDecoder` e `baseProtocolChannel`, o enquadramento `Content-Length` comum a LSP e DAP. 32 testes.
+- `studio_core`: `LspClient`, `DapClient` e `DtdConnection` (IR-001 a IR-003); `ToolchainSupervisor` com `ToolchainChild` e `ToolchainState` (NFR-REL-002); `ToolingDaemonChild`, `AnalysisServerChild`, `AppRun` e `ProjectSession` (FR-PRJ-004, FR-RUN-001 e 003, FR-DOC-002); `EditFailure` e `SourceLocation`. 51 testes, dois deles de sistema com o SDK real: `project_session_test.dart` e `app_run_test.dart` (tag `desktop`, abre uma janela).
+- `studio_shell`: tela Studio dentro do DevTools herdado, com `WorkbenchController`, `InheritedDevTools`, `WorkbenchView`, `ProjectWorkbench`, `RunToolbar`, `OutputPane` e `OpenProjectPrompt`; textos em `lib/l10n/studio_en.arb` e `studio_pt.arb`, com a classe `StudioLocalizations` gerada por `flutter gen-l10n` em `lib/src/l10n/`; o primeiro argumento da linha de comando abre um projeto na partida; o projeto é fechado na saída e em SIGTERM ou SIGINT. 16 testes.
+- `STUDIO-PATCH(3)` em `packages/devtools_app/lib/devtools_app.dart`: exporta o painel de propriedades. Registrado em `PATCHES.md`.
 
 ### Alterado
 
@@ -32,5 +35,6 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - ADR-0003 a ADR-0013: estado de "proposta" para "aceita", nos arquivos e no índice (registro de decisões 0.3). A seção 9 de `docs/architecture/arc42.md` deixa de repetir os estados e remete ao índice.
 - ADR-0015: estado de "proposta" para "aceita" (registro de decisões 0.4); `docs/engineering/coding-standard.md` 0.3 tira a ressalva da linha do Decorator na seção 6.3.
 - `JOURNAL.md`: caminho de seis marcos até a primeira edição visual, com o desvio temporário de FR-API-002 aprovado pelo dono do produto.
+- `docs/architecture/arc42.md` 0.5 e `docs/engineering/coding-standard.md` 0.4, conforme a linha 0.8 da tabela do guia.
 - Histórico do `main` reescrito pelo rebase: os quatro commits anteriores ganharam hashes novos, sem mudança de conteúdo.
 - `docs/guide.md`: linha 0.3 na tabela de mudanças e os dois registros citados na seção de controle de mudanças.
