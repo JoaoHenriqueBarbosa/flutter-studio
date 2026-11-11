@@ -23,6 +23,7 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `studio_core`: `LspClient`, `DapClient` e `DtdConnection` (IR-001 a IR-003); `ToolchainSupervisor` com `ToolchainChild` e `ToolchainState` (NFR-REL-002); `ToolingDaemonChild`, `AnalysisServerChild`, `AppRun` e `ProjectSession` (FR-PRJ-004, FR-RUN-001 e 003, FR-DOC-002); `EditFailure` e `SourceLocation`. 51 testes, dois deles de sistema com o SDK real: `project_session_test.dart` e `app_run_test.dart` (tag `desktop`, abre uma janela).
 - `studio_shell`: tela Studio dentro do DevTools herdado, com `WorkbenchController`, `InheritedDevTools`, `WorkbenchView`, `ProjectWorkbench`, `RunToolbar`, `OutputPane` e `OpenProjectPrompt`; textos em `lib/l10n/studio_en.arb` e `studio_pt.arb`, com a classe `StudioLocalizations` gerada por `flutter gen-l10n` em `lib/src/l10n/`; o primeiro argumento da linha de comando abre um projeto na partida; o projeto é fechado na saída e em SIGTERM ou SIGINT. 16 testes.
 - `STUDIO-PATCH(3)` em `packages/devtools_app/lib/devtools_app.dart`: exporta o painel de propriedades. Registrado em `PATCHES.md`.
+- `studio_core`: desfazer e refazer no `DocumentStore` (FR-DOC-005, FR-DOC-006, NFR-REL-004). `apply`, `undo` e `redo` devolvem `AppliedEdit`, com as edições feitas e a versão de cada arquivo; `canUndo` e `canRedo` são `ValueListenable`; `TextDocument` ganha `replacing` e `editTo`. O fluxo `changedFiles` dá lugar a `changes`, de `DocumentChange`, com o documento novo e a origem (`ChangeOrigin`).
 
 ### Alterado
 

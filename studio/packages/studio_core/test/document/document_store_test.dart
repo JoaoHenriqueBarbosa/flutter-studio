@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
@@ -49,7 +50,15 @@ void main() {
 
     // Verifies: FR-DOC-001
     test('announces each file after it reaches the disk', () async {
-      final changed = expectLater(store.changedFiles, emits(filePath));
+      final changed = expectLater(
+        store.changes,
+        emits(
+          isA<DocumentChange>()
+              .having((change) => change.filePath, 'filePath', filePath)
+              .having((change) => change.document.version, 'version', 2)
+              .having((change) => change.origin, 'origin', ChangeOrigin.studio),
+        ),
+      );
 
       await store.apply(replaceCenter(filePath));
 
@@ -94,6 +103,86 @@ void main() {
       expect(File(filePath).readAsStringSync(), 'alignment: .center,\n');
       expect(File(otherPath).readAsStringSync(), 'x\n');
     });
+
+    // Verifies: FR-DOC-005, FR-DOC-006
+    test(
+      'undo restores the exact text and redo applies the edit again',
+      () async {
+        await store.apply(replaceCenter(filePath));
+
+        final undone = await store.undo();
+
+        expect(File(filePath).readAsStringSync(), 'alignment: .center,\n');
+        expect(undone?.versions, {filePath: 3});
+        expect(undone?.changes.single.edits.single, (
+          range: (
+            start: (line: 0, character: 12),
+            end: (line: 0, character: 15),
+          ),
+          newText: 'center',
+        ));
+        expect(store.canUndo.value, isFalse);
+        expect(store.canRedo.value, isTrue);
+
+        await store.redo();
+
+        expect(File(filePath).readAsStringSync(), 'alignment: .end,\n');
+        expect(store.canUndo.value, isTrue);
+        expect(store.canRedo.value, isFalse);
+      },
+    );
+
+    // Verifies: FR-DOC-005
+    test('undo with no edit changes nothing', () async {
+      expect(await store.undo(), isNull);
+      expect(await store.redo(), isNull);
+    });
+
+    // Verifies: FR-DOC-005
+    test('a new edit discards the edits that were undone', () async {
+      await store.apply(replaceCenter(filePath));
+      await store.undo();
+
+      await store.apply(replaceCenter(filePath));
+
+      expect(store.canRedo.value, isFalse);
+    });
+
+    // Verifies: NFR-REL-004
+    test(
+      'undoing every edit of a random sequence restores the files',
+      () async {
+        final random = math.Random(20261111);
+        const editCount = 100;
+        for (var index = 0; index < editCount; index++) {
+          final text = store.document(filePath).text;
+          final start = random.nextInt(text.length);
+          final end = start + random.nextInt(text.length - start);
+          await store.apply(
+            WorkspaceEdit([
+              (
+                filePath: filePath,
+                edits: [
+                  (
+                    range: (
+                      start: (line: 0, character: start),
+                      end: (line: 0, character: end),
+                    ),
+                    newText: 'x' * random.nextInt(4),
+                  ),
+                ],
+              ),
+            ]),
+          );
+        }
+
+        while (store.canUndo.value) {
+          await store.undo();
+        }
+
+        expect(File(filePath).readAsStringSync(), 'alignment: .center,\n');
+      },
+    );
 
     // Verifies: IR-005
     test('refuses to edit a file outside the project', () async {

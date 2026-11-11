@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import '../dap/dap_request_failed.dart';
+import '../document/document_change.dart';
 import '../document/document_store.dart';
 import '../document/edit_failure.dart';
 import '../document/text_edit.dart';
@@ -42,7 +43,7 @@ final class ProjectSession {
 
   ({String filePath, DocumentPosition position})? _activeLocation;
 
-  StreamSubscription<String>? _changedFiles;
+  StreamSubscription<DocumentChange>? _changes;
 
   /// Address of the Dart Tooling Daemon, or `null` while it is not running.
   ValueListenable<Uri?> get daemonUri => _daemonUri;
@@ -61,7 +62,7 @@ final class ProjectSession {
   /// Completes when the server has registered its service in the daemon.
   /// No code of the project runs.
   Future<void> start() async {
-    _changedFiles = documents.changedFiles.listen(_handleChangedFile);
+    _changes = documents.changes.listen(_handleChange);
     await _supervisor.start(
       ToolingDaemonChild(project.sdk, _handleDaemonConnected),
     );
@@ -110,7 +111,7 @@ final class ProjectSession {
   /// Ends the app and the tools and releases the resources of the session.
   Future<void> close() async {
     await stopApp();
-    await _changedFiles?.cancel();
+    await _changes?.cancel();
     await _server?.close();
     await _daemon?.close();
     await _supervisor.stop();
@@ -147,7 +148,7 @@ final class ProjectSession {
 
   /// Reloads the app after the file is on disk (FR-DOC-002) and announces
   /// the active location again, so that the tools read the new text.
-  Future<void> _handleChangedFile(String filePath) async {
+  Future<void> _handleChange(DocumentChange change) async {
     try {
       await _appRun.value?.hotReload();
     } on DapRequestFailed {

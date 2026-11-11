@@ -3,6 +3,9 @@ library;
 
 export 'src/dap/dap_client.dart';
 export 'src/dap/dap_request_failed.dart';
+export 'src/document/applied_edit.dart';
+export 'src/document/change_origin.dart';
+export 'src/document/document_change.dart';
 export 'src/document/document_store.dart';
 export 'src/document/edit_failure.dart';
 export 'src/document/source_location.dart';
