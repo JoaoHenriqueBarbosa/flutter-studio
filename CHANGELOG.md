@@ -53,6 +53,9 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - Pacote `studio/packages/studio_design_agent` 0.1.0 (IF-06): `DesignAgent` registra as extensões de serviço dentro do app; `SceneCollector` percorre a árvore de elementos e devolve, de cada widget criado sob as raízes do projeto, o local de criação e o retângulo na superfície. Depende só do Flutter e do `studio_protocol`. 5 testes de widget.
 - `docs/interfaces/icd.md` 0.6, conforme a linha 0.19 da tabela do guia.
 - `studio_core`: `DesignHostProject` gera o projeto host em `.dart_tool/studio/host/` do projeto do usuário, com dependência por caminho para o projeto e para o agente e um `main` que inicia o `DesignAgent` e chama o `main` do projeto, e resolve os pacotes com `flutter pub get --offline` (FR-HST-001, ADR-0008). `ProjectSession` aceita `studioPackagesPath` e, com ele, executa o host de design pelo projeto host. `Frame` e `FrameTransport` passam a levar o espelho de cena (`Scene`), que o `ScreenshotFrameTransport` lê de `ext.studio.agent.scene`. 147 testes; o de sistema confere que a cena traz só os widgets do projeto, nas mesmas posições da árvore de fonte.
+- `studio_core`: `SceneGeometry`, que responde pela cena do quadro em tela qual widget do projeto está sob um ponto e quais elementos um local de criação gera.
+- `studio_shell`: no `CanvasPane`, um clique seleciona o widget do projeto sob o ponteiro e a seleção ganha contorno sobre o quadro (FR-INS-003, FR-CNV-006); `StudioPackagesLocator` acha os fontes do agente de design, pela variável `STUDIO_PACKAGES_PATH` ou subindo a partir do executável, e o `WorkbenchController` os repassa à sessão, que então executa pelo projeto host. 41 testes no pacote.
+- `docs/architecture/arc42.md` 0.11, conforme a linha 0.20 da tabela do guia.
 
 ### Corrigido
 

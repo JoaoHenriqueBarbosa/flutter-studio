@@ -21,13 +21,20 @@ final class WorkbenchController extends DisposableController
     with AutoDisposeControllerMixin {
   /// Creates a controller that opens projects with [_loader] and reaches
   /// the inherited panels through [_devTools].
-  WorkbenchController(this._loader, this._devTools) {
+  ///
+  /// [studioPackagesPath] is the directory with the sources of the design
+  /// agent, or `null` when this Studio has none. Without them the design
+  /// host shows the app, but nothing can be selected on the canvas.
+  WorkbenchController(this._loader, this._devTools, {this.studioPackagesPath}) {
     addAutoDisposeListener(_devTools.selectedLocation, _handleSelection);
   }
 
   final ProjectLoader _loader;
 
   final InheritedDevTools _devTools;
+
+  /// Directory with the sources of the design agent, when there is one.
+  final String? studioPackagesPath;
 
   final _state = ValueNotifier<WorkbenchState>(const WorkbenchEmpty());
 
@@ -58,7 +65,10 @@ final class WorkbenchController extends DisposableController
     await closeProject();
     _state.value = WorkbenchOpening(projectPath);
     try {
-      final session = ProjectSession(_loader.load(projectPath));
+      final session = ProjectSession(
+        _loader.load(projectPath),
+        studioPackagesPath: studioPackagesPath,
+      );
       await session.start();
       final daemonUri = session.daemonUri.value;
       if (daemonUri != null) await _devTools.connectDaemon(daemonUri);

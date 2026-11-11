@@ -109,7 +109,11 @@ final class ProjectWorkbench extends StatelessWidget {
             child: TabBarView(
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                CanvasPane(canvas: session.canvas, texts: texts),
+                CanvasPane(
+                  canvas: session.canvas,
+                  selection: session.selection,
+                  texts: texts,
+                ),
                 _widgetTree(),
               ],
             ),

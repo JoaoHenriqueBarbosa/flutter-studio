@@ -4,6 +4,16 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**Clicar no canvas seleciona o widget.** Com o app rodando no canvas, um clique sobre um texto, um botão ou qualquer widget escrito no projeto seleciona esse widget: ele ganha um contorno no canvas, fica marcado na Estrutura, e as Propriedades e a barra de estrutura passam a valer para ele. A partir daí o ciclo completo acontece numa janela só: clicar no que se vê, mudar no painel, ver mudar.
+
+Para isso entraram duas peças previstas no projeto: o agente de design, um trecho de código do Studio que roda dentro do app e informa onde está cada widget do projeto na tela; e o projeto host, gerado em `.dart_tool/studio/host/` do projeto aberto, que liga o agente ao app sem acrescentar nada ao `pubspec.yaml` nem aos fontes do usuário. Um teste com o SDK real confere que as posições informadas pelo agente são as mesmas da árvore de fonte.
+
+Limites que valem saber antes de usar em projeto de verdade:
+
+- Imagens e fontes declaradas no `pubspec.yaml` do projeto ainda não aparecem no canvas. O app de exemplo não tem nenhuma; um app real quase sempre tem. É o próximo conserto, e está na dívida técnica.
+- O app no canvas não recebe mouse nem teclado: clicar seleciona, não aciona o botão. Para usar o app, "Executar em janela".
+- Widgets que vêm de pacotes não são selecionáveis no canvas; o clique cai no widget do projeto que os contém.
+
 **O app agora aparece dentro do Studio.** Run passou a executar o projeto no host de design do SDK, sem abrir outra janela e sem compilar nada nativo: o app sobe em poucos segundos e a imagem dele aparece na aba Canvas, no centro da bancada. Trocar uma propriedade ou envolver um widget atualiza o canvas logo depois do reload (cerca de um quarto de segundo no exemplo). Parar o app deixa o último quadro, esmaecido e com aviso. Quem quiser a janela de verdade tem um segundo botão, "Executar em janela".
 
 É o primeiro degrau do canvas, e convém não confundir com o canvas do F2:

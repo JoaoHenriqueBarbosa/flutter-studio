@@ -4,6 +4,7 @@ library;
 export 'src/canvas/canvas_controller.dart';
 export 'src/canvas/frame.dart';
 export 'src/canvas/frame_transport.dart';
+export 'src/canvas/scene_geometry.dart';
 export 'src/canvas/screenshot_frame_transport.dart';
 export 'src/dap/dap_client.dart';
 export 'src/dap/dap_request_failed.dart';

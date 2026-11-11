@@ -1,48 +1,62 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/widgets.dart' show Image;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:studio_core/studio_core.dart';
+import 'package:studio_protocol/studio_protocol.dart'
+    show Position, Scene, SceneElement;
 import 'package:studio_shell/studio_shell.dart';
 
 import '../support/workbench_fixture.dart';
 
-/// A [FrameTransport] that always answers with the same image.
+/// A [FrameTransport] that always answers with the same image and scene.
 final class _OneFrameTransport implements FrameTransport {
-  const _OneFrameTransport(this._image);
+  const _OneFrameTransport(this._image, {this.scene});
 
   final Uint8List _image;
 
+  final Scene? scene;
+
   @override
-  Future<CapturedFrame?> capture() async => (pngBytes: _image, scene: null);
+  Future<CapturedFrame?> capture() async => (pngBytes: _image, scene: scene);
 
   @override
   Future<void> close() async {}
 }
 
-/// A PNG image of one transparent pixel.
-final _onePixelPng = Uint8List.fromList([
-  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, //
-  0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-  0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00,
-  0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
-  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49,
-  0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
-]);
+/// A PNG image of one pixel.
+final _onePixelPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA'
+  '60e6kgAAAABJRU5ErkJggg==',
+);
 
 void main() {
   group('CanvasPane', () {
+    late Directory project;
+    late String filePath;
+    late DocumentStore documents;
+    late SelectionController selection;
     late CanvasController canvas;
 
     setUp(() {
+      project = Directory.systemTemp.createTempSync('canvas_pane_test');
+      filePath = '${project.path}/main.dart';
+      File(filePath).writeAsStringSync('Column()\n');
+      documents = DocumentStore(project.path);
+      selection = SelectionController(documents);
       canvas = CanvasController(interval: const Duration(hours: 1));
     });
+
+    tearDown(() => project.deleteSync(recursive: true));
 
     Future<void> pumpPane(WidgetTester tester) => tester.pumpWidget(
       wrapForTest(
         CanvasPane(
           canvas: canvas,
+          selection: selection,
           texts: lookupStudioLocalizations(const Locale('pt')),
         ),
       ),
@@ -77,6 +91,46 @@ void main() {
 
       expect(find.byType(Image), findsOneWidget);
       expect(find.textContaining('último quadro'), findsOneWidget);
+      await tester.runAsync(canvas.dispose);
+    });
+
+    // Verifies: FR-INS-003, FR-CNV-006
+    testWidgets('a click selects the widget of the project under it', (
+      tester,
+    ) async {
+      final scene = Scene(
+        width: 100,
+        height: 100,
+        devicePixelRatio: 1,
+        elements: [
+          SceneElement(
+            uri: '${Uri.file(filePath)}',
+            position: const Position(line: 0, character: 0),
+            parentIndex: -1,
+            left: 0,
+            top: 0,
+            width: 100,
+            height: 50,
+          ),
+        ],
+      );
+      await pumpPane(tester);
+      await tester.runAsync(
+        () => canvas.attach(_OneFrameTransport(_onePixelPng, scene: scene)),
+      );
+      await tester.pump();
+      final surface = tester.getRect(find.byType(Image));
+
+      // The lower half of the surface has no element of the project.
+      await tester.tapAt(surface.center + Offset(0, surface.height / 4));
+      expect(selection.selection.value, isNull);
+
+      await tester.tapAt(surface.center - Offset(0, surface.height / 4));
+      expect(selection.selection.value, (
+        filePath: filePath,
+        position: (line: 0, character: 0),
+        documentVersion: 1,
+      ));
       await tester.runAsync(canvas.dispose);
     });
   });

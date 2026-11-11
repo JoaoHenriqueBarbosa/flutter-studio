@@ -13,6 +13,7 @@ import 'package:studio_core/studio_core.dart';
 import 'src/inherited/inherited_dev_tools.dart';
 import 'src/inherited_assets/inherited_font_registry.dart';
 import 'src/l10n/studio_localizations.dart';
+import 'src/studio_packages_locator.dart';
 import 'src/studio_widgets_binding.dart';
 import 'src/workbench/studio_screen.dart';
 import 'src/workbench/workbench_controller.dart';
@@ -60,6 +61,8 @@ void main(List<String> arguments) {
       controller = WorkbenchController(
         ProjectLoader(SdkLocator(environment: Platform.environment)),
         devTools,
+        studioPackagesPath: StudioPackagesLocator(Platform.environment)
+            .locate(Platform.resolvedExecutable),
       );
       _closeProjectOnExit(controller);
       final projectPath = arguments.firstOrNull;
