@@ -10,6 +10,8 @@ export 'src/generated/change_origin.dart';
 export 'src/generated/document_changed.dart';
 export 'src/generated/edit_result.dart';
 export 'src/generated/expression.dart';
+export 'src/generated/flex_fit_kind.dart';
+export 'src/generated/layout_info.dart';
 export 'src/generated/move_direction.dart';
 export 'src/generated/position.dart';
 export 'src/generated/property.dart';

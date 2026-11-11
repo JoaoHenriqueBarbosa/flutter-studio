@@ -298,6 +298,35 @@ abstract class StudioLocalizations {
   /// **'This app was built without the tracking of widget creation. Selecting on the canvas is off for this run.'**
   String get canvasNotTracked;
 
+  /// Size of the selected widget in the running app, in logical pixels.
+  ///
+  /// In en, this message translates to:
+  /// **'Size {width} × {height}'**
+  String layoutSize(String width, String height);
+
+  /// Constraints that the parent gives to the selected widget.
+  ///
+  /// In en, this message translates to:
+  /// **'Constraints: width {minWidth} to {maxWidth}, height {minHeight} to {maxHeight}'**
+  String layoutConstraints(
+    String minWidth,
+    String maxWidth,
+    String minHeight,
+    String maxHeight,
+  );
+
+  /// Flex factor and flex fit of the selected widget inside a row or a column.
+  ///
+  /// In en, this message translates to:
+  /// **'Flex {flex}, fit {fit}'**
+  String layoutFlex(String flex, String fit);
+
+  /// Shown in place of a maximum that a constraint does not have.
+  ///
+  /// In en, this message translates to:
+  /// **'unbounded'**
+  String get layoutUnbounded;
+
   /// Title of the pane that edits the arguments of the selected widget.
   ///
   /// In en, this message translates to:

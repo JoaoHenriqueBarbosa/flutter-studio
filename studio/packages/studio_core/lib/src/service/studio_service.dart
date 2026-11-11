@@ -278,6 +278,7 @@ final class StudioService implements StudioApi {
             width: element.width,
             height: element.height,
           ),
+          layout: element.layout,
           children: _runtimeNodesUnder(scene, index),
         ),
   ];

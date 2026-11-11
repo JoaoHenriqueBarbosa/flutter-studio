@@ -2,6 +2,7 @@
 // Source: studio.openrpc.json. Generator: st generate.
 
 import '../json_conversion.dart';
+import 'layout_info.dart';
 import 'position.dart';
 
 /// One element created in the project, in the frame on screen.
@@ -16,6 +17,7 @@ final class SceneElement {
     required this.top,
     required this.width,
     required this.height,
+    this.layout,
   });
 
   /// Decodes the value from [json], the form it has on the wire.
@@ -32,6 +34,10 @@ final class SceneElement {
       top: asJson<num>(fields['top']).toDouble(),
       width: asJson<num>(fields['width']).toDouble(),
       height: asJson<num>(fields['height']).toDouble(),
+      layout: switch (fields['layout']) {
+        null => null,
+        final value => LayoutInfo.fromJson(value),
+      },
     );
   }
 
@@ -60,6 +66,10 @@ final class SceneElement {
   /// Height of the bounds, in logical pixels.
   final double height;
 
+  /// The constraints and the flex data of the widget, absent when its render
+  /// object is not a box.
+  final LayoutInfo? layout;
+
   /// Encodes the value in the form it has on the wire.
   Map<String, Object?> toJson() => {
     'className': className,
@@ -70,6 +80,7 @@ final class SceneElement {
     'top': top,
     'width': width,
     'height': height,
+    if (layout case final layout?) 'layout': layout.toJson(),
   };
 
   @override

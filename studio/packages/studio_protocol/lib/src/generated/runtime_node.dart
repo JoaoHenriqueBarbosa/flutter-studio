@@ -3,6 +3,7 @@
 
 import '../json_conversion.dart';
 import 'bounds.dart';
+import 'layout_info.dart';
 import 'widget_ref.dart';
 
 /// A widget of the project in the tree of the running app.
@@ -13,6 +14,7 @@ final class RuntimeNode {
     required this.ref,
     required this.bounds,
     required this.children,
+    this.layout,
   });
 
   /// Decodes the value from [json], the form it has on the wire.
@@ -28,6 +30,10 @@ final class RuntimeNode {
         for (final item in asJson<List<Object?>>(fields['children']))
           RuntimeNode.fromJson(item),
       ],
+      layout: switch (fields['layout']) {
+        null => null,
+        final value => LayoutInfo.fromJson(value),
+      },
     );
   }
 
@@ -44,12 +50,17 @@ final class RuntimeNode {
   /// The nearest descendants created in the project, in tree order.
   final List<RuntimeNode> children;
 
+  /// The constraints and the flex data of the widget, absent when its render
+  /// object is not a box.
+  final LayoutInfo? layout;
+
   /// Encodes the value in the form it has on the wire.
   Map<String, Object?> toJson() => {
     'className': className,
     'ref': ref.toJson(),
     'bounds': bounds.toJson(),
     'children': [for (final item in children) item.toJson()],
+    if (layout case final layout?) 'layout': layout.toJson(),
   };
 
   @override

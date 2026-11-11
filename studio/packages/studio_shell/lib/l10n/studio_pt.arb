@@ -33,6 +33,10 @@
   "canvasPlaceholder": "Execute o app para vê-lo aqui.",
   "canvasStale": "O app não está em execução. Este é o último quadro.",
   "canvasNotTracked": "Este app foi compilado sem o rastreamento de criação de widgets. A seleção no canvas fica desligada nesta execução.",
+  "layoutSize": "Tamanho {width} × {height}",
+  "layoutConstraints": "Restrições: largura de {minWidth} a {maxWidth}, altura de {minHeight} a {maxHeight}",
+  "layoutFlex": "Flex {flex}, ajuste {fit}",
+  "layoutUnbounded": "sem limite",
   "propertiesTitle": "Propriedades",
   "outputTitle": "Saída"
 }

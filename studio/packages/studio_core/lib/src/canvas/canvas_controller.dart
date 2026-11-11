@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:studio_protocol/studio_protocol.dart' show AgentInfo;
+
 import 'frame.dart';
 import 'frame_transport.dart';
 
@@ -22,7 +24,7 @@ final class CanvasController {
 
   final _isLive = ValueNotifier(false);
 
-  final _isSelectable = ValueNotifier(false);
+  final _agent = ValueNotifier<AgentInfo?>(null);
 
   FrameTransport? _transport;
 
@@ -42,11 +44,16 @@ final class CanvasController {
   /// Whether [frame] comes from an app that is running now.
   ValueListenable<bool> get isLive => _isLive;
 
+  /// What the design agent of the running app tells about itself, or
+  /// `null` while the app has not answered or runs without the agent.
+  ///
+  /// An app built without the tracking of widget creation links no widget
+  /// to its source, and visual editing is off for its run (FR-INS-007).
+  ValueListenable<AgentInfo?> get agent => _agent;
+
   /// Whether a widget can be selected on the frames of the running app:
-  /// the app has the design agent and was built with the tracking of
-  /// widget creation. Without the tracking no widget is linked to its
-  /// source, and visual editing is off for the session (FR-INS-007).
-  ValueListenable<bool> get isSelectable => _isSelectable;
+  /// the app has the design agent and tracks the creation of widgets.
+  bool get isSelectable => _agent.value?.isWidgetCreationTracked ?? false;
 
   /// Starts showing the frames that [transport] brings, in place of the
   /// transport that was attached before.
@@ -56,10 +63,6 @@ final class CanvasController {
     _isLive.value = true;
     _timer = Timer.periodic(interval, (_) => unawaited(refresh()));
     await refresh();
-    final agent = await transport.readAgentInfo();
-    if (identical(transport, _transport)) {
-      _isSelectable.value = agent?.isWidgetCreationTracked ?? false;
-    }
   }
 
   /// Stops asking for frames and closes the transport. The last frame
@@ -70,7 +73,7 @@ final class CanvasController {
     final transport = _transport;
     _transport = null;
     _isLive.value = false;
-    _isSelectable.value = false;
+    _agent.value = null;
     await transport?.close();
   }
 
@@ -110,11 +113,15 @@ final class CanvasController {
     await detach();
     _frame.dispose();
     _isLive.dispose();
-    _isSelectable.dispose();
+    _agent.dispose();
   }
 
   Future<void> _captureFrom(FrameTransport transport) async {
+    // The agent registers itself while the app starts, so it is asked
+    // again at each capture until it answers.
+    final agent = _agent.value ?? await transport.readAgentInfo();
     final captured = await transport.capture();
+    if (identical(transport, _transport)) _agent.value = agent;
     final last = _frame.value;
     if (captured == null || !identical(transport, _transport)) return;
     final isSameImage = listEquals(captured.pngBytes, last?.pngBytes);

@@ -360,6 +360,7 @@ void main() {
         const Position(line: 13, character: 21),
       ]);
       expect((scene.width, scene.height), (800, 600));
+      expect(session.canvas.isSelectable, isTrue);
       final runtimeTree = await session.service.getRuntimeTree();
       expect(runtimeTree.single.className, 'SampleApp');
       expect(

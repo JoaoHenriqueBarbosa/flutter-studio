@@ -9,6 +9,7 @@ import '../inherited/studio_editor_client.dart';
 import '../l10n/studio_localizations.dart';
 import 'canvas_pane.dart';
 import 'history_buttons.dart';
+import 'layout_summary.dart';
 import 'output_pane.dart';
 import 'run_toolbar.dart';
 import 'source_tree_pane.dart';
@@ -163,6 +164,11 @@ final class ProjectWorkbench extends StatelessWidget {
         StructureToolbar(
           session: session,
           controller: controller,
+          texts: texts,
+        ),
+        LayoutSummary(
+          canvas: session.canvas,
+          selection: session.selection,
           texts: texts,
         ),
         Expanded(

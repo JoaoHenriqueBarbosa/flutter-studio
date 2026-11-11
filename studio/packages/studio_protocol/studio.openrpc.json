@@ -2,7 +2,7 @@
   "openrpc": "1.4.0",
   "info": {
     "title": "Studio",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "Operations of Studio: reading, selecting and editing the widgets of the open project."
   },
   "x-binding": {
@@ -30,7 +30,7 @@
           "result": {
             "name": "versionInfo",
             "value": {
-              "version": "0.7.0"
+              "version": "0.8.0"
             }
           }
         }
@@ -1591,6 +1591,10 @@
           "height": {
             "description": "Height of the bounds, in logical pixels.",
             "type": "number"
+          },
+          "layout": {
+            "description": "The constraints and the flex data of the widget, absent when its render object is not a box.",
+            "$ref": "#/components/schemas/LayoutInfo"
           }
         }
       },
@@ -1681,6 +1685,52 @@
             "items": {
               "$ref": "#/components/schemas/RuntimeNode"
             }
+          },
+          "layout": {
+            "description": "The constraints and the flex data of the widget, absent when its render object is not a box.",
+            "$ref": "#/components/schemas/LayoutInfo"
+          }
+        }
+      },
+      "FlexFitKind": {
+        "description": "How a child of a flex layout fills the space given to it.",
+        "type": "string",
+        "enum": [
+          "tight",
+          "loose"
+        ]
+      },
+      "LayoutInfo": {
+        "description": "The layout data of a widget in the running app.",
+        "type": "object",
+        "required": [
+          "minWidth",
+          "minHeight"
+        ],
+        "properties": {
+          "minWidth": {
+            "description": "Smallest width that the parent allows, in logical pixels.",
+            "type": "number"
+          },
+          "maxWidth": {
+            "description": "Largest width that the parent allows, absent when the width is unbounded.",
+            "type": "number"
+          },
+          "minHeight": {
+            "description": "Smallest height that the parent allows, in logical pixels.",
+            "type": "number"
+          },
+          "maxHeight": {
+            "description": "Largest height that the parent allows, absent when the height is unbounded.",
+            "type": "number"
+          },
+          "flex": {
+            "description": "The flex factor of the widget, present when its parent is a flex layout and gives it one.",
+            "type": "integer"
+          },
+          "fit": {
+            "description": "The flex fit of the widget, present when its parent is a flex layout.",
+            "$ref": "#/components/schemas/FlexFitKind"
           }
         }
       }

@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:studio_protocol/studio_protocol.dart';
 
@@ -56,7 +57,8 @@ final class SceneCollector {
     if (location == null || !_projectRootUris.any(location.uri.startsWith)) {
       return null;
     }
-    final bounds = _boundsOf(element.findRenderObject());
+    final renderObject = element.findRenderObject();
+    final bounds = _boundsOf(renderObject);
     if (bounds == null) return null;
     return SceneElement(
       className: '${element.widget.runtimeType}',
@@ -67,6 +69,36 @@ final class SceneCollector {
       top: bounds.top,
       width: bounds.width,
       height: bounds.height,
+      layout: _layoutOf(renderObject),
+    );
+  }
+
+  /// Returns the constraints and the flex data of [renderObject], or `null`
+  /// when it is not a box.
+  ///
+  /// Both are read from the description that the render object gives of
+  /// itself for diagnostics, where they are public.
+  LayoutInfo? _layoutOf(RenderObject? renderObject) {
+    if (renderObject is! RenderBox) return null;
+    final properties = renderObject.toDiagnosticsNode().getProperties();
+    final values = [
+      for (final property in properties)
+        if (property is DiagnosticsProperty<Object?>) property.value,
+    ];
+    final constraints = values.whereType<BoxConstraints>().firstOrNull;
+    if (constraints == null) return null;
+    final flexData = values.whereType<FlexParentData>().firstOrNull;
+    return LayoutInfo(
+      minWidth: constraints.minWidth,
+      maxWidth: constraints.hasBoundedWidth ? constraints.maxWidth : null,
+      minHeight: constraints.minHeight,
+      maxHeight: constraints.hasBoundedHeight ? constraints.maxHeight : null,
+      flex: flexData?.flex,
+      fit: switch (flexData?.fit) {
+        FlexFit.tight => FlexFitKind.tight,
+        FlexFit.loose => FlexFitKind.loose,
+        null => null,
+      },
     );
   }
 

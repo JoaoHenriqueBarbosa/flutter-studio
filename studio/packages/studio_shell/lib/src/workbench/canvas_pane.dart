@@ -42,17 +42,17 @@ final class CanvasPane extends StatelessWidget {
       listenables: [
         canvas.frame,
         canvas.isLive,
-        canvas.isSelectable,
+        canvas.agent,
         selection.selection,
       ],
       builder: (context, _, _) {
         final frame = canvas.frame.value;
         if (frame == null) return Center(child: Text(texts.canvasPlaceholder));
         final isLive = canvas.isLive.value;
-        // An app with the agent that cannot be selected on is one built
-        // without the tracking of widget creation (FR-INS-007).
+        // The agent tells when the app was built without the tracking of
+        // widget creation (FR-INS-007).
         final isUntracked =
-            isLive && frame.scene != null && !canvas.isSelectable.value;
+            isLive && canvas.agent.value?.isWidgetCreationTracked == false;
         return Padding(
           padding: const EdgeInsets.all(denseSpacing),
           child: Column(
@@ -85,7 +85,7 @@ final class CanvasPane extends StatelessWidget {
       gaplessPlayback: true,
     );
     final scene = frame.scene;
-    if (scene == null || !canvas.isSelectable.value) return image;
+    if (scene == null || !canvas.isSelectable) return image;
     final geometry = SceneGeometry(scene);
     final selected = selection.selection.value;
     return Center(

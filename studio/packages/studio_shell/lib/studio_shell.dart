@@ -8,6 +8,7 @@ export 'src/studio_packages_locator.dart';
 export 'src/workbench/app_run_status.dart';
 export 'src/workbench/canvas_pane.dart';
 export 'src/workbench/history_buttons.dart';
+export 'src/workbench/layout_summary.dart';
 export 'src/workbench/open_project_prompt.dart';
 export 'src/workbench/output_pane.dart';
 export 'src/workbench/project_workbench.dart';

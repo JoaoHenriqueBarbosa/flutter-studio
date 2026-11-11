@@ -116,24 +116,26 @@ void main() {
     // Verifies: FR-INS-007
     test('lets select only in an app that tracks widget creation', () async {
       await canvas.attach(transport);
-      expect(canvas.isSelectable.value, isFalse);
+      expect(canvas.isSelectable, isFalse);
+
+      // The agent answers only after the app has started.
+      transport.agentInfo = const AgentInfo(
+        protocolVersion: 1,
+        isWidgetCreationTracked: true,
+      );
+      await canvas.refresh();
+      expect(canvas.isSelectable, isTrue);
+
+      await canvas.detach();
+      expect(canvas.isSelectable, isFalse);
 
       transport.agentInfo = const AgentInfo(
         protocolVersion: 1,
         isWidgetCreationTracked: false,
       );
       await canvas.attach(transport);
-      expect(canvas.isSelectable.value, isFalse);
-
-      transport.agentInfo = const AgentInfo(
-        protocolVersion: 1,
-        isWidgetCreationTracked: true,
-      );
-      await canvas.attach(transport);
-      expect(canvas.isSelectable.value, isTrue);
-
-      await canvas.detach();
-      expect(canvas.isSelectable.value, isFalse);
+      expect(canvas.agent.value?.isWidgetCreationTracked, isFalse);
+      expect(canvas.isSelectable, isFalse);
     });
   });
 }

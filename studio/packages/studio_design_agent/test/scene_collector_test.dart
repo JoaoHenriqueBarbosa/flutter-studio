@@ -95,5 +95,32 @@ void main() {
       // The second scene takes the locations from what the first one read.
       expect(collector.collect().elements, isEmpty);
     });
+
+    // Verifies: FR-PRP-011
+    testWidgets('reports the constraints and the flex data of a widget', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: Row(
+            children: [Expanded(flex: 2, child: SizedBox(height: 10))],
+          ),
+        ),
+      );
+
+      final elements = SceneCollector(tester.binding, [
+        '${Directory.current.uri}',
+      ]).collect().elements;
+      final row = elements[1].layout;
+      final box = elements.last.layout;
+
+      expect(elements.last.className, 'SizedBox');
+      expect((row?.minWidth, row?.maxWidth, row?.flex), (800, 800, null));
+      expect(box?.flex, 2);
+      expect(box?.fit, FlexFitKind.tight);
+      expect((box?.minWidth, box?.maxWidth), (800, 800));
+      expect(box?.maxHeight, 600);
+    });
   });
 }

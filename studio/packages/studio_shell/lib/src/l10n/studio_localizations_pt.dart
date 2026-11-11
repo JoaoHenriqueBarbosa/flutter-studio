@@ -127,6 +127,29 @@ class StudioLocalizationsPt extends StudioLocalizations {
       'Este app foi compilado sem o rastreamento de criação de widgets. A seleção no canvas fica desligada nesta execução.';
 
   @override
+  String layoutSize(String width, String height) {
+    return 'Tamanho $width × $height';
+  }
+
+  @override
+  String layoutConstraints(
+    String minWidth,
+    String maxWidth,
+    String minHeight,
+    String maxHeight,
+  ) {
+    return 'Restrições: largura de $minWidth a $maxWidth, altura de $minHeight a $maxHeight';
+  }
+
+  @override
+  String layoutFlex(String flex, String fit) {
+    return 'Flex $flex, ajuste $fit';
+  }
+
+  @override
+  String get layoutUnbounded => 'sem limite';
+
+  @override
   String get propertiesTitle => 'Propriedades';
 
   @override

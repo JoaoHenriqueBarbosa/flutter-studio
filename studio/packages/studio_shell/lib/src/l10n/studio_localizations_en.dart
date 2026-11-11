@@ -125,6 +125,29 @@ class StudioLocalizationsEn extends StudioLocalizations {
       'This app was built without the tracking of widget creation. Selecting on the canvas is off for this run.';
 
   @override
+  String layoutSize(String width, String height) {
+    return 'Size $width × $height';
+  }
+
+  @override
+  String layoutConstraints(
+    String minWidth,
+    String maxWidth,
+    String minHeight,
+    String maxHeight,
+  ) {
+    return 'Constraints: width $minWidth to $maxWidth, height $minHeight to $maxHeight';
+  }
+
+  @override
+  String layoutFlex(String flex, String fit) {
+    return 'Flex $flex, fit $fit';
+  }
+
+  @override
+  String get layoutUnbounded => 'unbounded';
+
+  @override
   String get propertiesTitle => 'Properties';
 
   @override

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0
+
+- Contract 0.8.0: `LayoutInfo` and `FlexFitKind`, in `SceneElement.layout`
+  and `RuntimeNode.layout`.
+
 ## 0.7.0
 
 - Contract 0.7.0: `extractWidget` and `convertToStatefulWidget`.

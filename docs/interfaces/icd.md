@@ -1,6 +1,6 @@
 # Especificação de interfaces
 
-Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.10, rascunho para revisão.
+Contratos entre os processos do Studio e com o SDK. Mensagens em JSON-RPC 2.0; palavras normativas conforme a BCP 14. Versão 0.11, rascunho para revisão.
 
 ## 1. Inventário de interfaces
 
@@ -30,7 +30,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 
 ### 2.1 Regras
 
-- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.7.0.
+- O contrato tem versão semântica, devolvida por `getVersion`. Esta é a versão 0.8.0.
 - Todo `WidgetRef` enviado a um método de edição DEVE trazer `documentVersion`. Se não for a versão atual do documento, o serviço DEVE responder `StaleDocument` sem alterar nada.
 - Um método de edição DEVE ser atômico: ou todos os arquivos da edição são gravados, ou nenhum.
 - O serviço NÃO DEVE aceitar URI fora das raízes do projeto.
@@ -49,7 +49,7 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `StructureOptions` | `wrappers: WidgetSpec[]`, `canRemove`, `canMoveUp`, `canMoveDown`, `canSwapWithParent`, `canSwapWithChild` | Edições de estrutura que um widget admite |
 | `Property` | `name`, `type`, `expression?`, `defaultValue?`, `runtimeValue?` (F2), `isSet`, `isEditable`, `isEvent` (F3), `options?: string[]`, `documentation?` | Parâmetro do construtor de um widget. `type` é o gênero do valor como o analysis server o nomeia (`string`, `int`, `double`, `bool`, `enum` ou outro); `options` traz os valores aceitos por um enum |
 | `SourceNode` | `ref: WidgetRef`, `className`, `owner?: string`, `slot?: SlotRef` (F3), `children: SourceNode[]`, `emptySlots: SlotRef[]` (F3) | Nó da árvore de fonte. `owner` é o nome qualificado da declaração que cria o widget, como `MyHomePage.build`, e só vem nos widgets que nenhum outro contém. Os slots dependem do motor de edição (ASM-03) |
-| `RuntimeNode` | `id` (F2), `className`, `ref: WidgetRef`, `bounds` (`left`, `top`, `width`, `height`, em pixels lógicos), `children: RuntimeNode[]` | Nó da árvore em execução. Nesta versão a árvore só traz os widgets criados no projeto |
+| `RuntimeNode` | `id` (F2), `className`, `ref: WidgetRef`, `bounds` (`left`, `top`, `width`, `height`, em pixels lógicos), `layout?: LayoutInfo`, `children: RuntimeNode[]` | Nó da árvore em execução. `layout` traz as restrições (`minWidth`, `maxWidth?`, `minHeight`, `maxHeight?`, sem o máximo quando não há limite) e, dentro de um flex, `flex?` e `fit?` (`tight` ou `loose`). Nesta versão a árvore só traz os widgets criados no projeto |
 | `Surface` | `id`, `kind` (`preview`, `widget` ou `app`), `name`, `ref?: WidgetRef` | Alvo que o canvas pode abrir |
 | `SurfaceConfig` | `width`, `height`, `devicePixelRatio`, `brightness`, `platform`, `textScale`, `locale` | Configuração de exibição de uma superfície |
 | `TextDocumentEdit` | `uri: string`, `edits: TextEdit[]`, cada um com `range` e `newText` | Edições feitas em um documento, com intervalos que se referem ao texto anterior |
@@ -85,9 +85,9 @@ O shell registra o serviço `Studio` no Dart Tooling Daemon. Um cliente chama `S
 | `createEventHandler` | `target`, `event: string` | `EditResult` e a localização do método criado | F3 |
 | `listPalette` | `query?: string` | `WidgetSpec[]`, com documentação | F3 |
 
-O contrato 0.7.0 traz `getVersion`, `getSourceTree`, `getRuntimeTree`, `getSelection`, `select`, `getProperties`, `setProperty`, `getStructureOptions`, `wrapWidget`, `removeWidget`, `reorderWidget`, `swapWidget`, `extractWidget`, `convertToStatefulWidget`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem.
+O contrato 0.8.0 traz `getVersion`, `getSourceTree`, `getRuntimeTree`, `getSelection`, `select`, `getProperties`, `setProperty`, `getStructureOptions`, `wrapWidget`, `removeWidget`, `reorderWidget`, `swapWidget`, `extractWidget`, `convertToStatefulWidget`, `undo` e `redo`. Os demais métodos de F1 entram com as operações que os atendem.
 
-Limites da versão 0.7.0, que realiza os dois primeiros níveis da ADR-0006:
+Limites da versão 0.8.0, que realiza os dois primeiros níveis da ADR-0006:
 
 - `setProperty` grava um literal do gênero do parâmetro pelo analysis server, esteja o argumento no código ou não. Outra expressão só substitui a de um argumento que já está no código, e `value` nulo remove do código um argumento nomeado; as duas são edições do texto do argumento, sem validação pelo analisador nesta versão (FR-PRP-007, FR-PRP-008). Expressão não literal para argumento ausente e remoção de argumento posicional respondem `UnsupportedTarget`.
 - `wrapWidget` aceita os widgets que `getStructureOptions` lista em `wrappers`, que são os que o analysis server sabe envolver. Outro widget responde `UnsupportedTarget` até o motor de edição existir.
@@ -123,7 +123,7 @@ O agente roda dentro do app alvo. O canal de controle usa extensões de serviço
 
 Os nomes das extensões e os tipos dos resultados ficam no documento OpenRPC do `studio_protocol`, na chave `x-agent`, de onde saem as constantes e os tipos usados pelo shell e pelo agente (ADR-0013).
 
-Construído até aqui: `ext.studio.agent.hello` e `ext.studio.agent.scene`. A primeira devolve `protocolVersion` e `isWidgetCreationTracked`, que diz se o app foi compilado com o rastreamento de criação de widgets (FR-INS-007). A segunda não está na tabela de controle abaixo: ela devolve o espelho de cena da seção 3.3 em JSON, enquanto o segmento de memória compartilhada não existe. Cada elemento traz `className`, `uri` e `position` do local de criação, `parentIndex` e o retângulo `left`, `top`, `width` e `height` na superfície, em pixels lógicos, no lugar da matriz de transformação; a cena traz ainda `width`, `height` e `devicePixelRatio` da superfície.
+Construído até aqui: `ext.studio.agent.hello` e `ext.studio.agent.scene`. A primeira devolve `protocolVersion` e `isWidgetCreationTracked`, que diz se o app foi compilado com o rastreamento de criação de widgets (FR-INS-007). A segunda não está na tabela de controle abaixo: ela devolve o espelho de cena da seção 3.3 em JSON, enquanto o segmento de memória compartilhada não existe. Cada elemento traz `className`, `layout`, `uri` e `position` do local de criação, `parentIndex` e o retângulo `left`, `top`, `width` e `height` na superfície, em pixels lógicos, no lugar da matriz de transformação; a cena traz ainda `width`, `height` e `devicePixelRatio` da superfície.
 
 ### 3.1 Controle
 

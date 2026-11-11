@@ -4,6 +4,12 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**Tamanho e restrições do widget selecionado, e um defeito que eu tinha deixado passar.** Acima das propriedades aparece agora o tamanho do widget selecionado no app em execução, as restrições que o pai impõe e, dentro de linha ou coluna, o fator e o ajuste de flex. Alterar alinhamento e flex já era possível pelas propriedades e por "Envolver com Expanded ou Flexible".
+
+O defeito: o aviso de "app sem rastreamento", que entrou algumas entradas abaixo, aparecia sempre e desligava a seleção por clique no canvas. Os testes passavam; a interface eu não tinha reaberto depois daquela mudança. Achei ao conferir o painel novo, corrigi e pus no teste de sistema a conferência de que o canvas fica selecionável. Daqui em diante reabro a interface depois de toda mudança que toca o canvas.
+
+Com isso todos os requisitos funcionais até o F1 que pedem teste têm teste. No passo de rastreabilidade do portão resta só NFR-MNT-004, os testes herdados, que passam mas rodam fora do que o portão enxerga.
+
 **O portão confere a estrutura.** Entrou o QG-08: nenhum pacote depende de outro fora do desenho combinado, todo pacote tem a mesma anatomia, todo teste espelha um arquivo do código, não há arquivo com nome vazio de sentido, e no núcleo e no shell só o `DocumentStore` grava em arquivo (o gerador do projeto host é a exceção declarada, porque grava em `.dart_tool/`). O código passou sem ajuste.
 
 Dez dos treze passos do portão existem. Para o portão aprovar faltam três coisas que dependem de você (licença do DCM, para QG-03 e parte do QG-06; instalar e fixar PMD e cspell, para QG-06 e QG-07; licença do produto, para o cabeçalho que o QG-10 exige) e duas que dependem de trabalho: teste para o painel de layout e flex (FR-PRP-011) e levar os testes herdados para dentro do que o portão enxerga (NFR-MNT-004).

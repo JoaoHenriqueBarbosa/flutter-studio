@@ -81,6 +81,28 @@
   "@canvasStale": {"description": "Notice over the canvas when the frame on screen is of an app that ended."},
   "canvasNotTracked": "This app was built without the tracking of widget creation. Selecting on the canvas is off for this run.",
   "@canvasNotTracked": {"description": "Notice over the canvas when the running app cannot link its widgets to the source."},
+  "layoutSize": "Size {width} × {height}",
+  "@layoutSize": {
+    "description": "Size of the selected widget in the running app, in logical pixels.",
+    "placeholders": {"width": {"type": "String"}, "height": {"type": "String"}}
+  },
+  "layoutConstraints": "Constraints: width {minWidth} to {maxWidth}, height {minHeight} to {maxHeight}",
+  "@layoutConstraints": {
+    "description": "Constraints that the parent gives to the selected widget.",
+    "placeholders": {
+      "minWidth": {"type": "String"},
+      "maxWidth": {"type": "String"},
+      "minHeight": {"type": "String"},
+      "maxHeight": {"type": "String"}
+    }
+  },
+  "layoutFlex": "Flex {flex}, fit {fit}",
+  "@layoutFlex": {
+    "description": "Flex factor and flex fit of the selected widget inside a row or a column.",
+    "placeholders": {"flex": {"type": "String"}, "fit": {"type": "String"}}
+  },
+  "layoutUnbounded": "unbounded",
+  "@layoutUnbounded": {"description": "Shown in place of a maximum that a constraint does not have."},
   "propertiesTitle": "Properties",
   "@propertiesTitle": {"description": "Title of the pane that edits the arguments of the selected widget."},
   "outputTitle": "Output",
