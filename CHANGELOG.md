@@ -65,6 +65,8 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 
 ### Corrigido
 
+- `STUDIO-PATCH(4)`: a exportação de `api_classes.dart` inteiro em `devtools_app.dart` fazia o nome `Field` colidir com o do `vm_service` e impedia a compilação de dois testes herdados (`program_explorer_test.dart` e `vm_field_display_test.dart`). A exportação fica restrita aos sete tipos que o shell usa. A suíte herdada do `devtools_app` volta a passar inteira com o SDK candidato: 1683 testes, 8 pulados pelo upstream (NFR-MNT-004).
+- Saem do repositório cinco arquivos temporários de `packages/devtools_app/test/test_infra/fixtures/flutter_test_temp_SXOYYC/`, criados pela suíte herdada em execução e incluídos por engano no commit dos atalhos de desfazer.
 - `DocumentSync.ensureOpen` envia ao analysis server a versão atual do documento antes de qualquer pergunta. Uma leitura feita logo depois de uma edição era respondida sobre o texto anterior, porque o aviso da mudança saía depois da pergunta.
 - O app no host de design parava de responder quando um quadro era pedido durante o hot reload; o canvas congelava e os reloads seguintes não aconteciam. Visto na interface, reproduzido por teste e resolvido com a suspensão da captura.
 
