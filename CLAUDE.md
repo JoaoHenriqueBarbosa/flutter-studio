@@ -1,6 +1,16 @@
+<!-- STUDIO-PATCH(1): Replaces the upstream file to load the Studio documents. -->
+
 # Studio
 
 Editor visual de Flutter, escrito em Flutter, que renderiza o código do projeto como está e grava cada alteração nos próprios arquivos. O repositório está na baseline de projeto: os documentos em `docs/` são especificação a implementar, não descrição de software pronto.
+
+## Código herdado
+
+O repositório é um fork de `flutter/devtools` mantido como fila de patches (ADR-0002): o `master` do upstream fica por baixo, e os commits do Studio, por cima. Os pacotes `devtools_*`, a ferramenta `dt` e os demais arquivos do upstream são código herdado.
+
+- Antes de tocar em arquivo herdado, leia e siga o `AGENTS.md` e o `STYLE.md` da raiz, que são do upstream.
+- Toda alteração em arquivo herdado leva o marcador `STUDIO-PATCH(n)` e uma linha em `PATCHES.md`, que também registra o commit base do fork.
+- `docs/README.md` e os arquivos em maiúsculas da raiz (`CONTRIBUTING.md`, `TESTING.md` e os demais) são do upstream. A documentação do Studio é a do mapa em `docs/guide.md`.
 
 ## Sempre no contexto
 

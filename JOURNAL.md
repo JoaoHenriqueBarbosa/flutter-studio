@@ -4,6 +4,12 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**O repositório virou o fork do DevTools.** Começou o incremento F0. O código do DevTools (commit `9b8d6457`, de 10/11/2026) entrou por baixo dos nossos commits, como a ADR-0002 descreve, por decisão do dono do produto entre três formas possíveis. Para isso o histórico do `main` foi reescrito uma vez e enviado com force push; o conteúdo dos documentos não mudou. Isso vai se repetir a cada rebase semanal. O `PATCHES.md` registra o commit base e a fila de patches, que tem um item: o nosso `CLAUDE.md` no lugar do deles.
+
+**GitHub Actions desligado no repositório.** O upstream traz workflows próprios, e quatro deles rodam por agenda, um sem checar em que repositório está. Para não gastarem minutos nem mexerem em issues, o Actions foi desligado nas configurações do repositório. Volta a ser ligado quando o Studio tiver o próprio CI chamando `st verify`.
+
+Pendente do F0, em ordem: compilar e rodar o `devtools_app` em desktop com os testes herdados passando; criar os pacotes `studio_*` e o `st verify`; shell com daemon, analysis server e adaptador de debug; `DocumentStore`; experimentos das premissas ASM-01 a ASM-08.
+
 **Repositório criado e baseline publicada.** O repositório privado `flutter-studio` existe no GitHub e já tem a baseline de projeto: os seis documentos e o guia. Ainda não há código; tudo é especificação.
 
 **Documentos nas pastas definitivas.** Os documentos estavam todos soltos em `docs/` e o guia apontava para subpastas. Agora estão onde o guia diz. As decisões, que eram um arquivo só, viraram treze arquivos, um por ADR, com um índice. Os nomes dos arquivos das decisões foram traduzidos para o inglês, seguindo a regra de caminhos em inglês; vale uma conferida nesses nomes.
