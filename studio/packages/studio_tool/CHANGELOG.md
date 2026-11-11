@@ -7,3 +7,4 @@
 - `st trace` and the step QG-12.
 - `st docs` and the step QG-11.
 - Steps QG-10 and QG-13.
+- Step QG-08.

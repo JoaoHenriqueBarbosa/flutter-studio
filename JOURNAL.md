@@ -4,6 +4,10 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**O portão confere a estrutura.** Entrou o QG-08: nenhum pacote depende de outro fora do desenho combinado, todo pacote tem a mesma anatomia, todo teste espelha um arquivo do código, não há arquivo com nome vazio de sentido, e no núcleo e no shell só o `DocumentStore` grava em arquivo (o gerador do projeto host é a exceção declarada, porque grava em `.dart_tool/`). O código passou sem ajuste.
+
+Dez dos treze passos do portão existem. Para o portão aprovar faltam três coisas que dependem de você (licença do DCM, para QG-03 e parte do QG-06; instalar e fixar PMD e cspell, para QG-06 e QG-07; licença do produto, para o cabeçalho que o QG-10 exige) e duas que dependem de trabalho: teste para o painel de layout e flex (FR-PRP-011) e levar os testes herdados para dentro do que o portão enxerga (NFR-MNT-004).
+
 **Mais dois passos do portão: marcadores e dispensas.** O portão agora procura no código próprio o que não pode chegar ao ramo principal (pendência sem dono e issue, `print`, teste pulado, caminho não implementado) e confere, nos commits do Studio, que nenhum atribui o trabalho a ferramenta. Confere também que toda supressão de diagnóstico cita uma dispensa registrada; hoje não há supressão nem dispensa. O código passou limpo nos dois.
 
 O passo dos marcadores não aprova ainda, de propósito: ele deveria conferir o cabeçalho de licença de cada arquivo, e o texto do cabeçalho depende da licença do produto, que é decisão sua. Quando o arquivo `studio/license-header.txt` existir, o passo passa a exigir o cabeçalho.

@@ -1,6 +1,7 @@
 import '../docs/documentation_step.dart';
 import '../generate/generated_code_step.dart';
 import '../markers/marker_step.dart';
+import '../structure/structure_step.dart';
 import '../trace/trace_step.dart';
 import '../waivers/waiver_step.dart';
 import 'gate_step.dart';
@@ -51,6 +52,7 @@ final class GateStepCatalog {
         ToolInvocation('dart', ['analyze', '--fatal-infos']),
       ],
     ),
+    const StructureStep(),
     GeneratedCodeStep(_runner),
     MarkerStep(_runner),
     DocumentationStep(_runner),
