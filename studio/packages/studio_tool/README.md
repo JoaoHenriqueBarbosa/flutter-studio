@@ -25,3 +25,7 @@ dart run studio_tool:st generate
 `// Verifies:` comments. With `--check` it fails when a test cites an
 identifier that no document defines, or when a requirement of the increment in
 `current-increment.txt` has no test, which is step QG-12 of the gate.
+
+`st docs` generates the API reference of every package with `dart doc`, and the
+reference of the `Studio` service from its contract, into `doc/api/`. A warning
+of a generator fails the command, which is step QG-11 of the gate.

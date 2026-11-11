@@ -24,6 +24,11 @@ final class PackageAssetMessenger implements BinaryMessenger {
 
   final Uint8List _keyPrefix;
 
+  /// Delivers to the framework a message that came from the platform on
+  /// [channel], and calls [callback] with the reply.
+  ///
+  /// The framework deprecated this entry point and reads the messages from
+  /// the channel buffers, which is where this method puts [data].
   @override
   Future<void> handlePlatformMessage(
     String channel,

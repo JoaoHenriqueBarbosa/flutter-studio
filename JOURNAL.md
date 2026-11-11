@@ -4,9 +4,11 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**A referência de API passou a ser gerada, e o portão confere.** `st docs` gera a referência de cada pacote e a do serviço `Studio` (esta a partir do contrato, com exemplos). É o passo QG-11 do portão; a primeira rodada achou quatro avisos, já corrigidos. Seis dos treze passos existem agora. Os que faltam: QG-08, QG-10 e QG-13, que são verificações próprias a escrever, e QG-03, QG-06 e QG-07, que dependem de ferramentas de fora (DCM, PMD, cspell).
+
 **Extrair widget, converter para StatefulWidget e a árvore do app na API.** A barra de estrutura ganhou "Extrair para um widget novo": pede o nome da classe e move o widget selecionado, com tudo o que há dentro, para uma classe nova no mesmo arquivo; o que ele usava de fora vira parâmetro. Converter um `StatelessWidget` em `StatefulWidget` existe na API e ainda não tem botão, porque a interface ainda não tem onde selecionar uma classe. A API também passou a devolver a árvore do app em execução, com o local de criação de cada widget do projeto.
 
-Com isso, dos requisitos até o F1 que pedem teste, ficam sem teste só quatro: o painel de layout e flex (FR-PRP-011), os testes herdados (NFR-MNT-004, que passam mas rodam fora do portão), a referência de API gerada (NFR-MNT-007) e nada mais do lado funcional.
+Com isso, dos requisitos até o F1 que pedem teste, ficam sem teste só três: o painel de layout e flex (FR-PRP-011), os testes herdados (NFR-MNT-004, que passam mas rodam fora do portão), a referência de API gerada (NFR-MNT-007) e nada mais do lado funcional.
 
 **O canvas avisa quando não dá para ligar o que se vê ao código.** Se o app for compilado sem o rastreamento de criação de widgets, o agente informa, o canvas mostra um aviso e deixa de selecionar por clique nessa execução (FR-INS-007). Nas execuções normais em modo debug o rastreamento vem ligado, e nada muda.
 

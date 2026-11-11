@@ -114,7 +114,7 @@ final class ContractDocument {
       'paramStructure': 'by-name',
       'params': final List<Object?> params,
       'result': {'schema': final Object? result},
-      'examples': [_, ...],
+      'examples': [_, ...] && final List<Object?> examples,
     }) {
       return (
         name: _checked(name, _lowerCamelCase),
@@ -130,6 +130,10 @@ final class ContractDocument {
             for (final error in errors)
               if (error case {r'$ref': final String reference})
                 reference.split('/').last,
+        ],
+        examples: [
+          for (final example in examples)
+            const JsonEncoder.withIndent('  ').convert(example),
         ],
       );
     }

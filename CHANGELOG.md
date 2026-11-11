@@ -69,6 +69,7 @@ Registro técnico do que muda no repositório. O formato segue o [Keep a Changel
 - `docs/interfaces/icd.md` 0.9, conforme a linha 0.24 da tabela do guia.
 - FR-STR-007: contrato 0.7.0 com `extractWidget` e `convertToStatefulWidget`. No `studio_core`, `LspClient.extractWidget` pede `refactor.perform` com `EXTRACT_WIDGET`, `EditPipeline.extractWidget` confere o nome da classe, e a conversão usa o assist `refactor.flutter.convert.toStatefulWidget`. No `studio_shell`, botão e diálogo de extrair na barra de estrutura, com quatro textos novos. 172 testes no `studio_core`, um de sistema que extrai, converte e desfaz as duas edições.
 - `docs/interfaces/icd.md` 0.10, conforme a linha 0.25 da tabela do guia.
+- `studio_tool`: comando `st docs` e o passo QG-11 do portão (`DocumentationStep`, NFR-MNT-007). `DocumentationSet` roda `dart doc` em cada pacote de `studio/packages` e reprova qualquer aviso; `ServiceReference` escreve de `studio.openrpc.json` a referência do serviço `Studio` em Markdown, com parâmetros, erros e exemplos. A saída vai para `studio/doc/api/`, fora do Git (CS-DOC-011). `ContractMethod` passa a guardar os exemplos. 69 testes no pacote. Ainda não faz parte do passo a análise de exemplos em comentários de documentação (CS-DOC-008): não há nenhum.
 
 ### Corrigido
 

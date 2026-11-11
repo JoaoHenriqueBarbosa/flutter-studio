@@ -1,3 +1,4 @@
+import '../docs/documentation_step.dart';
 import '../generate/generated_code_step.dart';
 import '../trace/trace_step.dart';
 import 'gate_step.dart';
@@ -49,6 +50,7 @@ final class GateStepCatalog {
       ],
     ),
     GeneratedCodeStep(_runner),
+    DocumentationStep(_runner),
     const TraceStep(),
     ProcessStep(
       _runner,

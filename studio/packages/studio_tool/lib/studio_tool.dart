@@ -1,6 +1,10 @@
 /// Development tool of Studio.
 library;
 
+export 'src/docs/docs_command.dart';
+export 'src/docs/documentation_set.dart';
+export 'src/docs/documentation_step.dart';
+export 'src/docs/service_reference.dart';
 export 'src/generate/constants_emitter.dart';
 export 'src/generate/contract_document.dart';
 export 'src/generate/contract_error.dart';
