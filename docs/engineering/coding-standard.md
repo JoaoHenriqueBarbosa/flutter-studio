@@ -1,6 +1,6 @@
 # Padrão de código
 
-Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.2, rascunho para revisão.
+Regras de código do Studio, cada uma com identificador, enunciado normativo e forma de verificação. Versão 0.3, rascunho para revisão.
 
 ## 1. Propósito, alcance e precedência
 
@@ -333,7 +333,7 @@ O grafo tem um sentido só: o shell conhece todos, e o `studio_protocol` não co
 | O histórico local precisa de armazenamento separado da lógica | Repository | Histórico em `.dart_tool/studio/history/` |
 | Canal de plataforma sem implementação não pode derrubar o app | Null Object | `studio_design_agent` |
 | Recurso do sistema precisa de liberação garantida | RAII em Rust, `dispose` em Dart | Memória compartilhada, texturas, processos |
-| O código herdado pede assets por chaves que só valem no aplicativo raiz | Decorator | `InheritedAssetMessenger` (ADR-0015, proposta) |
+| O código herdado pede assets por chaves que só valem no aplicativo raiz | Decorator | `InheritedAssetMessenger` (ADR-0015) |
 
 O vocabulário é o de Gamma et al. para Command, Strategy, Adapter, Facade, Mediator, Observer, State, Visitor, Builder e Decorator. Gateway e Repository vêm de Fowler; Pipes and Filters, de Buschmann et al.; Null Object, de Woolf.
 

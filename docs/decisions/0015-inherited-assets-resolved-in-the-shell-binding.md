@@ -1,6 +1,6 @@
 # ADR-0015: Assets e fontes do código herdado resolvidos no binding do shell
 
-Estado: proposta.
+Estado: aceita.
 
 ## Contexto e problema
 

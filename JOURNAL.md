@@ -4,6 +4,8 @@ Registro informal do andamento, para quem aprova: o que foi feito e por quê, o 
 
 ## 11/11/2026
 
+**ADR-0015 aceita.** O dono do produto aprovou o mecanismo de assets do shell. Não há mais decisão em estado de proposta.
+
 **ADR-0003 a ADR-0013 estão aceitas.** O dono do produto informou que aprovou todas ao publicar a baseline em `docs/`, e que só faltou trocar o estado. Trocado. A ADR-0015, escrita depois, continua como proposta.
 
 **Decidido: o produto é construído com o Flutter estável.** O dono do produto aceitou a alternativa levantada mais abaixo, e ela virou a ADR-0014. Os pacotes do Studio ficam em `studio/`, com dependências resolvidas pelo estável 3.47.9, e o código herdado continua sendo testado com a pré-versão que o upstream usa. O preço é ter dois SDKs no repositório e conferir, a cada rebase, se o código herdado ainda compila com o estável.
